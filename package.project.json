@@ -1,0 +1,11 @@
+{
+    "name": "InventoryPlus",
+    "tree": {
+        "Packages": {
+            "$path": "Packages",
+            "inventoryplus": {
+                "$path": "src"
+            }
+        }
+    }
+}

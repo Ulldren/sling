@@ -1,0 +1,10 @@
+[package]
+name = "guilherme/inventoryplus"
+
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+vide = "centau/vide@0.4.0"
+topbarplus = "1foreverhd/topbarplus@3.4.0"

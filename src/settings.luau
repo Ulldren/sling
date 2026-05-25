@@ -1,0 +1,11 @@
+return table.freeze({
+	slotSize = 60,
+
+	hotbarSlotsFull = 10,
+	hotbarSlotsMini = 6,
+	hotbarSlotsPortrait = 3,
+
+	inventoryRowsFull = 4,
+	inventoryRowsMini = 3,
+	inventoryRowsPortrait = 4,
+})

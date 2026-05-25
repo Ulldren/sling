@@ -1,0 +1,7 @@
+/*.lock
+/*.rbxlx
+
+sourcemap.json
+.vscode
+
+Packages/
