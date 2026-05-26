@@ -21,7 +21,7 @@ A reactive custom backpack system for Roblox, built using [Vide](https://github.
 
 ### Github Releases
 
-1. Download the `VideBackpack.rbxm` model file from the [Github Releases](https://github.com/encodedlux/vide-backpack/releases).
+1. Download the `VideBackpack.rbxm` model file from the [Github Releases](https://github.com/GuiRios7/VideBackpack/releases).
 2. Open Roblox Studio and create a new place or open an existing place.
 3. In the Explorer window, insert **VideBackpack** into **ReplicatedStorage**.
 4. Select the **VideBackpack** model file you downloaded from GitHub.
