@@ -1,29 +1,29 @@
 --!nonstrict
-local GuiService = game:GetService("GuiService")
+const GuiService = game:GetService("GuiService")
 
-local vide = require("../../vide")
+const vide = require("../../vide")
 
 type Can<T> = vide.Source<T> | T
 
-local read = vide.read
-local cleanup = vide.cleanup
---local derive = vide.derive
-local effect = vide.effect
-local source = vide.source
+const read = vide.read
+const cleanup = vide.cleanup
+--const derive = vide.derive
+const effect = vide.effect
+const source = vide.source
 
-local IsTenFootInterface = GuiService:IsTenFootInterface()
+const IsTenFootInterface = GuiService:IsTenFootInterface()
 
---local BASE_RESOLUTION = Vector2.new(1280, 720)
---local DOMINANT_AXIS = 0.5
---local SCALE_POINTS = { 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3 }
-local CONSOLE_SCALE_MULTIPLIER = 1.66
+--const BASE_RESOLUTION = Vector2.new(1280, 720)
+--const DOMINANT_AXIS = 0.5
+--const SCALE_POINTS = { 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3 }
+const CONSOLE_SCALE_MULTIPLIER = 1.66
 
-local currentScale = source(1)
+const currentScale = source(1)
 
 --[[
 	Apply additional modifications to the scale factor here if desired.
 ]]
-local function modifyScale(scale: number): number
+const function modifyScale(scale: number): number
 	if IsTenFootInterface then
 		scale *= CONSOLE_SCALE_MULTIPLIER
 	end
@@ -41,20 +41,20 @@ local function modifyScale(scale: number): number
 	--return SCALE_POINTS[#SCALE_POINTS]
 end
 
-local function usePx()
-	local viewportSize = source(Vector2.new(0, 0))
+const function usePx()
+	const viewportSize = source(Vector2.new(0, 0))
 
-	--[[local getConstrainedViewportSize = derive(function()
-		local viewport = viewportSize()
-		local constrainedAspectRatio = math.min(viewport.X / viewport.Y, 16 / 9)
+	--[[const getConstrainedViewportSize = derive(function()
+		const viewport = viewportSize()
+		const constrainedAspectRatio = math.min(viewport.X / viewport.Y, 16 / 9)
 
 		return Vector2.new(viewport.Y * constrainedAspectRatio, viewport.Y)
 	end)]]
 
 	effect(function()
-		--local viewport = getConstrainedViewportSize()
-		--local scaleX = math.log(viewport.X / BASE_RESOLUTION.X, 2)
-		--local scaleY = math.log(viewport.Y / BASE_RESOLUTION.Y, 2)
+		--const viewport = getConstrainedViewportSize()
+		--const scaleX = math.log(viewport.X / BASE_RESOLUTION.X, 2)
+		--const scaleY = math.log(viewport.Y / BASE_RESOLUTION.Y, 2)
 
 		--currentScale(modifyScale(2 ^ math.lerp(scaleX, scaleY, DOMINANT_AXIS)))
 		viewportSize()
@@ -68,39 +68,39 @@ local function usePx()
 	viewportSize(workspace.CurrentCamera.ViewportSize)
 end
 
-local function setScale(scale: number)
+const function setScale(scale: number)
 	currentScale(scale)
 end
 
-local function px(x: Can<number>): () -> number
+const function px(x: Can<number>): () -> number
 	return function()
 		return math.round(read(x) * currentScale())
 	end
 end
 
-local function raw(scaled: Can<number>): number
+const function raw(scaled: Can<number>): number
 	return math.round(read(scaled) / currentScale())
 end
 
-local function scale(x: Can<number>): () -> number
+const function scale(x: Can<number>): () -> number
 	return function()
 		return read(x) * currentScale()
 	end
 end
 
-local function offset(x: Can<number>, y: Can<number>): () -> UDim2
+const function offset(x: Can<number>, y: Can<number>): () -> UDim2
 	return function()
 		return UDim2.fromOffset(px(read(x))(), px(read(y))())
 	end
 end
 
-local function udim2(xScale: Can<number>, xOffset: Can<number>, yScale: Can<number>, yOffset: Can<number>): () -> UDim2
+const function udim2(xScale: Can<number>, xOffset: Can<number>, yScale: Can<number>, yOffset: Can<number>): () -> UDim2
 	return function()
 		return UDim2.new(read(xScale), px(read(xOffset))(), read(yScale), px(read(yOffset))())
 	end
 end
 
-local function udim(scale: Can<number>, offset: Can<number>): () -> UDim
+const function udim(scale: Can<number>, offset: Can<number>): () -> UDim
 	return function()
 		return UDim.new(read(scale), px(read(offset))())
 	end

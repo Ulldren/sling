@@ -1,6 +1,6 @@
 --!nonstrict
-local searchbar = require("../components/searchbar")
-local vide = require("../../vide")
+const searchbar = require("../components/searchbar")
+const vide = require("../../vide")
 
 return {
 	vide = vide,

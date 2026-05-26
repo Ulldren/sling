@@ -1,14 +1,14 @@
-local px = require("../utils/px")
-local states = require("../states")
-local vide = require("../../vide")
+const px = require("../utils/px")
+const states = require("../states")
+const vide = require("../../vide")
 
-local create = vide.create
+const create = vide.create
 
 type Props = {
 	text: vide.Source<string>,
 }
 
-local function tooltip(props: Props)
+const function tooltip(props: Props)
 	return create("TextLabel")({
 		Name = "ToolTip",
 		AnchorPoint = Vector2.new(0.5, 1),

@@ -1,9 +1,9 @@
-local states = require("../states")
-local usePreferredTransparency = require("./usePreferredTransparency")
-local vide = require("../../vide")
+const states = require("../states")
+const usePreferredTransparency = require("./usePreferredTransparency")
+const vide = require("../../vide")
 
-local function useBackgroundTransparency(): () -> number
-	local preferredTransparency = usePreferredTransparency()
+const function useBackgroundTransparency(): () -> number
+	const preferredTransparency = usePreferredTransparency()
 
 	return vide.derive(function()
 		return states.attributes.BackgroundTransparency() * preferredTransparency()

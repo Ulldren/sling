@@ -1,12 +1,12 @@
-local category = require("./category")
-local px = require("../utils/px")
-local states = require("../states")
-local vide = require("../../vide")
+const category = require("./category")
+const px = require("../utils/px")
+const states = require("../states")
+const vide = require("../../vide")
 
-local create = vide.create
-local indexes = vide.indexes
+const create = vide.create
+const indexes = vide.indexes
 
-local function categorybar()
+const function categorybar()
 	return create("Frame")({
 		Name = "CategoryBar",
 		AnchorPoint = Vector2.new(0.5, 0.5),

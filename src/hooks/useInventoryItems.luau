@@ -1,10 +1,10 @@
-local states = require("../states")
-local vide = require("../../vide")
+const states = require("../states")
+const vide = require("../../vide")
 
-local function useInventoryItems()
+const function useInventoryItems()
 	return vide.derive(function()
-		local slots = states.slots()
-		local items = states.items()
+		const slots = states.slots()
+		const items = states.items()
 
 		local maxIdx = slots
 		for idx in items do
@@ -13,9 +13,9 @@ local function useInventoryItems()
 			end
 		end
 
-		local newInventory = {}
+		const newInventory = {}
 		for i = slots + 1, maxIdx do
-			local item = items[i]
+			const item = items[i]
 			if item then
 				table.insert(newInventory, item)
 			end

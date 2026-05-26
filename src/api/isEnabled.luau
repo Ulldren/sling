@@ -1,6 +1,6 @@
-local states = require("../states")
+const states = require("../states")
 
-local function isEnabled()
+const function isEnabled()
 	return states.enabled()
 end
 

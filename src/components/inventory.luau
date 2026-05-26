@@ -1,29 +1,29 @@
-local categorybar = require("./categorybar")
-local px = require("../utils/px")
-local searchbar = require("./searchbar")
-local settings = require("../settings")
-local slot = require("./slot")
-local states = require("../states")
-local useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
-local useInventoryItems = require("../hooks/useInventoryItems")
-local vide = require("../../vide")
+const categorybar = require("./categorybar")
+const px = require("../utils/px")
+const searchbar = require("./searchbar")
+const settings = require("../settings")
+const slot = require("./slot")
+const states = require("../states")
+const useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
+const useInventoryItems = require("../hooks/useInventoryItems")
+const vide = require("../../vide")
 
-local derive = vide.derive
-local create = vide.create
-local source = vide.source
-local indexes = vide.indexes
-local show = vide.show
-local action = vide.action
+const derive = vide.derive
+const create = vide.create
+const source = vide.source
+const indexes = vide.indexes
+const show = vide.show
+const action = vide.action
 
-local function inventory(): Frame
-	local height = derive(function()
+const function inventory(): Frame
+	const height = derive(function()
 		return states.rows() * (settings.slotSize + 5) - 5
 	end)
-	local searchText = source("")
+	const searchText = source("")
 
-	local selectedIndex = derive(function()
-		local selectedCategory = states.selectedCategory()
-		local categories = states.categories()
+	const selectedIndex = derive(function()
+		const selectedCategory = states.selectedCategory()
+		const categories = states.categories()
 		for i, category in categories do
 			if category.category == selectedCategory then
 				return i
@@ -32,9 +32,9 @@ local function inventory(): Frame
 		return 0
 	end)
 
-	local searchTokens = derive(function()
-		local text = searchText():lower()
-		local tokens = {}
+	const searchTokens = derive(function()
+		const text = searchText():lower()
+		const tokens = {}
 		for token in text:gmatch("%S+") do
 			table.insert(tokens, token)
 		end
@@ -106,23 +106,23 @@ local function inventory(): Frame
 
 				indexes(useInventoryItems(), function(item, order)
 					return show(function()
-						local currentItem = item()
+						const currentItem = item()
 						if not currentItem then
 							return false
 						end
 
-						local selectedIdx = selectedIndex()
-						local selectedCategory = states.categories()[selectedIdx]
+						const selectedIdx = selectedIndex()
+						const selectedCategory = states.categories()[selectedIdx]
 						if selectedCategory and not selectedCategory.predicate(currentItem) then
 							return false
 						end
 
-						local tokens = searchTokens()
+						const tokens = searchTokens()
 						if #tokens == 0 then
 							return true
 						end
 
-						local name = currentItem.Name:lower()
+						const name = currentItem.Name:lower()
 						local tooltipText = ""
 						if currentItem:IsA("Tool") then
 							tooltipText = (currentItem :: Tool).ToolTip:lower()

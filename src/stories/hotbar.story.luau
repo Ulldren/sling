@@ -1,11 +1,11 @@
 --!nonstrict
-local hotbar = require("../components/hotbar")
-local states = require("../states")
-local vide = require("../../vide")
+const hotbar = require("../components/hotbar")
+const states = require("../states")
+const vide = require("../../vide")
 
-local effect = vide.effect
+const effect = vide.effect
 
-local controls = {
+const controls = {
 	opened = true,
 	slots = 10,
 	keyboardHint = true,
@@ -19,7 +19,7 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		local item = Instance.new("Tool")
+		const item = Instance.new("Tool")
 		item.Name = "Tool"
 		item.ToolTip = "Tooltip"
 

@@ -1,7 +1,7 @@
-local tooltip = require("../components/tooltip")
-local vide = require("../../vide")
+const tooltip = require("../components/tooltip")
+const vide = require("../../vide")
 
-local create = vide.create
+const create = vide.create
 
 return {
 	vide = vide,

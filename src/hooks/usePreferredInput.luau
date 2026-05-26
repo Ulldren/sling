@@ -1,10 +1,10 @@
-local UserInputService = game:GetService("UserInputService")
+const UserInputService = game:GetService("UserInputService")
 
-local useEventListener = require("./useEventListener")
-local vide = require("../../vide")
+const useEventListener = require("./useEventListener")
+const vide = require("../../vide")
 
-local function usePreferredInput(): () -> Enum.PreferredInput
-	local preferredInput = vide.source(UserInputService.PreferredInput)
+const function usePreferredInput(): () -> Enum.PreferredInput
+	const preferredInput = vide.source(UserInputService.PreferredInput)
 
 	useEventListener(UserInputService:GetPropertyChangedSignal("PreferredInput"), function()
 		preferredInput(UserInputService.PreferredInput)

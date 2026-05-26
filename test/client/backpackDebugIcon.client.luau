@@ -1,33 +1,33 @@
-local Players = game:GetService("Players")
+const Players = game:GetService("Players")
 
-local Icon = require("@game/ReplicatedStorage/VideBackpackLoader/VideBackpack/Packages/topbarplus")
+const Icon = require("@game/ReplicatedStorage/VideBackpackLoader/VideBackpack/Packages/topbarplus")
 
-local player = Players.LocalPlayer
+const player = Players.LocalPlayer
 
-local toolIcon = Icon.new()
+const toolIcon = Icon.new()
 toolIcon:setLabel("Tool Options")
 toolIcon:align("Right")
 toolIcon:setDropdown({
 	Icon.new()
 		:setLabel("Add Tool")
 		:bindEvent("deselected", function()
-			local backpack = player:FindFirstChildOfClass("Backpack") :: Backpack
-			local tool = Instance.new("Tool")
+			const backpack = player:FindFirstChildOfClass("Backpack") :: Backpack
+			const tool = Instance.new("Tool")
 			tool.Parent = backpack
 		end)
 		:oneClick(),
 	Icon.new()
 		:setLabel("Add HopperBin")
 		:bindEvent("deselected", function()
-			local backpack = player:FindFirstChildOfClass("Backpack") :: Backpack
-			local hopperBin = Instance.new("HopperBin")
+			const backpack = player:FindFirstChildOfClass("Backpack") :: Backpack
+			const hopperBin = Instance.new("HopperBin")
 			hopperBin.Parent = backpack
 		end)
 		:oneClick(),
 	Icon.new()
 		:setLabel("Clear Backpack")
 		:bindEvent("deselected", function()
-			local backpack = player:FindFirstChildOfClass("Backpack") :: Backpack
+			const backpack = player:FindFirstChildOfClass("Backpack") :: Backpack
 			backpack:ClearAllChildren()
 		end)
 		:oneClick(),

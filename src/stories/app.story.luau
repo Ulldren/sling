@@ -1,13 +1,13 @@
 --!nonstrict
-local app = require("../components/app")
-local states = require("../states")
-local types = require("../types")
-local vide = require("../../vide")
+const app = require("../components/app")
+const states = require("../states")
+const types = require("../types")
+const vide = require("../../vide")
 
-local derive = vide.derive
-local effect = vide.effect
+const derive = vide.derive
+const effect = vide.effect
 
-local controls = {
+const controls = {
 	keyboardHint = true,
 	gamepadHint = true,
 	opened = true,
@@ -25,15 +25,15 @@ return {
 	controls = controls,
 	summary = "Inventory Plus",
 	story = function(props: Props)
-		local function createSword()
-			local tool = Instance.new("Tool")
+		const function createSword()
+			const tool = Instance.new("Tool")
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"
 			return tool
 		end
 
-		local function category(name: string): types.Category
+		const function category(name: string): types.Category
 			return {
 				category = name,
 				predicate = function()
@@ -42,15 +42,15 @@ return {
 			}
 		end
 
-		local getCategories = derive(function()
-			local count = props.controls.categories()
-			local categories = {}
+		const getCategories = derive(function()
+			const count = props.controls.categories()
+			const categories = {}
 			if count < 1 then
 				return categories
 			end
 			for i = 1, count do
-				local category = category("category " .. i)
-				table.insert(categories, category)
+				const categoryVal = category("category " .. i)
+				table.insert(categories, categoryVal)
 			end
 			return categories
 		end)

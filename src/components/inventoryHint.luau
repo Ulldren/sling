@@ -1,17 +1,17 @@
-local UserInputService = game:GetService("UserInputService")
+const UserInputService = game:GetService("UserInputService")
 
-local px = require("../utils/px")
-local states = require("../states")
-local vide = require("../../vide")
+const px = require("../utils/px")
+const states = require("../states")
+const vide = require("../../vide")
 
-local create = vide.create
+const create = vide.create
 
 type Props = {
 	keyCode: Enum.KeyCode,
 	text: string,
 }
 
-local function inventoryHint(props: Props)
+const function inventoryHint(props: Props)
 	return create("Frame")({
 		Name = "HintFrame",
 		AutomaticSize = Enum.AutomaticSize.XY,

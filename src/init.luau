@@ -1,15 +1,16 @@
-local closeInventory = require("@self/api/closeInventory")
-local createCategory = require("@self/api/createCategory")
-local events = require("@self/events")
-local getTopbarIcon = require("@self/api/getTopbarIcon")
-local isEnabled = require("@self/api/isEnabled")
-local isInventoryOpen = require("@self/api/isInventoryOpen")
-local openInventory = require("@self/api/openInventory")
-local setEnabled = require("@self/api/setEnabled")
-local toggleInventory = require("@self/api/toggleInventory")
+const closeInventory = require("@self/api/closeInventory")
+const createCategory = require("@self/api/createCategory")
+const events = require("@self/events")
+const getTopbarIcon = require("@self/api/getTopbarIcon")
+const isEnabled = require("@self/api/isEnabled")
+const isInventoryOpen = require("@self/api/isInventoryOpen")
+const openInventory = require("@self/api/openInventory")
+const setEnabled = require("@self/api/setEnabled")
+const toggleInventory = require("@self/api/toggleInventory")
 
 require("@self/appRoot")
 require("@self/topbarIcon")
+require("@self/attribution")
 
 return table.freeze({
 	-- API

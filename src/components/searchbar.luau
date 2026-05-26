@@ -1,24 +1,24 @@
-local px = require("../utils/px")
-local states = require("../states")
-local usePreferredTransparency = require("../hooks/usePreferredTransparency")
-local vide = require("../../vide")
+const px = require("../utils/px")
+const states = require("../states")
+const usePreferredTransparency = require("../hooks/usePreferredTransparency")
+const vide = require("../../vide")
 
-local SEARCH_BORDER_COLOR: Color3 = Color3.new(1, 1, 1)
-local SEARCH_BORDER_TRANSPARENCY: number = 0.8
-local SEARCH_TEXT_OFFSET: number = 8
-local SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
+const SEARCH_BORDER_COLOR: Color3 = Color3.new(1, 1, 1)
+const SEARCH_BORDER_TRANSPARENCY: number = 0.8
+const SEARCH_TEXT_OFFSET: number = 8
+const SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
 
-local create = vide.create
-local changed = vide.changed
+const create = vide.create
+const changed = vide.changed
 
 type Props = {
 	searchText: vide.Source<string>,
 }
 
-local function searchbar(props: Props)
-	local searchText = props.searchText
+const function searchbar(props: Props)
+	const searchText = props.searchText
 
-	local preferredTransparency = usePreferredTransparency()
+	const preferredTransparency = usePreferredTransparency()
 
 	return create("TextBox")({
 		Name = "Search",

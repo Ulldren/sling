@@ -1,4 +1,4 @@
-local VideBackpack = require("../VideBackpackLoader/VideBackpack")
+const VideBackpack = require("../VideBackpackLoader/VideBackpack")
 
 VideBackpack.createCategory("Swords", function(tool)
 	return tool:HasTag("Sword")

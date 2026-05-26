@@ -1,11 +1,11 @@
 --!nonstrict
-local backpack = require("../components/backpack")
-local states = require("../states")
-local vide = require("../../vide")
+const backpack = require("../components/backpack")
+const states = require("../states")
+const vide = require("../../vide")
 
-local effect = vide.effect
+const effect = vide.effect
 
-local controls = {
+const controls = {
 	toolSlot = 4,
 	slots = 10,
 	rows = 4,
@@ -21,7 +21,7 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		local tool = Instance.new("Tool")
+		const tool = Instance.new("Tool")
 		tool.Name = "Sword"
 		tool.TextureId = "rbxasset://Textures/Sword128.png"
 		tool.ToolTip = "A cool sword"

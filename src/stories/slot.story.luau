@@ -1,13 +1,13 @@
-local slot = require("../components/slot")
-local vide = require("../../vide")
+const slot = require("../components/slot")
+const vide = require("../../vide")
 
-local source = vide.source
-local cleanup = vide.cleanup
+const source = vide.source
+const cleanup = vide.cleanup
 
 return {
 	vide = vide,
 	story = function()
-		local item = Instance.new("Tool")
+		const item = Instance.new("Tool")
 		item.Name = "Tool"
 		item.ToolTip = "Tooltip"
 

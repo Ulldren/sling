@@ -1,15 +1,15 @@
-local hotbar = require("./hotbar")
-local inventory = require("./inventory")
-local states = require("../states")
-local vide = require("../../vide")
+const hotbar = require("./hotbar")
+const inventory = require("./inventory")
+const states = require("../states")
+const vide = require("../../vide")
 
-local create = vide.create
-local effect = vide.effect
-local show = vide.show
+const create = vide.create
+const effect = vide.effect
+const show = vide.show
 
-local function backpack()
+const function backpack()
 	effect(function()
-		local categories = states.categories()
+		const categories = states.categories()
 		states.selectedCategory(if #categories > 0 then categories[1].category else "")
 	end)
 

@@ -1,22 +1,22 @@
-local GuiService = game:GetService("GuiService")
-local UserInputService = game:GetService("UserInputService")
+const GuiService = game:GetService("GuiService")
+const UserInputService = game:GetService("UserInputService")
 
-local checkBounds = require("../utils/checkBounds")
-local getClosestFrame = require("../utils/getClosestFrame")
-local px = require("../utils/px")
-local settings = require("../settings")
-local states = require("../states")
-local tooltip = require("./tooltip")
-local types = require("../types")
-local useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
-local vide = require("../../vide")
+const checkBounds = require("../utils/checkBounds")
+const getClosestFrame = require("../utils/getClosestFrame")
+const px = require("../utils/px")
+const settings = require("../settings")
+const states = require("../states")
+const tooltip = require("./tooltip")
+const types = require("../types")
+const useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
+const vide = require("../../vide")
 
-local create = vide.create
-local show = vide.show
-local source = vide.source
-local effect = vide.effect
-local cleanup = vide.cleanup
-local action = vide.action
+const create = vide.create
+const show = vide.show
+const source = vide.source
+const effect = vide.effect
+const cleanup = vide.cleanup
+const action = vide.action
 
 type Props = {
 	item: vide.Source<types.InventoryItem?>,
@@ -25,25 +25,25 @@ type Props = {
 	inHotbar: boolean?,
 }
 
-local function slot(props: Props): Frame
-	local isHovering = source(false)
-	local isDragging = source(false)
+const function slot(props: Props): Frame
+	const isHovering = source(false)
+	const isDragging = source(false)
 
-	local slotRef = source(nil :: TextButton?)
-	local slotFrameRef = source(nil :: Frame?)
+	const slotRef = source(nil :: TextButton?)
+	const slotFrameRef = source(nil :: Frame?)
 
-	local slotSize = px.offset(settings.slotSize, settings.slotSize)
-	local backgroundTransparency = useBackgroundTransparency()
-	local zindex = vide.derive(function()
+	const slotSize = px.offset(settings.slotSize, settings.slotSize)
+	const backgroundTransparency = useBackgroundTransparency()
+	const zindex = vide.derive(function()
 		return if isDragging() then 2 else 1
 	end)
 
-	local itemName = source("")
-	local itemImage = source("")
-	local tooltipText = source("")
+	const itemName = source("")
+	const itemImage = source("")
+	const tooltipText = source("")
 
 	effect(function()
-		local i = props.item()
+		const i = props.item()
 		if i == nil then
 			itemName("")
 			itemImage("")
@@ -57,7 +57,7 @@ local function slot(props: Props): Frame
 		end))
 
 		if i:IsA("Tool") then
-			local tool = i :: Tool
+			const tool = i :: Tool
 			itemImage(tool.TextureId)
 			tooltipText(tool.ToolTip)
 			cleanup(tool:GetPropertyChangedSignal("TextureId"):Connect(function()
@@ -74,7 +74,7 @@ local function slot(props: Props): Frame
 
 	local lastClickTime = 0
 
-	local function getSlotNumber(): string
+	const function getSlotNumber(): string
 		if props.order >= 1 and props.order < 10 then
 			return tostring(props.order)
 		elseif props.order == 10 then
@@ -83,12 +83,12 @@ local function slot(props: Props): Frame
 		return ""
 	end
 
-	local function getSourceIdx(): number?
-		local item = props.item()
+	const function getSourceIdx(): number?
+		const item = props.item()
 		if not item then
 			return nil
 		end
-		local currentItems = states.items()
+		const currentItems = states.items()
 		for idx, it in currentItems do
 			if it == item then
 				return idx
@@ -97,16 +97,16 @@ local function slot(props: Props): Frame
 		return nil
 	end
 
-	local function swap(targetSlot: number)
-		local slots = states.slots()
-		local sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
+	const function swap(targetSlot: number)
+		const slots = states.slots()
+		const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
 		local currentItems = table.clone(states.items())
-		local itemA = currentItems[sourceIdx]
+		const itemA = currentItems[sourceIdx]
 		if not itemA then
 			return
 		end
-		local targetIdx = targetSlot
-		local itemB = currentItems[targetIdx]
+		const targetIdx = targetSlot
+		const itemB = currentItems[targetIdx]
 		if props.inHotbar then
 			currentItems[sourceIdx], currentItems[targetIdx] = currentItems[targetIdx], currentItems[sourceIdx]
 		else
@@ -120,10 +120,10 @@ local function slot(props: Props): Frame
 						maxIdx = idx
 					end
 				end
-				local newList = {}
+				const newList = {}
 				local invCount = 0
 				for i = 1, maxIdx do
-					local item = currentItems[i]
+					const item = currentItems[i]
 					if item then
 						if i <= slots then
 							newList[i] = item
@@ -140,11 +140,11 @@ local function slot(props: Props): Frame
 		states.items(currentItems)
 	end
 
-	local function moveToInventory()
-		local slots = states.slots()
-		local sourceIdx = getSourceIdx() or props.order
-		local currentItems = table.clone(states.items())
-		local itemToMove = currentItems[sourceIdx]
+	const function moveToInventory()
+		const slots = states.slots()
+		const sourceIdx = getSourceIdx() or props.order
+		const currentItems = table.clone(states.items())
+		const itemToMove = currentItems[sourceIdx]
 		if not itemToMove then
 			return
 		end
@@ -159,9 +159,9 @@ local function slot(props: Props): Frame
 		states.items(currentItems)
 	end
 
-	local function moveToHotbar()
-		local slots = states.slots()
-		local currentItems = states.items()
+	const function moveToHotbar()
+		const slots = states.slots()
+		const currentItems = states.items()
 		local targetIdx = nil
 		for idx = 1, slots do
 			if currentItems[idx] == nil then
@@ -186,7 +186,7 @@ local function slot(props: Props): Frame
 		end
 
 		if input.KeyCode == settings.gamepadRemoveKey then
-			local slotBtn = slotRef()
+			const slotBtn = slotRef()
 			if slotBtn and GuiService.SelectedObject == slotBtn then
 				moveToInventory()
 			end
@@ -224,15 +224,15 @@ local function slot(props: Props): Frame
 			action(slotRef) :: any,
 
 			MouseButton1Click = function()
-				local slots = states.slots()
-				local sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
+				const slots = states.slots()
+				const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
 
 				if states.gamepadHint() and states.opened() then
-					local activeSwapIdx = states.gamepadSwapIdx()
+					const activeSwapIdx = states.gamepadSwapIdx()
 					if activeSwapIdx then
 						states.gamepadSwapIdx(nil)
 						if activeSwapIdx ~= sourceIdx then
-							local currentItems = table.clone(states.items())
+							const currentItems = table.clone(states.items())
 							currentItems[sourceIdx], currentItems[activeSwapIdx] =
 								currentItems[activeSwapIdx], currentItems[sourceIdx]
 							states.items(currentItems)
@@ -241,7 +241,7 @@ local function slot(props: Props): Frame
 					end
 				end
 
-				local i = props.item()
+				const i = props.item()
 				if not i then
 					return
 				end
@@ -251,7 +251,7 @@ local function slot(props: Props): Frame
 					return
 				end
 
-				local now = os.clock()
+				const now = os.clock()
 				if now - lastClickTime < settings.doubleClickTime then
 					lastClickTime = 0
 
@@ -272,13 +272,13 @@ local function slot(props: Props): Frame
 			DragBegin = function()
 				isDragging(true)
 
-				local slot = slotRef()
-				local app = states.appRef()
+				const slot = slotRef()
+				const app = states.appRef()
 				if not slot or not app then
 					return
 				end
 				if not props.inHotbar then
-					local newPosition = UDim2.new(
+					const newPosition = UDim2.new(
 						0,
 						slot.AbsolutePosition.X - app.AbsolutePosition.X,
 						0,
@@ -291,8 +291,8 @@ local function slot(props: Props): Frame
 			DragStopped = function(x: number, y: number)
 				isDragging(false)
 
-				local slot = slotRef()
-				local slotFrame = slotFrameRef()
+				const slot = slotRef()
+				const slotFrame = slotFrameRef()
 				if not slot or not slotFrame then
 					return
 				end
@@ -302,17 +302,17 @@ local function slot(props: Props): Frame
 				end
 				slot.Position = UDim2.new()
 
-				local abpos = Vector2.new(x, y)
-				local hotbar = states.hotbarRef()
+				const abpos = Vector2.new(x, y)
+				const hotbar = states.hotbarRef()
 
 				local insideHotbar = false
 
 				if hotbar then
 					insideHotbar = checkBounds(abpos, hotbar)
 					if insideHotbar then
-						local closest = getClosestFrame(abpos, hotbar, settings.slotSize / 2)
+						const closest = getClosestFrame(abpos, hotbar, settings.slotSize / 2)
 						if closest and closest ~= slotFrame then
-							local targetOrder = closest.LayoutOrder
+							const targetOrder = closest.LayoutOrder
 							swap(targetOrder)
 							return
 						end
@@ -392,8 +392,8 @@ local function slot(props: Props): Frame
 				})
 			end),
 			show(function()
-				local slots = states.slots()
-				local sourceIdx = if props.inHotbar then props.order else slots + props.order
+				const slots = states.slots()
+				const sourceIdx = if props.inHotbar then props.order else slots + props.order
 				return props.item() ~= nil and (isDragging() or states.gamepadSwapIdx() == sourceIdx)
 			end, function()
 				return create("UIStroke")({
