@@ -29,7 +29,7 @@ const VERSION = "1.0.0"
 
 -- Print attribution. Do not modify without reading above
 if not RunService:IsStudio() and RunService:IsClient() then
-	print(`👛 Running VideBackpack v{VERSION} by @EncodedLux`)
+	print(`🎒 Running VideBackpack v{VERSION} by @EncodedLux`)
 end
 
 return nil
