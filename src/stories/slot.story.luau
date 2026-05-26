@@ -1,6 +1,5 @@
-local vide = require("../../vide")
 local slot = require("../components/slot")
-local attributesController = require("../lib/attributesController")
+local vide = require("../../vide")
 
 local source = vide.source
 local cleanup = vide.cleanup
@@ -19,9 +18,7 @@ return {
 			item = source(item),
 			equippedItem = source(nil),
 			order = 1,
-			keyboardHint = source(true),
 			unlocked = source(true),
-			attributes = attributesController.generateAttributes(),
 		}))({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),

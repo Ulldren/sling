@@ -8,4 +8,11 @@ return table.freeze({
 	inventoryRowsFull = 4,
 	inventoryRowsMini = 3,
 	inventoryRowsPortrait = 4,
+
+	doubleClickTime = 0.3,
+
+	gamepadSwapKey = Enum.KeyCode.ButtonA,
+	gamepadRemoveKey = Enum.KeyCode.ButtonX,
+	gamepadCloseKey = Enum.KeyCode.ButtonB,
+	gamepadCloseSecondaryKey = Enum.KeyCode.ButtonStart,
 })

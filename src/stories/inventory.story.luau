@@ -1,6 +1,7 @@
-local vide = require("../../vide")
+--!nonstrict
 local inventory = require("../components/inventory")
-local attributesController = require("../lib/attributesController")
+local states = require("../states")
+local vide = require("../../vide")
 
 local controls = {
 	width = 655,
@@ -24,20 +25,20 @@ return {
 			table.insert(itemsTbl, tool)
 		end
 
-		return vide.apply(inventory({
-			opened = vide.source(true),
-			rows = props.controls.rows :: any,
-			items = vide.source(itemsTbl),
-			equippedItem = vide.source(nil),
-			categories = vide.source({}),
-			selectedCategory = vide.source(""),
-			attributes = attributesController.generateAttributes(),
-		}))({
+		vide.effect(function()
+			states.width(props.controls.width())
+			states.rows(props.controls.rows())
+		end)
+
+		states.opened(true)
+		states.items(itemsTbl)
+		states.equippedItem(nil)
+		states.categories({})
+		states.selectedCategory("")
+
+		return vide.apply(inventory())({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
-			Size = function()
-				return UDim2.new(0, (props.controls.width :: any)(), 0, 0)
-			end,
 		})
 	end,
 }

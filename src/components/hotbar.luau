@@ -1,80 +1,65 @@
-local vide = require("../../vide")
-local types = require("../types")
+local px = require("../utils/px")
+local settings = require("../settings")
 local slot = require("./slot")
+local states = require("../states")
+local useHotbarItems = require("../hooks/useHotbarItems")
+local vide = require("../../vide")
 
 local create = vide.create
 local indexes = vide.indexes
 local derive = vide.derive
 local show = vide.show
 local changed = vide.changed
+local action = vide.action
 
-type Props = {
-	opened: vide.Source<boolean>,
-	slots: vide.Source<number>,
-	items: vide.Source<{ types.InventoryItem }>,
-	equippedItem: vide.Source<types.InventoryItem?>,
-	keyboardHint: vide.Source<boolean>,
-	widthChanged: (number) -> (),
-	attributes: types.Attributes,
-}
+local HOTBAR_PADDING = 5
 
-local function hotbar(props: Props): Frame
-	local slotData = derive(function()
-		local slots = props.slots()
-		local items = props.items()
-		local data: { { item: types.InventoryItem? } } = table.create(slots)
-		for i = 1, slots do
-			data[i] = { item = items[i] }
-		end
-		return data
-	end)
-
-	local slotsFrames = indexes(slotData, function(entry, order)
-		local item = derive(function()
-			return entry().item
-		end)
-		return show(function()
-			return props.opened() or item() ~= nil
-		end, function()
-			return slot({
-				opened = props.opened,
-				item = item,
-				order = order,
-				keyboardHint = props.keyboardHint,
-				unlocked = function()
-					return props.opened() and item() ~= nil
-				end,
-				equippedItem = props.equippedItem,
-				attributes = props.attributes,
-			})
-		end)
-	end)
-
+local function hotbar(): Frame
 	return create("Frame")({
 		Name = "Hotbar",
-		AutomaticSize = Enum.AutomaticSize.XY,
+		AutomaticSize = Enum.AutomaticSize.X,
+		Size = px.offset(0, settings.slotSize + HOTBAR_PADDING * 2),
 		BackgroundTransparency = 1,
 		LayoutOrder = 1,
 
+		action(states.hotbarRef) :: any,
+
 		changed("AbsoluteSize", function(size: Vector2)
-			props.widthChanged(size.X)
+			states.width(size.X)
 		end) :: any,
 
 		create("UIListLayout")({
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
-			Padding = UDim.new(0, 5),
+			Padding = px.udim(0, HOTBAR_PADDING),
 		}),
 
 		create("UIPadding")({
-			PaddingLeft = UDim.new(0, 5),
-			PaddingRight = UDim.new(0, 5),
-			PaddingTop = UDim.new(0, 5),
-			PaddingBottom = UDim.new(0, 5),
+			PaddingLeft = px.udim(0, HOTBAR_PADDING),
+			PaddingRight = px.udim(0, HOTBAR_PADDING),
+			PaddingTop = px.udim(0, HOTBAR_PADDING),
+			PaddingBottom = px.udim(0, HOTBAR_PADDING),
 		}),
 
-		slotsFrames,
+		indexes(useHotbarItems(), function(entry, order)
+			local item = derive(function()
+				return entry().item
+			end)
+			return show(function()
+				return states.opened() or item() ~= nil
+			end, function()
+				return slot({
+					item = item,
+					order = order,
+					keyboardHint = states.keyboardHint,
+					unlocked = function()
+						return states.opened() and item() ~= nil
+					end,
+					isHotbar = true,
+				})
+			end)
+		end),
 	})
 end
 

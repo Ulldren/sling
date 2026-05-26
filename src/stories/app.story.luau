@@ -1,10 +1,11 @@
-local vide = require("../../vide")
+--!nonstrict
 local app = require("../components/app")
-local attributesController = require("../lib/attributesController")
+local states = require("../states")
 local types = require("../types")
+local vide = require("../../vide")
 
-local source = vide.source
 local derive = vide.derive
+local effect = vide.effect
 
 local controls = {
 	keyboardHint = true,
@@ -41,7 +42,7 @@ return {
 		end
 
 		local getCategories = derive(function()
-			local count = (props.controls.categories :: any)()
+			local count = props.controls.categories()
 			local categories = {}
 			if count < 1 then
 				return categories
@@ -53,17 +54,17 @@ return {
 			return categories
 		end)
 
-		return app({
-			opened = props.controls.opened :: any,
-			slots = props.controls.slots :: any,
-			rows = props.controls.rows :: any,
-			items = source({ [1] = createSword(), [11] = createSword(), [12] = createSword() }),
-			equippedItem = source(nil),
-			keyboardHint = props.controls.keyboardHint :: any,
-			gamepadHint = props.controls.gamepadHint :: any,
-			categories = getCategories,
-			selectedCategory = source(""),
-			attributes = attributesController.generateAttributes(),
-		})
+		effect(function()
+			states.opened(props.controls.opened())
+			states.slots(props.controls.slots())
+			states.rows(props.controls.rows())
+			states.keyboardHint(props.controls.keyboardHint())
+			states.gamepadHint(props.controls.gamepadHint())
+			states.categories(getCategories())
+		end)
+
+		states.items({ [1] = createSword(), [11] = createSword(), [12] = createSword() })
+
+		return app()
 	end,
 }

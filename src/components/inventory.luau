@@ -1,34 +1,29 @@
-local vide = require("../../vide")
-local types = require("../types")
 local categorybar = require("./categorybar")
+local px = require("../utils/px")
 local searchbar = require("./searchbar")
+local settings = require("../settings")
 local slot = require("./slot")
+local states = require("../states")
+local useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
+local useInventoryItems = require("../hooks/useInventoryItems")
+local vide = require("../../vide")
 
 local derive = vide.derive
 local create = vide.create
 local source = vide.source
 local indexes = vide.indexes
 local show = vide.show
+local action = vide.action
 
-type Props = {
-	opened: vide.Source<boolean>,
-	rows: vide.Source<number>,
-	items: vide.Source<{ types.InventoryItem }>,
-	equippedItem: vide.Source<types.InventoryItem?>,
-	categories: vide.Source<{ types.Category }>,
-	selectedCategory: vide.Source<string>,
-	attributes: types.Attributes,
-}
-
-local function inventory(props: Props): Frame
+local function inventory(): Frame
 	local height = derive(function()
-		return props.rows() * 65 - 5
+		return states.rows() * (settings.slotSize + 5) - 5
 	end)
 	local searchText = source("")
 
 	local selectedIndex = derive(function()
-		local selectedCategory = props.selectedCategory()
-		local categories = props.categories()
+		local selectedCategory = states.selectedCategory()
+		local categories = states.categories()
 		for i, category in categories do
 			if category.category == selectedCategory then
 				return i
@@ -48,25 +43,23 @@ local function inventory(props: Props): Frame
 
 	return create("Frame")({
 		Name = "Inventory",
-		BackgroundColor3 = props.attributes.BackgroundColor3,
-		BackgroundTransparency = props.attributes.BackgroundTransparency,
+		BackgroundColor3 = states.attributes.BackgroundColor3,
+		BackgroundTransparency = useBackgroundTransparency(),
 		AutomaticSize = Enum.AutomaticSize.Y,
-		Size = UDim2.fromScale(1, 0),
+		Size = function()
+			return UDim2.fromOffset(states.width(), 0)
+		end,
 
 		create("UICorner")({
-			CornerRadius = props.attributes.CornerRadius,
+			CornerRadius = states.attributes.CornerRadius,
 		}),
 
 		create("UIListLayout")({}),
 
 		show(function()
-			return #props.categories() > 1
+			return #states.categories() > 1
 		end, function()
-			return categorybar({
-				categories = props.categories,
-				selectedCategory = props.selectedCategory,
-				attributes = props.attributes,
-			})
+			return categorybar()
 		end),
 
 		create("Frame")({
@@ -77,19 +70,18 @@ local function inventory(props: Props): Frame
 			LayoutOrder = 1,
 
 			create("UIPadding")({
-				PaddingBottom = UDim.new(0, 5),
-				PaddingLeft = UDim.new(0, 5),
-				PaddingRight = UDim.new(0, 5),
-				PaddingTop = UDim.new(0, 5),
+				PaddingBottom = px.udim(0, 5),
+				PaddingLeft = px.udim(0, 5),
+				PaddingRight = px.udim(0, 5),
+				PaddingTop = px.udim(0, 5),
 			}),
 
 			create("UIListLayout")({
-				Padding = UDim.new(0, 5),
+				Padding = px.udim(0, 5),
 			}),
 
 			searchbar({
 				searchText = searchText,
-				attributes = props.attributes,
 			}),
 
 			create("ScrollingFrame")({
@@ -102,18 +94,19 @@ local function inventory(props: Props): Frame
 				ScrollBarThickness = 8,
 				ScrollingDirection = Enum.ScrollingDirection.Y,
 				Selectable = false,
-				Size = function()
-					return UDim2.new(1, 18, 0, height())
-				end,
+				Size = px.udim2(1, 18, 0, height),
+				LayoutOrder = 1,
+
+				action(states.inventoryGridRef) :: any,
 
 				create("UIListLayout")({
 					FillDirection = Enum.FillDirection.Horizontal,
-					Padding = UDim.new(0, 5),
+					Padding = px.udim(0, 5),
 					SortOrder = Enum.SortOrder.LayoutOrder,
 					Wraps = true,
 				}),
 
-				indexes(props.items, function(item, order)
+				indexes(useInventoryItems(), function(item, order)
 					return show(function()
 						local currentItem = item()
 						if not currentItem then
@@ -121,7 +114,7 @@ local function inventory(props: Props): Frame
 						end
 
 						local selectedIdx = selectedIndex()
-						local selectedCategory = props.categories()[selectedIdx]
+						local selectedCategory = states.categories()[selectedIdx]
 						if selectedCategory and not selectedCategory.predicate(currentItem) then
 							return false
 						end
@@ -146,12 +139,9 @@ local function inventory(props: Props): Frame
 						return false
 					end, function()
 						return slot({
-							opened = props.opened,
 							item = item,
 							order = order,
 							unlocked = source(true),
-							equippedItem = props.equippedItem,
-							attributes = props.attributes,
 						})
 					end)
 				end),

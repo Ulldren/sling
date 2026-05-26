@@ -1,7 +1,7 @@
-local vide = require("../../vide")
 local categorybar = require("../components/categorybar")
-local attributesController = require("../lib/attributesController")
+local states = require("../states")
 local types = require("../types")
+local vide = require("../../vide")
 
 local apply = vide.apply
 
@@ -17,11 +17,10 @@ return {
 				end,
 			}
 		end
-		return apply(categorybar({
-			categories = vide.source({ category("Tools"), category("Currency"), category("Consumable") }),
-			selectedCategory = vide.source("Tools"),
-			attributes = attributesController.generateAttributes(),
-		}))({
+		states.categories({ category("Tools"), category("Currency"), category("Consumable") })
+		states.selectedCategory("Tools")
+
+		return apply(categorybar())({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 		})

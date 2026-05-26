@@ -1,6 +1,5 @@
-local vide = require("../../vide")
 local tooltip = require("../components/tooltip")
-local attributesController = require("../lib/attributesController")
+local vide = require("../../vide")
 
 local create = vide.create
 
@@ -15,7 +14,6 @@ return {
 				text = function()
 					return "Hello World"
 				end,
-				attributes = attributesController.generateAttributes(),
 			}),
 		})
 	end,

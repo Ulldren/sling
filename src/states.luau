@@ -1,6 +1,6 @@
-local vide = require("../vide")
 local settings = require("./settings")
 local types = require("./types")
+local vide = require("../vide")
 
 local source = vide.source
 
@@ -10,12 +10,21 @@ return {
 
 	slots = source(settings.hotbarSlotsFull),
 	rows = source(settings.inventoryRowsFull),
+	width = source(655),
+
+	keyboardHint = source(false),
+	gamepadHint = source(false),
+	gamepadSwapIdx = source(nil :: number?),
 
 	categories = source({} :: { types.Category }),
 	selectedCategory = source(""),
 
 	items = source({} :: { types.InventoryItem }),
 	equippedItem = source(nil :: types.InventoryItem?),
+
+	appRef = source(nil :: Frame?),
+	hotbarRef = source(nil :: Frame?),
+	inventoryGridRef = source(nil :: ScrollingFrame?),
 
 	attributes = {
 		BackgroundColor3 = source(Color3.fromRGB(25, 27, 29)),

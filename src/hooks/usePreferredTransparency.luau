@@ -1,7 +1,7 @@
 local GuiService = game:GetService("GuiService")
 
-local vide = require("@game/ReplicatedStorage/Packages/vide")
 local useEventListener = require("./useEventListener")
+local vide = require("@game/ReplicatedStorage/Packages/vide")
 
 local function usePreferredTransparency(): () -> number
 	local preferredTransparency = vide.source(GuiService.PreferredTransparency)

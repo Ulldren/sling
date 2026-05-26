@@ -1,5 +1,7 @@
+local px = require("../utils/px")
+local states = require("../states")
+local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local vide = require("../../vide")
-local types = require("../types")
 
 local SEARCH_BORDER_COLOR: Color3 = Color3.new(1, 1, 1)
 local SEARCH_BORDER_TRANSPARENCY: number = 0.8
@@ -11,26 +13,29 @@ local changed = vide.changed
 
 type Props = {
 	searchText: vide.Source<string>,
-	attributes: types.Attributes,
 }
 
 local function searchbar(props: Props)
 	local searchText = props.searchText
 
+	local preferredTransparency = usePreferredTransparency()
+
 	return create("TextBox")({
 		Name = "Search",
-		BackgroundColor3 = props.attributes.BackgroundColor3,
-		BackgroundTransparency = props.attributes.BackgroundTransparency,
+		BackgroundColor3 = states.attributes.BackgroundColor3,
+		BackgroundTransparency = function()
+			return (states.attributes.BackgroundTransparency() - 0.1) * preferredTransparency()
+		end,
 		ClearTextOnFocus = false,
 		ClipsDescendants = true,
-		FontFace = props.attributes.FontFace,
+		FontFace = states.attributes.FontFace,
 		PlaceholderText = "Search",
-		Size = UDim2.new(1, 0, 0, 30),
+		Size = px.udim2(1, 0, 0, 30),
 		Text = searchText,
-		TextColor3 = props.attributes.TextColor3,
-		TextSize = props.attributes.TextSize,
-		TextStrokeColor3 = props.attributes.TextStrokeColor3,
-		TextStrokeTransparency = props.attributes.TextStrokeTransparency,
+		TextColor3 = states.attributes.TextColor3,
+		TextSize = px.scale(states.attributes.TextSize),
+		TextStrokeColor3 = states.attributes.TextStrokeColor3,
+		TextStrokeTransparency = states.attributes.TextStrokeTransparency,
 		TextXAlignment = Enum.TextXAlignment.Left,
 
 		changed("Text", function(value: string)
@@ -38,18 +43,19 @@ local function searchbar(props: Props)
 		end),
 
 		create("UIPadding")({
-			PaddingLeft = UDim.new(0, SEARCH_TEXT_OFFSET),
-			PaddingRight = UDim.new(0, SEARCH_TEXT_OFFSET),
-			PaddingTop = UDim.new(0, SEARCH_TEXT_OFFSET),
-			PaddingBottom = UDim.new(0, SEARCH_TEXT_OFFSET),
+			PaddingLeft = px.udim(0, SEARCH_TEXT_OFFSET),
+			PaddingRight = px.udim(0, SEARCH_TEXT_OFFSET),
+			PaddingTop = px.udim(0, SEARCH_TEXT_OFFSET),
+			PaddingBottom = px.udim(0, SEARCH_TEXT_OFFSET),
 		}),
 		create("UIStroke")({
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 			Color = SEARCH_BORDER_COLOR,
 			Transparency = SEARCH_BORDER_TRANSPARENCY,
+			Thickness = px.scale(1),
 		}),
 		create("UICorner")({
-			CornerRadius = props.attributes.SmallCornerRadius,
+			CornerRadius = states.attributes.SmallCornerRadius,
 		}),
 		create("ImageButton")({
 			Name = "Clear",

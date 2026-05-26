@@ -1,4 +1,3 @@
---!strict
 local types = require("./types")
 
 type Listener<Args... = ...any> = (Args...) -> ()

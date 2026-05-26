@@ -1,8 +1,9 @@
-local vide = require("../../vide")
+--!nonstrict
 local hotbar = require("../components/hotbar")
-local attributesController = require("../lib/attributesController")
+local states = require("../states")
+local vide = require("../../vide")
 
-local source = vide.source
+local effect = vide.effect
 
 local controls = {
 	opened = true,
@@ -22,15 +23,16 @@ return {
 		item.Name = "Tool"
 		item.ToolTip = "Tooltip"
 
-		return vide.apply(hotbar({
-			opened = props.controls.opened :: any,
-			slots = props.controls.slots :: any,
-			items = source({ item }),
-			equippedItem = vide.source(nil),
-			keyboardHint = props.controls.keyboardHint :: any,
-			widthChanged = print,
-			attributes = attributesController.generateAttributes(),
-		}))({
+		effect(function()
+			states.opened(props.controls.opened())
+			states.slots(props.controls.slots())
+			states.keyboardHint(props.controls.keyboardHint())
+		end)
+
+		states.items({ item })
+		states.equippedItem(nil)
+
+		return vide.apply(hotbar())({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 		})

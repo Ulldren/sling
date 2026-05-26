@@ -1,9 +1,9 @@
-local vide = require("../../vide")
+--!nonstrict
 local backpack = require("../components/backpack")
-local attributesController = require("../lib/attributesController")
-local types = require("../types")
+local states = require("../states")
+local vide = require("../../vide")
 
-local source = vide.source
+local effect = vide.effect
 
 local controls = {
 	toolSlot = 4,
@@ -28,20 +28,15 @@ return {
 
 		vide.cleanup(tool)
 
-		return vide.apply(backpack({
-			opened = props.controls.opened :: any,
-			slots = props.controls.slots :: any,
-			rows = props.controls.rows :: any,
-			items = function()
-				return { [(props.controls.toolSlot :: any)()] = tool }
-			end,
-			equippedItem = source(nil :: types.InventoryItem?),
-			keyboardHint = props.controls.keyboardHint :: any,
-			categories = source({}),
-			selectedCategory = source(""),
-			widthChanged = print,
-			attributes = attributesController.generateAttributes(),
-		}))({
+		effect(function()
+			states.opened(props.controls.opened())
+			states.slots(props.controls.slots())
+			states.rows(props.controls.rows())
+			states.keyboardHint(props.controls.keyboardHint())
+			states.items({ [props.controls.toolSlot()] = tool })
+		end)
+
+		return vide.apply(backpack())({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 		})
