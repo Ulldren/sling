@@ -382,13 +382,6 @@ local function slot(props: Props): Frame
 				})
 			end),
 			show(function()
-				return tooltipText() ~= "" and isHovering()
-			end, function()
-				return tooltip({
-					text = tooltipText,
-				})
-			end),
-			show(function()
 				return props.item() ~= nil and states.equippedItem() == props.item()
 			end, function()
 				return create("UIStroke")({
@@ -408,6 +401,13 @@ local function slot(props: Props): Frame
 					BorderStrokePosition = Enum.BorderStrokePosition.Inner,
 					Color = Color3.fromRGB(255, 255, 255),
 					Thickness = px.scale(2),
+				})
+			end),
+			show(function()
+				return props.inHotbar and tooltipText() ~= "" and isHovering()
+			end, function()
+				return tooltip({
+					text = tooltipText,
 				})
 			end),
 		}),
