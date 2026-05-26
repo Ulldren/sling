@@ -58,9 +58,7 @@ local function inventory(): Frame
 
 		show(function()
 			return #states.categories() > 1
-		end, function()
-			return categorybar()
-		end),
+		end, categorybar),
 
 		create("Frame")({
 			Name = "InventoryMainFrame",

@@ -1,6 +1,10 @@
 local types = require("./types")
 
 type Listener<Args... = ...any> = (Args...) -> ()
+type Event<Args... = ...any> = {
+	callbacks: { Listener<Args...> },
+	on: (listener: Listener<Args...>) -> () -> (),
+}
 
 local function createEvent<Args...>()
 	local callbacks: { Listener<Args...> } = {}
@@ -18,14 +22,14 @@ end
 
 return {
 	backpackEmpty = createEvent(),
-	backpackEquipped = createEvent<<(types.InventoryItem)>>(),
-	backpackUnequipped = createEvent<<(types.InventoryItem)>>(),
-	backpackRemoved = createEvent<<(types.InventoryItem)>>(),
+	backpackEquipped = createEvent() :: Event<types.InventoryItem>,
+	backpackUnequipped = createEvent() :: Event<types.InventoryItem>,
+	backpackRemoved = createEvent() :: Event<types.InventoryItem>,
 	inventoryOpened = createEvent(),
 	inventoryClosed = createEvent(),
 
 	-- internal
-	backpackEnabled = createEvent<<(boolean)>>(),
-	categoryAdded = createEvent<<(types.Category)>>(),
-	attributeChanged = createEvent<<(string, any)>>(),
+	backpackEnabled = createEvent() :: Event<boolean>,
+	categoryAdded = createEvent() :: Event<types.Category>,
+	attributeChanged = createEvent() :: Event<string, any>,
 }

@@ -1,6 +1,7 @@
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local StarterGui = game:GetService("StarterGui")
+local StarterPack = game:GetService("StarterPack")
 local UserInputService = game:GetService("UserInputService")
 
 local app = require("./components/app")
@@ -206,9 +207,7 @@ local function appRoot()
 				local targetIdx = nil
 				local isStarterTool = false
 				local starterGear = player:FindFirstChild("StarterGear")
-				if starterGear and starterGear:FindFirstChild(item.Name) then
-					isStarterTool = true
-				elseif game:GetService("StarterPack"):FindFirstChild(item.Name) then
+				if (starterGear and starterGear:FindFirstChild(item.Name)) or StarterPack:FindFirstChild(item.Name) then
 					isStarterTool = true
 				end
 
@@ -359,7 +358,7 @@ local function appRoot()
 
 		return vide.show(states.enabled, function()
 			return vide.create("ScreenGui")({
-				Name = "InventoryPlus",
+				Name = "BackpackGui",
 				DisplayOrder = 120,
 				IgnoreGuiInset = true,
 				ResetOnSpawn = false,

@@ -40,12 +40,7 @@ local function inventoryHint(props: Props)
 			Text = props.text,
 			TextColor3 = states.attributes.TextColor3,
 			TextSize = px.scale(states.attributes.TextSize),
-			TextWrapped = true,
 			TextXAlignment = Enum.TextXAlignment.Left,
-
-			create("UITextSizeConstraint")({
-				MaxTextSize = 19,
-			}),
 		}),
 	})
 end

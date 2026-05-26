@@ -1,0 +1,23 @@
+{
+    "name": "VideBackpack-Test",
+    "emitLegacyScripts": false,
+    "tree": {
+        "$className": "DataModel",
+        "ReplicatedStorage": {
+            "VideBackpackLoader": {
+                "$path": "models/VideBackpackLoader"
+            },
+            "shared": {
+                "$path": "test/shared"
+            },
+            "client": {
+                "$path": "test/client"
+            }
+        },
+        "ServerScriptService": {
+            "server": {
+                "$path": "test/server"
+            }
+        }
+    }
+}

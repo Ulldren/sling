@@ -52,11 +52,10 @@ local function hotbar(): Frame
 				return slot({
 					item = item,
 					order = order,
-					keyboardHint = states.keyboardHint,
 					unlocked = function()
 						return states.opened() and item() ~= nil
 					end,
-					isHotbar = true,
+					inHotbar = true,
 				})
 			end)
 		end),

@@ -1,11 +1,7 @@
 {
-    "name": "InventoryPlus",
+    "name": "VideBackpack",
+    "emitLegacyScripts": false,
     "tree": {
-        "Packages": {
-            "$path": "Packages",
-            "inventoryplus": {
-                "$path": "src"
-            }
-        }
+        "$path": "models"
     }
 }

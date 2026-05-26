@@ -12,7 +12,7 @@ return {
 			return {
 				category = name,
 				icon = "rbxasset://textures/ui/TopBar/inventoryOn.png",
-				predicate = function(item)
+				predicate = function()
 					return true
 				end,
 			}

@@ -23,6 +23,7 @@ type Props = {
 return {
 	vide = vide,
 	controls = controls,
+	summary = "Inventory Plus",
 	story = function(props: Props)
 		local function createSword()
 			local tool = Instance.new("Tool")
@@ -35,7 +36,7 @@ return {
 		local function category(name: string): types.Category
 			return {
 				category = name,
-				predicate = function(item)
+				predicate = function()
 					return true
 				end,
 			}

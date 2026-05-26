@@ -1,7 +1,7 @@
 local UserInputService = game:GetService("UserInputService")
 
 local useEventListener = require("./useEventListener")
-local vide = require("@game/ReplicatedStorage/Packages/vide")
+local vide = require("../../vide")
 
 local function usePreferredInput(): () -> Enum.PreferredInput
 	local preferredInput = vide.source(UserInputService.PreferredInput)

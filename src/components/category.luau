@@ -21,10 +21,6 @@ local function category(props: Props)
 	local isSelected = derive(function()
 		return categoryName() == states.selectedCategory()
 	end)
-	local showSeparateLine = derive(function()
-		local categories = states.categories()
-		return categories[#categories] ~= category()
-	end)
 
 	return create("TextButton")({
 		BackgroundTransparency = 1,
@@ -57,7 +53,10 @@ local function category(props: Props)
 			})
 		end),
 
-		show(showSeparateLine, function()
+		show(function()
+			local categories = states.categories()
+			return categories[#categories] ~= category()
+		end, function()
 			return create("Frame")({
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = Color3.new(1, 1, 1),

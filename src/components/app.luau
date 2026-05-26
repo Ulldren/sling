@@ -9,14 +9,14 @@ local show = vide.show
 
 local function app()
 	return create("Frame")({
-		Name = "InventoryApp",
+		Name = "App",
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 
 		vide.action(states.appRef) :: any,
 
 		create("Frame")({
-			Name = "InventoryContainer",
+			Name = "Container",
 			AnchorPoint = Vector2.new(0.5, 1),
 			Position = UDim2.fromScale(0.5, 1),
 			AutomaticSize = Enum.AutomaticSize.Y,
@@ -24,8 +24,6 @@ local function app()
 				return UDim2.fromOffset(states.width(), 0)
 			end,
 			BackgroundTransparency = 1,
-
-			vide.action(states.appRef) :: any,
 
 			create("UIListLayout")({
 				HorizontalAlignment = Enum.HorizontalAlignment.Center,
@@ -37,6 +35,7 @@ local function app()
 				return states.gamepadHint() and states.opened()
 			end, function()
 				return create("Frame")({
+					Name = "GamepadHints",
 					Size = UDim2.fromScale(1, 0),
 					AutomaticSize = Enum.AutomaticSize.Y,
 					BackgroundTransparency = 1,

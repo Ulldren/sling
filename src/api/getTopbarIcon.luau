@@ -1,7 +1,7 @@
 local topbarplus = require("../../topbarplus")
 
 local function getTopbarIcon()
-	return topbarplus.getIcon("InventoryPlus") :: topbarplus.Icon?
+	return topbarplus.getIcon("VideBackpack") :: topbarplus.Icon?
 end
 
 return getTopbarIcon

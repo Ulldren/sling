@@ -23,9 +23,7 @@ local function backpack()
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 		}),
 
-		show(states.opened, function()
-			return inventory()
-		end),
+		show(states.opened, inventory),
 		hotbar(),
 	})
 end

@@ -1,9 +1,8 @@
---!strict
 local Players = game:GetService("Players")
 
-local Icon = require("@game/ReplicatedStorage/Packages/topbarplus")
+local Icon = require("@game/ReplicatedStorage/VideBackpackLoader/VideBackpack/Packages/topbarplus")
 
-local player = Players.LocalPlayer :: Player
+local player = Players.LocalPlayer
 
 local toolIcon = Icon.new()
 toolIcon:setLabel("Tool Options")

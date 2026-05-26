@@ -1,5 +1,6 @@
 {
-  "name": "InventoryPlus",
+  "name": "VideBackpack",
+  "emitLegacyScripts": false,
   "tree": {
     "$path": "src"
   }

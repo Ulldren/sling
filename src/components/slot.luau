@@ -1,5 +1,6 @@
 local GuiService = game:GetService("GuiService")
 local UserInputService = game:GetService("UserInputService")
+
 local checkBounds = require("../utils/checkBounds")
 local getClosestFrame = require("../utils/getClosestFrame")
 local px = require("../utils/px")
@@ -20,16 +21,11 @@ local action = vide.action
 type Props = {
 	item: vide.Source<types.InventoryItem?>,
 	order: number,
-	keyboardHint: vide.Source<boolean>?,
 	unlocked: vide.Source<boolean>?,
-	isHotbar: boolean?,
+	inHotbar: boolean?,
 }
 
 local function slot(props: Props): Frame
-	local itemName = source("")
-	local itemImage = source("")
-	local tooltipText = source("")
-
 	local isHovering = source(false)
 	local isDragging = source(false)
 
@@ -41,6 +37,10 @@ local function slot(props: Props): Frame
 	local zindex = vide.derive(function()
 		return if isDragging() then 2 else 1
 	end)
+
+	local itemName = source("")
+	local itemImage = source("")
+	local tooltipText = source("")
 
 	effect(function()
 		local i = props.item()
@@ -72,18 +72,34 @@ local function slot(props: Props): Frame
 		end
 	end)
 
-	local slotNumber = ""
-	if props.order >= 1 and props.order < 10 then
-		slotNumber = tostring(props.order)
-	elseif props.order == 10 then
-		slotNumber = "0"
+	local lastClickTime = 0
+
+	local function getSlotNumber(): string
+		if props.order >= 1 and props.order < 10 then
+			return tostring(props.order)
+		elseif props.order == 10 then
+			return "0"
+		end
+		return ""
 	end
 
-	local lastClickTime = 0
+	local function getSourceIdx(): number?
+		local item = props.item()
+		if not item then
+			return nil
+		end
+		local currentItems = states.items()
+		for idx, it in currentItems do
+			if it == item then
+				return idx
+			end
+		end
+		return nil
+	end
 
 	local function swap(targetSlot: number)
 		local slots = states.slots()
-		local sourceIdx = if props.isHotbar then props.order else slots + props.order
+		local sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
 		local currentItems = table.clone(states.items())
 		local itemA = currentItems[sourceIdx]
 		if not itemA then
@@ -91,7 +107,7 @@ local function slot(props: Props): Frame
 		end
 		local targetIdx = targetSlot
 		local itemB = currentItems[targetIdx]
-		if props.isHotbar then
+		if props.inHotbar then
 			currentItems[sourceIdx], currentItems[targetIdx] = currentItems[targetIdx], currentItems[sourceIdx]
 		else
 			if itemB then
@@ -126,7 +142,7 @@ local function slot(props: Props): Frame
 
 	local function moveToInventory()
 		local slots = states.slots()
-		local sourceIdx = props.order
+		local sourceIdx = getSourceIdx() or props.order
 		local currentItems = table.clone(states.items())
 		local itemToMove = currentItems[sourceIdx]
 		if not itemToMove then
@@ -165,7 +181,7 @@ local function slot(props: Props): Frame
 		if not states.opened() then
 			return
 		end
-		if not props.isHotbar then
+		if not props.inHotbar then
 			return
 		end
 
@@ -209,7 +225,7 @@ local function slot(props: Props): Frame
 
 			MouseButton1Click = function()
 				local slots = states.slots()
-				local sourceIdx = if props.isHotbar then props.order else slots + props.order
+				local sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
 
 				if states.gamepadHint() and states.opened() then
 					local activeSwapIdx = states.gamepadSwapIdx()
@@ -239,7 +255,7 @@ local function slot(props: Props): Frame
 				if now - lastClickTime < settings.doubleClickTime then
 					lastClickTime = 0
 
-					if not props.isHotbar then
+					if not props.inHotbar then
 						moveToHotbar()
 					end
 				else
@@ -252,9 +268,8 @@ local function slot(props: Props): Frame
 			end,
 			MouseLeave = function()
 				isHovering(false)
-				isDragging(false)
 			end,
-			DragBegin = function(dragPoint: UDim2)
+			DragBegin = function()
 				isDragging(true)
 
 				local slot = slotRef()
@@ -262,7 +277,7 @@ local function slot(props: Props): Frame
 				if not slot or not app then
 					return
 				end
-				if not props.isHotbar then
+				if not props.inHotbar then
 					local newPosition = UDim2.new(
 						0,
 						slot.AbsolutePosition.X - app.AbsolutePosition.X,
@@ -282,7 +297,7 @@ local function slot(props: Props): Frame
 					return
 				end
 
-				if not props.isHotbar then
+				if not props.inHotbar then
 					slot.Parent = slotFrame
 				end
 				slot.Position = UDim2.new()
@@ -290,11 +305,11 @@ local function slot(props: Props): Frame
 				local abpos = Vector2.new(x, y)
 				local hotbar = states.hotbarRef()
 
-				local inHotbar = false
+				local insideHotbar = false
 
 				if hotbar then
-					inHotbar = checkBounds(abpos, hotbar)
-					if inHotbar then
+					insideHotbar = checkBounds(abpos, hotbar)
+					if insideHotbar then
 						local closest = getClosestFrame(abpos, hotbar, settings.slotSize / 2)
 						if closest and closest ~= slotFrame then
 							local targetOrder = closest.LayoutOrder
@@ -304,7 +319,7 @@ local function slot(props: Props): Frame
 					end
 				end
 
-				if props.isHotbar and not inHotbar then
+				if props.inHotbar and not insideHotbar then
 					moveToInventory()
 				end
 			end,
@@ -326,13 +341,13 @@ local function slot(props: Props): Frame
 			}),
 
 			show(function()
-				return props.keyboardHint and props.keyboardHint()
+				return props.inHotbar and states.keyboardHint()
 			end, function()
 				return create("TextLabel")({
 					Name = "Number",
 					BackgroundTransparency = 1,
 					AutomaticSize = Enum.AutomaticSize.XY,
-					Text = slotNumber,
+					Text = getSlotNumber(),
 					TextColor3 = states.attributes.TextColor3,
 					TextSize = px.scale(states.attributes.TextSize),
 					FontFace = function()
@@ -344,25 +359,28 @@ local function slot(props: Props): Frame
 					end,
 					TextStrokeColor3 = states.attributes.TextStrokeColor3,
 					TextStrokeTransparency = states.attributes.TextStrokeTransparency,
-					ZIndex = zindex,
+					ZIndex = function()
+						return zindex() + 1
+					end,
 				})
 			end),
-			create("ImageLabel")({
-				Name = "Icon",
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.5, 0.5),
-				BackgroundTransparency = 1,
-				Image = itemImage,
-				Size = UDim2.fromScale(1, 1),
-				Visible = function()
-					return itemImage() ~= ""
-				end,
-				ZIndex = zindex,
+			show(function()
+				return itemImage() ~= ""
+			end, function()
+				return create("ImageLabel")({
+					Name = "Icon",
+					AnchorPoint = Vector2.new(0.5, 0.5),
+					Position = UDim2.fromScale(0.5, 0.5),
+					BackgroundTransparency = 1,
+					Image = itemImage,
+					Size = UDim2.fromScale(1, 1),
+					ZIndex = zindex,
 
-				create("UICorner")({
-					CornerRadius = states.attributes.CornerRadius,
-				}),
-			}),
+					create("UICorner")({
+						CornerRadius = states.attributes.CornerRadius,
+					}),
+				})
+			end),
 			show(function()
 				return tooltipText() ~= "" and isHovering()
 			end, function()
@@ -382,7 +400,7 @@ local function slot(props: Props): Frame
 			end),
 			show(function()
 				local slots = states.slots()
-				local sourceIdx = if props.isHotbar then props.order else slots + props.order
+				local sourceIdx = if props.inHotbar then props.order else slots + props.order
 				return props.item() ~= nil and (isDragging() or states.gamepadSwapIdx() == sourceIdx)
 			end, function()
 				return create("UIStroke")({

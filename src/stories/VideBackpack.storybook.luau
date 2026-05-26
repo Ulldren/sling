@@ -1,5 +1,5 @@
 return {
-	name = "InventoryPlus",
+	name = "VideBackpack",
 	storyRoots = {
 		script.Parent,
 	},

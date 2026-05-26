@@ -7,7 +7,7 @@ local types = require("../types")
 	
 	```lua
 	createCategory("Weapons", function(item)
-		return item:GetAttribute("Weapon") == true
+		return item:HasTag("Weapon")
 	end)
     ```
 ]=]

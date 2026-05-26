@@ -21,6 +21,7 @@ local function tooltip(props: Props)
 		TextSize = px.scale(states.attributes.TextSize),
 		TextStrokeColor3 = states.attributes.TextStrokeColor3,
 		TextStrokeTransparency = states.attributes.TextStrokeTransparency,
+		ZIndex = 3,
 
 		create("UICorner")({
 			CornerRadius = states.attributes.SmallCornerRadius,
