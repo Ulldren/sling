@@ -57,8 +57,8 @@ return {
 
 		effect(function()
 			states.opened(props.controls.opened())
-			states.slots(props.controls.slots())
-			states.rows(props.controls.rows())
+			states.slots(math.floor(props.controls.slots()))
+			states.rows(math.floor(props.controls.rows()))
 			states.keyboardHint(props.controls.keyboardHint())
 			states.gamepadHint(props.controls.gamepadHint())
 			states.categories(getCategories())

@@ -9,6 +9,7 @@ const states = require("../states")
 const tooltip = require("./tooltip")
 const types = require("../types")
 const useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
+const usePreferredInput = require("../hooks/usePreferredInput")
 const vide = require("../../vide")
 
 const create = vide.create
@@ -34,6 +35,7 @@ const function slot(props: Props): Frame
 
 	const slotSize = px.offset(settings.slotSize, settings.slotSize)
 	const backgroundTransparency = useBackgroundTransparency()
+	const preferredInput = usePreferredInput()
 	const zindex = vide.derive(function()
 		return if isDragging() then 2 else 1
 	end)
@@ -100,7 +102,7 @@ const function slot(props: Props): Frame
 	const function swap(targetSlot: number)
 		const slots = states.slots()
 		const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
-		local currentItems = table.clone(states.items())
+		const currentItems = table.clone(states.items())
 		const itemA = currentItems[sourceIdx]
 		if not itemA then
 			return
@@ -114,27 +116,25 @@ const function slot(props: Props): Frame
 				currentItems[sourceIdx] = itemB
 				currentItems[targetIdx] = itemA
 			else
+				currentItems[sourceIdx] = nil
+				currentItems[targetIdx] = itemA
+
 				local maxIdx = slots
 				for idx in currentItems do
 					if idx > maxIdx then
 						maxIdx = idx
 					end
 				end
-				const newList = {}
-				local invCount = 0
-				for i = 1, maxIdx do
+
+				local invIndex = slots + 1
+				for i = slots + 1, maxIdx do
 					const item = currentItems[i]
-					if item then
-						if i <= slots then
-							newList[i] = item
-						elseif i ~= sourceIdx then
-							invCount = invCount + 1
-							newList[slots + invCount] = item
-						end
+					if item ~= nil then
+						currentItems[i] = nil
+						currentItems[invIndex] = item
+						invIndex = invIndex + 1
 					end
 				end
-				newList[targetIdx] = itemA
-				currentItems = newList
 			end
 		end
 		states.items(currentItems)
@@ -227,7 +227,7 @@ const function slot(props: Props): Frame
 				const slots = states.slots()
 				const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
 
-				if states.gamepadHint() and states.opened() then
+				if preferredInput() == Enum.PreferredInput.Gamepad and states.opened() then
 					const activeSwapIdx = states.gamepadSwapIdx()
 					if activeSwapIdx then
 						states.gamepadSwapIdx(nil)
@@ -246,7 +246,7 @@ const function slot(props: Props): Frame
 					return
 				end
 
-				if states.gamepadHint() and states.opened() then
+				if preferredInput() == Enum.PreferredInput.Gamepad and states.opened() then
 					states.gamepadSwapIdx(sourceIdx)
 					return
 				end

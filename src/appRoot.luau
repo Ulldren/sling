@@ -15,8 +15,6 @@ const types = require("./types")
 const usePreferredInput = require("./hooks/usePreferredInput")
 const vide = require("../vide")
 
-const cleanup = vide.cleanup
-
 const player = Players.LocalPlayer
 const playerGui = player:WaitForChild("PlayerGui")
 
@@ -50,97 +48,103 @@ const GAMEPAD_INPUT_TYPES = {
 
 const function appRoot()
 	return vide.mount(function()
-		px.usePx()
-
-		cleanup(GuiService.MenuOpened:Connect(function()
+		vide.cleanup(GuiService.MenuOpened:Connect(function()
 			setEnabled(false)
 		end))
-		cleanup(GuiService.MenuClosed:Connect(function()
+		vide.cleanup(GuiService.MenuClosed:Connect(function()
 			setEnabled(true)
 		end))
 
-		cleanup(UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		const function keyboardControls(input: InputObject)
+			-- Change slot selection
+			const slotNum = KEY_TO_SLOT[input.KeyCode]
+			if slotNum and slotNum <= states.slots() then
+				const items = states.items()
+				const item = items[slotNum]
+				if item then
+					states.equippedItem(if item == states.equippedItem() then nil else item)
+				end
+			end
+		end
+
+		const function gamepadControls(input: InputObject)
+			-- Change slot selection
+			if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
+				const moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
+				const slots = states.slots()
+				const items = states.items()
+				const equipped = states.equippedItem()
+
+				local equippedIdx = nil
+				if equipped then
+					for idx = 1, slots do
+						if items[idx] == equipped then
+							equippedIdx = idx
+							break
+						end
+					end
+				end
+
+				if equippedIdx then
+					local newPos = equippedIdx + moveDirection
+					local hitEdge = false
+					if newPos > slots then
+						newPos = 1
+						hitEdge = true
+					elseif newPos < 1 then
+						newPos = slots
+						hitEdge = true
+					end
+
+					const origNewPos = newPos
+					while items[newPos] == nil do
+						newPos = newPos + moveDirection
+						if newPos > slots then
+							newPos = 1
+							hitEdge = true
+						elseif newPos < 1 then
+							newPos = slots
+							hitEdge = true
+						end
+
+						if newPos == origNewPos then
+							return
+						end
+					end
+
+					if hitEdge then
+						states.equippedItem(nil)
+					else
+						states.equippedItem(items[newPos])
+					end
+				else
+					const startIdx = if moveDirection == 1 then 1 else slots
+					const endIdx = if moveDirection == 1 then slots else 1
+					for idx = startIdx, endIdx, moveDirection do
+						const item = items[idx]
+						if item then
+							states.equippedItem(item)
+							break
+						end
+					end
+				end
+			-- Close inventory
+			elseif input.KeyCode == settings.gamepadCloseKey or input.KeyCode == settings.gamepadCloseSecondaryKey then
+				if states.opened() then
+					closeInventory()
+				end
+			end
+		end
+
+		vide.cleanup(UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
 				const inputType = input.UserInputType
 				if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
 					closeInventory()
 				elseif inputType == Enum.UserInputType.Keyboard then
-					const slotNum = KEY_TO_SLOT[input.KeyCode]
-					if slotNum and slotNum <= states.slots() then
-						const items = states.items()
-						const item = items[slotNum]
-						if item then
-							states.equippedItem(if item == states.equippedItem() then nil else item)
-						end
-					end
+					keyboardControls(input)
 				elseif GAMEPAD_INPUT_TYPES[inputType] then
-					if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
-						const moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
-						const slots = states.slots()
-						const items = states.items()
-						const equipped = states.equippedItem()
-
-						local equippedIdx = nil
-						if equipped then
-							for idx = 1, slots do
-								if items[idx] == equipped then
-									equippedIdx = idx
-									break
-								end
-							end
-						end
-
-						if equippedIdx then
-							local newPos = equippedIdx + moveDirection
-							local hitEdge = false
-							if newPos > slots then
-								newPos = 1
-								hitEdge = true
-							elseif newPos < 1 then
-								newPos = slots
-								hitEdge = true
-							end
-
-							const origNewPos = newPos
-							while items[newPos] == nil do
-								newPos = newPos + moveDirection
-								if newPos > slots then
-									newPos = 1
-									hitEdge = true
-								elseif newPos < 1 then
-									newPos = slots
-									hitEdge = true
-								end
-
-								if newPos == origNewPos then
-									return
-								end
-							end
-
-							if hitEdge then
-								states.equippedItem(nil)
-							else
-								states.equippedItem(items[newPos])
-							end
-						else
-							const startIdx = if moveDirection == 1 then 1 else slots
-							const endIdx = if moveDirection == 1 then slots else 1
-							for idx = startIdx, endIdx, moveDirection do
-								const item = items[idx]
-								if item then
-									states.equippedItem(item)
-									break
-								end
-							end
-						end
-					elseif
-						input.KeyCode == settings.gamepadCloseKey
-						or input.KeyCode == settings.gamepadCloseSecondaryKey
-					then
-						if states.opened() then
-							closeInventory()
-						end
-					end
+					gamepadControls(input)
 				end
 			end
 		end))
@@ -162,8 +166,8 @@ const function appRoot()
 		end
 
 		updateBackpackSize()
-		cleanup(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"):Connect(updateBackpackSize))
-		cleanup(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"):Connect(updateBackpackSize))
+		vide.cleanup(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"):Connect(updateBackpackSize))
+		vide.cleanup(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"):Connect(updateBackpackSize))
 
 		const function isItem(instance: Instance): boolean
 			return instance:IsA("Tool") or instance:IsA("HopperBin")
@@ -182,7 +186,7 @@ const function appRoot()
 				for _, child in character:GetChildren() do
 					if isItem(child) then
 						active[child] = true
-						equipped = child :: types.InventoryItem
+						equipped = child
 					end
 				end
 			end
@@ -262,7 +266,7 @@ const function appRoot()
 					return
 				end
 
-				if tool:IsA("HopperBin") then
+				if tool:IsA("HopperBin") then -- NOTE: HopperBin
 					warn(`Cannot select '{tool.Name}' hopper. HopperBin is deprecated and not supported.`)
 					task.defer(function()
 						states.equippedItem(nil)
@@ -305,7 +309,7 @@ const function appRoot()
 			connectCharacter(player.Character)
 		end
 
-		cleanup(player.CharacterAdded:Connect(function(character)
+		vide.cleanup(player.CharacterAdded:Connect(function(character)
 			disconnectCharacter()
 			states.equippedItem(nil)
 
@@ -325,7 +329,7 @@ const function appRoot()
 			connectCharacter(character)
 		end))
 
-		cleanup(disconnectCharacter)
+		vide.cleanup(disconnectCharacter)
 
 		const attributeConnections: { RBXScriptConnection } = {}
 		for attributeName, source in states.attributes :: { [string]: vide.Source<any> } do
@@ -339,15 +343,11 @@ const function appRoot()
 				end)
 			)
 		end
-		cleanup(function()
+		vide.cleanup(function()
 			for _, conn in attributeConnections do
 				conn:Disconnect()
 			end
 			table.clear(attributeConnections)
-		end)
-
-		createCategory("All", function()
-			return true
 		end)
 
 		const preferredInput = usePreferredInput()
@@ -355,6 +355,12 @@ const function appRoot()
 			states.keyboardHint(preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
 			states.gamepadHint(preferredInput() == Enum.PreferredInput.Gamepad)
 		end)
+
+		createCategory("All", function()
+			return true
+		end)
+
+		px.usePx()
 
 		return vide.show(states.enabled, function()
 			return vide.create("ScreenGui")({

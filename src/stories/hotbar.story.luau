@@ -25,7 +25,7 @@ return {
 
 		effect(function()
 			states.opened(props.controls.opened())
-			states.slots(props.controls.slots())
+			states.slots(math.floor(props.controls.slots()))
 			states.keyboardHint(props.controls.keyboardHint())
 		end)
 

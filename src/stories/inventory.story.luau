@@ -27,7 +27,7 @@ return {
 
 		vide.effect(function()
 			states.width(props.controls.width())
-			states.rows(props.controls.rows())
+			states.rows(math.floor(props.controls.rows()))
 		end)
 
 		states.opened(true)
