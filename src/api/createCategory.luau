@@ -1,4 +1,3 @@
-const events = require("../events")
 const states = require("../states")
 const types = require("../types")
 
@@ -16,10 +15,6 @@ const function createCategory(category: string, predicate: types.CategoryPredica
 	const newCategory = { category = category, predicate = predicate }
 	table.insert(state, newCategory)
 	states.categories(state)
-
-	for _, listener in events.categoryAdded.callbacks do
-		task.spawn(listener, newCategory)
-	end
 end
 
 return createCategory

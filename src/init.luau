@@ -8,7 +8,7 @@ const openInventory = require("@self/api/openInventory")
 const setEnabled = require("@self/api/setEnabled")
 const toggleInventory = require("@self/api/toggleInventory")
 
-require("@self/appRoot")
+require("@self/components/render")()
 require("@self/topbarIcon")
 require("@self/attribution")
 

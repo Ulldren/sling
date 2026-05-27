@@ -6,6 +6,7 @@ const vide = require("../../vide")
 
 const create = vide.create
 const show = vide.show
+const action = vide.action
 
 const function app()
 	return create("Frame")({
@@ -13,7 +14,7 @@ const function app()
 		Size = UDim2.fromScale(1, 1),
 		BackgroundTransparency = 1,
 
-		vide.action(states.appRef) :: any,
+		action(states.appRef) :: any,
 
 		create("Frame")({
 			Name = "Container",

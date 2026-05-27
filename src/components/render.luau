@@ -4,16 +4,23 @@ const StarterGui = game:GetService("StarterGui")
 const StarterPack = game:GetService("StarterPack")
 const UserInputService = game:GetService("UserInputService")
 
-const app = require("./components/app")
-const closeInventory = require("./api/closeInventory")
-const createCategory = require("./api/createCategory")
-const px = require("./utils/px")
-const setEnabled = require("./api/setEnabled")
-const settings = require("./settings")
-const states = require("./states")
-const types = require("./types")
-const usePreferredInput = require("./hooks/usePreferredInput")
-const vide = require("../vide")
+const vide = require("../../Packages/vide")
+const app = require("./app")
+const closeInventory = require("../api/closeInventory")
+const createCategory = require("../api/createCategory")
+const events = require("../events")
+const px = require("../utils/px")
+const setEnabled = require("../api/setEnabled")
+const settings = require("../settings")
+const states = require("../states")
+const types = require("../types")
+const usePreferredInput = require("../hooks/usePreferredInput")
+
+const mount = vide.mount
+const cleanup = vide.cleanup
+const create = vide.create
+const effect = vide.effect
+const show = vide.show
 
 const player = Players.LocalPlayer
 const playerGui = player:WaitForChild("PlayerGui")
@@ -46,12 +53,12 @@ const GAMEPAD_INPUT_TYPES = {
 	[Enum.UserInputType.Gamepad8] = true,
 }
 
-const function appRoot()
-	return vide.mount(function()
-		vide.cleanup(GuiService.MenuOpened:Connect(function()
+const function render()
+	return mount(function()
+		cleanup(GuiService.MenuOpened:Connect(function()
 			setEnabled(false)
 		end))
-		vide.cleanup(GuiService.MenuClosed:Connect(function()
+		cleanup(GuiService.MenuClosed:Connect(function()
 			setEnabled(true)
 		end))
 
@@ -136,7 +143,7 @@ const function appRoot()
 			end
 		end
 
-		vide.cleanup(UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
+		cleanup(UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
 				const inputType = input.UserInputType
 				if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
@@ -166,8 +173,8 @@ const function appRoot()
 		end
 
 		updateBackpackSize()
-		vide.cleanup(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"):Connect(updateBackpackSize))
-		vide.cleanup(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"):Connect(updateBackpackSize))
+		cleanup(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"):Connect(updateBackpackSize))
+		cleanup(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"):Connect(updateBackpackSize))
 
 		const function isItem(instance: Instance): boolean
 			return instance:IsA("Tool") or instance:IsA("HopperBin")
@@ -204,6 +211,10 @@ const function appRoot()
 				if active[item] then
 					newList[i] = item
 					active[item] = nil
+				else
+					for _, listener in events.backpackRemoved.callbacks do
+						task.spawn(listener, item)
+					end
 				end
 			end
 
@@ -235,6 +246,24 @@ const function appRoot()
 				newList[targetIdx] = item
 			end
 
+			local currentCount = 0
+			for _, item in current do
+				if item then
+					currentCount = currentCount + 1
+				end
+			end
+			local newCount = 0
+			for _, item in newList do
+				if item then
+					newCount = newCount + 1
+				end
+			end
+			if newCount == 0 and currentCount > 0 then
+				for _, listener in events.backpackEmpty.callbacks do
+					task.spawn(listener)
+				end
+			end
+
 			states.equippedItem(equipped)
 			states.items(newList)
 		end
@@ -251,7 +280,7 @@ const function appRoot()
 			end
 		end
 
-		vide.effect(function()
+		effect(function()
 			const tool = states.equippedItem()
 			const character = player.Character
 			if not character then
@@ -277,6 +306,24 @@ const function appRoot()
 				humanoid:EquipTool(tool)
 			else
 				humanoid:UnequipTools()
+			end
+		end)
+
+		local lastEquipped: types.InventoryItem? = nil
+		effect(function()
+			const currentEquipped = states.equippedItem()
+			if currentEquipped ~= lastEquipped then
+				if lastEquipped then
+					for _, listener in events.backpackUnequipped.callbacks do
+						task.spawn(listener, lastEquipped)
+					end
+				end
+				if currentEquipped then
+					for _, listener in events.backpackEquipped.callbacks do
+						task.spawn(listener, currentEquipped)
+					end
+				end
+				lastEquipped = currentEquipped
 			end
 		end)
 
@@ -309,7 +356,7 @@ const function appRoot()
 			connectCharacter(player.Character)
 		end
 
-		vide.cleanup(player.CharacterAdded:Connect(function(character)
+		cleanup(player.CharacterAdded:Connect(function(character)
 			disconnectCharacter()
 			states.equippedItem(nil)
 
@@ -329,7 +376,7 @@ const function appRoot()
 			connectCharacter(character)
 		end))
 
-		vide.cleanup(disconnectCharacter)
+		cleanup(disconnectCharacter)
 
 		const attributeConnections: { RBXScriptConnection } = {}
 		for attributeName, source in states.attributes :: { [string]: vide.Source<any> } do
@@ -343,7 +390,7 @@ const function appRoot()
 				end)
 			)
 		end
-		vide.cleanup(function()
+		cleanup(function()
 			for _, conn in attributeConnections do
 				conn:Disconnect()
 			end
@@ -351,7 +398,7 @@ const function appRoot()
 		end)
 
 		const preferredInput = usePreferredInput()
-		vide.effect(function()
+		effect(function()
 			states.keyboardHint(preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
 			states.gamepadHint(preferredInput() == Enum.PreferredInput.Gamepad)
 		end)
@@ -362,8 +409,8 @@ const function appRoot()
 
 		px.usePx()
 
-		return vide.show(states.enabled, function()
-			return vide.create("ScreenGui")({
+		return show(states.enabled, function()
+			return create("ScreenGui")({
 				Name = "BackpackGui",
 				DisplayOrder = 120,
 				IgnoreGuiInset = true,
@@ -376,4 +423,4 @@ const function appRoot()
 	end, playerGui)
 end
 
-return appRoot()
+return render

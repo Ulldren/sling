@@ -27,9 +27,4 @@ return {
 	backpackRemoved = createEvent() :: Event<types.InventoryItem>,
 	inventoryOpened = createEvent(),
 	inventoryClosed = createEvent(),
-
-	-- internal
-	backpackEnabled = createEvent() :: Event<boolean>,
-	categoryAdded = createEvent() :: Event<types.Category>,
-	attributeChanged = createEvent() :: Event<string, any>,
 }
