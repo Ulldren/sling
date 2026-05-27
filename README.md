@@ -68,7 +68,7 @@ Track when items are equipped and handle custom mechanics:
 ```lua
 const VideBackpack = require("@game/ReplicatedStorage/Packages/VideBackpack")
 
-local disconnect = VideBackpack.onBackpackEquipped(function(item)
+const disconnect = VideBackpack.onBackpackEquipped(function(item)
     print("Player is now holding their:", item.Name)
 end)
 

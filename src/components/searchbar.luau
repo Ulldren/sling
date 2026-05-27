@@ -2,6 +2,7 @@ const px = require("../utils/px")
 const states = require("../states")
 const usePreferredTransparency = require("../hooks/usePreferredTransparency")
 const vide = require("../../vide")
+const cond = require("../utils/cond")
 
 const SEARCH_BORDER_COLOR: Color3 = Color3.new(1, 1, 1)
 const SEARCH_BORDER_TRANSPARENCY: number = 0.8
@@ -65,9 +66,7 @@ const function searchbar(props: Props)
 			Selectable = false,
 			Size = UDim2.fromScale(1, 1),
 			Image = SEARCH_IMAGE_X,
-			Visible = function()
-				return searchText() ~= ""
-			end,
+			Visible = cond.neq(searchText, ""),
 
 			Activated = function()
 				searchText("")

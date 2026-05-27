@@ -11,6 +11,7 @@ const types = require("../types")
 const useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
 const usePreferredInput = require("../hooks/usePreferredInput")
 const vide = require("../../vide")
+const cond = require("../utils/cond")
 
 const create = vide.create
 const show = vide.show
@@ -36,9 +37,7 @@ const function slot(props: Props): Frame
 	const slotSize = px.offset(settings.slotSize, settings.slotSize)
 	const backgroundTransparency = useBackgroundTransparency()
 	const preferredInput = usePreferredInput()
-	const zindex = vide.derive(function()
-		return if isDragging() then 2 else 1
-	end)
+	const zindex = vide.derive(cond.ifelse(isDragging, 2, 1))
 
 	const itemName = source("")
 	const itemImage = source("")
@@ -204,21 +203,15 @@ const function slot(props: Props): Frame
 		create("TextButton")({
 			AutoButtonColor = true,
 			BackgroundColor3 = states.attributes.BackgroundColor3,
-			BackgroundTransparency = function()
-				return if props.unlocked and props.unlocked() then 0 else backgroundTransparency()
-			end,
+			BackgroundTransparency = cond.ifelse(props.unlocked, 0, backgroundTransparency),
 			Size = slotSize,
-			Text = function()
-				return if itemImage() == "" then itemName() else ""
-			end,
+			Text = cond.ifelse(cond.eq(itemImage, ""), itemName, ""),
 			FontFace = states.attributes.FontFace,
 			TextColor3 = states.attributes.TextColor3,
 			TextScaled = true,
 			TextStrokeTransparency = states.attributes.TextStrokeTransparency,
 			TextTruncate = Enum.TextTruncate.SplitWord,
-			Draggable = function()
-				return states.opened() and props.item() ~= nil
-			end,
+			Draggable = cond.all(states.opened, props.item),
 			ZIndex = zindex,
 
 			action(slotRef) :: any,
@@ -340,9 +333,7 @@ const function slot(props: Props): Frame
 				CornerRadius = states.attributes.CornerRadius,
 			}),
 
-			show(function()
-				return props.inHotbar and states.keyboardHint()
-			end, function()
+			show(cond.all(props.inHotbar, states.keyboardHint), function()
 				return create("TextLabel")({
 					Name = "Number",
 					BackgroundTransparency = 1,
@@ -364,9 +355,7 @@ const function slot(props: Props): Frame
 					end,
 				})
 			end),
-			show(function()
-				return itemImage() ~= ""
-			end, function()
+			show(cond.neq(itemImage, ""), function()
 				return create("ImageLabel")({
 					Name = "Icon",
 					AnchorPoint = Vector2.new(0.5, 0.5),
@@ -381,9 +370,7 @@ const function slot(props: Props): Frame
 					}),
 				})
 			end),
-			show(function()
-				return props.item() ~= nil and states.equippedItem() == props.item()
-			end, function()
+			show(cond.all(props.item, cond.eq(states.equippedItem, props.item)), function()
 				return create("UIStroke")({
 					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 					Color = states.attributes.EquipBorderColor3,
@@ -393,7 +380,7 @@ const function slot(props: Props): Frame
 			end),
 			show(function()
 				const slots = states.slots()
-				const sourceIdx = if props.inHotbar then props.order else slots + props.order
+				const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
 				return props.item() ~= nil and (isDragging() or states.gamepadSwapIdx() == sourceIdx)
 			end, function()
 				return create("UIStroke")({
@@ -403,9 +390,7 @@ const function slot(props: Props): Frame
 					Thickness = px.scale(2),
 				})
 			end),
-			show(function()
-				return props.inHotbar and tooltipText() ~= "" and isHovering()
-			end, function()
+			show(cond.all(props.inHotbar, cond.neq(tooltipText, ""), isHovering), function()
 				return tooltip({
 					text = tooltipText,
 				})

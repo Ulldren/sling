@@ -4,6 +4,7 @@ const slot = require("./slot")
 const states = require("../states")
 const useHotbarItems = require("../hooks/useHotbarItems")
 const vide = require("../../vide")
+const cond = require("../utils/cond")
 
 const create = vide.create
 const indexes = vide.indexes
@@ -46,9 +47,7 @@ const function hotbar(): Frame
 			const item = derive(function()
 				return entry().item
 			end)
-			return show(function()
-				return states.opened() or item() ~= nil
-			end, function()
+			return show(cond.any(states.opened, item), function()
 				return slot({
 					item = item,
 					order = order,

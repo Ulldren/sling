@@ -7,10 +7,12 @@ const isInventoryOpen = require("@self/api/isInventoryOpen")
 const openInventory = require("@self/api/openInventory")
 const setEnabled = require("@self/api/setEnabled")
 const toggleInventory = require("@self/api/toggleInventory")
+const render = require("@self/components/render")
 
-require("@self/components/render")()
 require("@self/topbarIcon")
 require("@self/attribution")
+
+render()
 
 return table.freeze({
 	-- API

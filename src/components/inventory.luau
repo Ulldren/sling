@@ -7,6 +7,7 @@ const states = require("../states")
 const useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
 const useInventoryItems = require("../hooks/useInventoryItems")
 const vide = require("../../vide")
+const cond = require("../utils/cond")
 
 const derive = vide.derive
 const create = vide.create
@@ -56,9 +57,7 @@ const function inventory(): Frame
 
 		create("UIListLayout")({}),
 
-		show(function()
-			return #states.categories() > 1
-		end, categorybar),
+		show(cond.gt(cond.len(states.categories), 1), categorybar),
 
 		create("Frame")({
 			Name = "InventoryMainFrame",

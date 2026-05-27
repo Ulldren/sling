@@ -4,7 +4,7 @@ const StarterGui = game:GetService("StarterGui")
 const StarterPack = game:GetService("StarterPack")
 const UserInputService = game:GetService("UserInputService")
 
-const vide = require("../../Packages/vide")
+const vide = require("../../vide")
 const app = require("./app")
 const closeInventory = require("../api/closeInventory")
 const createCategory = require("../api/createCategory")
@@ -62,7 +62,7 @@ const function render()
 			setEnabled(true)
 		end))
 
-		const function keyboardControls(input: InputObject)
+		const function handleKeyboardControls(input: InputObject)
 			-- Change slot selection
 			const slotNum = KEY_TO_SLOT[input.KeyCode]
 			if slotNum and slotNum <= states.slots() then
@@ -74,7 +74,7 @@ const function render()
 			end
 		end
 
-		const function gamepadControls(input: InputObject)
+		const function handleGamepadControls(input: InputObject)
 			-- Change slot selection
 			if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
 				const moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
@@ -93,19 +93,10 @@ const function render()
 				end
 
 				if equippedIdx then
-					local newPos = equippedIdx + moveDirection
+					local newPos = equippedIdx
 					local hitEdge = false
-					if newPos > slots then
-						newPos = 1
-						hitEdge = true
-					elseif newPos < 1 then
-						newPos = slots
-						hitEdge = true
-					end
-
-					const origNewPos = newPos
-					while items[newPos] == nil do
-						newPos = newPos + moveDirection
+					for _ = 1, slots do
+						newPos += moveDirection
 						if newPos > slots then
 							newPos = 1
 							hitEdge = true
@@ -114,16 +105,11 @@ const function render()
 							hitEdge = true
 						end
 
-						if newPos == origNewPos then
-							return
+						if items[newPos] ~= nil then
+							break
 						end
 					end
-
-					if hitEdge then
-						states.equippedItem(nil)
-					else
-						states.equippedItem(items[newPos])
-					end
+					states.equippedItem(if hitEdge then nil else items[newPos])
 				else
 					const startIdx = if moveDirection == 1 then 1 else slots
 					const endIdx = if moveDirection == 1 then slots else 1
@@ -149,9 +135,9 @@ const function render()
 				if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
 					closeInventory()
 				elseif inputType == Enum.UserInputType.Keyboard then
-					keyboardControls(input)
+					handleKeyboardControls(input)
 				elseif GAMEPAD_INPUT_TYPES[inputType] then
-					gamepadControls(input)
+					handleGamepadControls(input)
 				end
 			end
 		end))

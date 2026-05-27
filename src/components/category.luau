@@ -2,6 +2,7 @@ const px = require("../utils/px")
 const states = require("../states")
 const types = require("../types")
 const vide = require("../../vide")
+const cond = require("../utils/cond")
 
 const create = vide.create
 const derive = vide.derive
@@ -34,24 +35,13 @@ const function category(props: Props)
 		TextColor3 = Color3.new(1, 1, 1),
 		TextSize = px.scale(states.attributes.TextSize),
 		Text = categoryName,
-		TextTransparency = function()
-			return if isSelected() then 0 else 0.4
-		end,
+		TextTransparency = spring(cond.ifelse(isSelected, 0, 0.4), 0.2),
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		TextWrapped = true,
 
 		Activated = function()
 			states.selectedCategory(categoryName())
 		end,
-
-		show(isSelected, function()
-			return create("Frame")({
-				AnchorPoint = Vector2.new(0.5, 1),
-				BackgroundColor3 = states.attributes.SelectionColor3,
-				Position = UDim2.fromScale(0.5, 1),
-				Size = px.udim2(1, 0, 0, 4),
-			})
-		end),
 
 		show(function()
 			const categories = states.categories()

@@ -3,6 +3,7 @@ const inventoryHint = require("./inventoryHint")
 const settings = require("../settings")
 const states = require("../states")
 const vide = require("../../vide")
+const cond = require("../utils/cond")
 
 const create = vide.create
 const show = vide.show
@@ -32,9 +33,7 @@ const function app()
 				SortOrder = Enum.SortOrder.LayoutOrder,
 			}),
 
-			show(function()
-				return states.gamepadHint() and states.opened()
-			end, function()
+			show(cond.all(states.gamepadHint, states.opened), function()
 				return create("Frame")({
 					Name = "GamepadHints",
 					Size = UDim2.fromScale(1, 0),
