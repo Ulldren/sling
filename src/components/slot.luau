@@ -8,10 +8,13 @@ const settings = require("../settings")
 const states = require("../states")
 const tooltip = require("./tooltip")
 const types = require("../types")
-const useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
 const usePreferredInput = require("../hooks/usePreferredInput")
 const vide = require("../../vide")
+const theme = require("../theme")
+const usePreferredTransparency = require("../hooks/usePreferredTransparency")
+const colorSpring = require("../utils/colorSpring")
 const cond = require("../utils/cond")
+const slotUtils = require("../utils/slotUtils")
 
 const create = vide.create
 const show = vide.show
@@ -19,15 +22,23 @@ const source = vide.source
 const effect = vide.effect
 const cleanup = vide.cleanup
 const action = vide.action
+const untrack = vide.untrack
+const derive = vide.derive
 
 type Props = {
-	item: vide.Source<types.InventoryItem?>,
+	entry: vide.Source<types.ItemEntry>,
 	order: number,
+	visible: vide.Source<boolean>?,
 	unlocked: vide.Source<boolean>?,
 	inHotbar: boolean?,
 }
 
 const function slot(props: Props): Frame
+	const entry = props.entry
+	const item = vide.derive(function()
+		return entry().item
+	end)
+
 	const isHovering = source(false)
 	const isDragging = source(false)
 
@@ -35,8 +46,11 @@ const function slot(props: Props): Frame
 	const slotFrameRef = source(nil :: Frame?)
 
 	const slotSize = px.offset(settings.slotSize, settings.slotSize)
-	const backgroundTransparency = useBackgroundTransparency()
 	const preferredInput = usePreferredInput()
+	const preferredTransparency = usePreferredTransparency()
+	const backgroundTransparency = vide.derive(function()
+		return theme.theme.slotBackgroundTransparency() * preferredTransparency()
+	end)
 	const zindex = vide.derive(cond.ifelse(isDragging, 2, 1))
 
 	const itemName = source("")
@@ -44,7 +58,7 @@ const function slot(props: Props): Frame
 	const tooltipText = source("")
 
 	effect(function()
-		const i = props.item()
+		const i = item()
 		if i == nil then
 			itemName("")
 			itemImage("")
@@ -73,6 +87,11 @@ const function slot(props: Props): Frame
 		end
 	end)
 
+	const getSourceIdx = derive(function()
+		const e = props.entry()
+		return table.find(states.items(), e) :: number
+	end)
+
 	local lastClickTime = 0
 
 	const function getSlotNumber(): string
@@ -84,100 +103,29 @@ const function slot(props: Props): Frame
 		return ""
 	end
 
-	const function getSourceIdx(): number?
-		const item = props.item()
-		if not item then
-			return nil
-		end
-		const currentItems = states.items()
-		for idx, it in currentItems do
-			if it == item then
-				return idx
-			end
-		end
-		return nil
-	end
-
-	const function swap(targetSlot: number)
-		const slots = states.slots()
-		const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
-		const currentItems = table.clone(states.items())
+	const function swap(targetIdx: number)
+		const sourceIdx = untrack(getSourceIdx)
+		const currentItems = untrack(states.items)
 		const itemA = currentItems[sourceIdx]
-		if not itemA then
+		if not itemA or itemA.item == nil then
 			return
 		end
-		const targetIdx = targetSlot
-		const itemB = currentItems[targetIdx]
-		if props.inHotbar then
-			currentItems[sourceIdx], currentItems[targetIdx] = currentItems[targetIdx], currentItems[sourceIdx]
-		else
-			if itemB then
-				currentItems[sourceIdx] = itemB
-				currentItems[targetIdx] = itemA
-			else
-				currentItems[sourceIdx] = nil
-				currentItems[targetIdx] = itemA
-
-				local maxIdx = slots
-				for idx in currentItems do
-					if idx > maxIdx then
-						maxIdx = idx
-					end
-				end
-
-				local invIndex = slots + 1
-				for i = slots + 1, maxIdx do
-					const item = currentItems[i]
-					if item ~= nil then
-						currentItems[i] = nil
-						currentItems[invIndex] = item
-						invIndex = invIndex + 1
-					end
-				end
-			end
-		end
-		states.items(currentItems)
+		slotUtils.swap(sourceIdx, targetIdx)
 	end
 
 	const function moveToInventory()
-		const slots = states.slots()
-		const sourceIdx = getSourceIdx() or props.order
-		const currentItems = table.clone(states.items())
-		const itemToMove = currentItems[sourceIdx]
-		if not itemToMove then
-			return
-		end
-		currentItems[sourceIdx] = nil
-		local maxIdx = slots
-		for idx in currentItems do
-			if idx > maxIdx then
-				maxIdx = idx
-			end
-		end
-		currentItems[maxIdx + 1] = itemToMove
-		states.items(currentItems)
+		slotUtils.moveToInventory(getSourceIdx())
 	end
 
 	const function moveToHotbar()
-		const slots = states.slots()
-		const currentItems = states.items()
-		local targetIdx = nil
-		for idx = 1, slots do
-			if currentItems[idx] == nil then
-				targetIdx = idx
-				break
-			end
-		end
-		if targetIdx then
-			swap(targetIdx)
-		end
+		slotUtils.moveToHotbar(getSourceIdx())
 	end
 
 	cleanup(UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 		if gameProcessedEvent then
 			return
 		end
-		if not states.opened() then
+		if not untrack(states.opened) then
 			return
 		end
 		if not props.inHotbar then
@@ -197,53 +145,46 @@ const function slot(props: Props): Frame
 		BackgroundTransparency = 1,
 		Size = slotSize,
 		LayoutOrder = props.order,
+		Visible = props.visible,
 
 		action(slotFrameRef),
 
 		create("TextButton")({
 			AutoButtonColor = true,
-			BackgroundColor3 = states.attributes.BackgroundColor3,
+			BackgroundColor3 = colorSpring(theme.theme.slotBackgroundColor),
 			BackgroundTransparency = cond.ifelse(props.unlocked, 0, backgroundTransparency),
 			Size = slotSize,
 			Text = cond.ifelse(cond.eq(itemImage, ""), itemName, ""),
-			FontFace = states.attributes.FontFace,
-			TextColor3 = states.attributes.TextColor3,
+			FontFace = theme.theme.slotFontFace,
+			TextColor3 = colorSpring(theme.theme.slotTextColor),
 			TextScaled = true,
-			TextStrokeTransparency = states.attributes.TextStrokeTransparency,
+			TextStrokeTransparency = theme.theme.textStrokeTransparency,
 			TextTruncate = Enum.TextTruncate.SplitWord,
-			Draggable = cond.all(states.opened, props.item),
+			Draggable = cond.all(states.opened, item),
 			ZIndex = zindex,
 
 			action(slotRef) :: any,
 
 			MouseButton1Click = function()
-				const slots = states.slots()
-				const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
-
-				if preferredInput() == Enum.PreferredInput.Gamepad and states.opened() then
-					const activeSwapIdx = states.gamepadSwapIdx()
+				const sourceIdx = untrack(getSourceIdx)
+				if preferredInput() == Enum.PreferredInput.Gamepad and untrack(states.opened) then
+					const activeSwapIdx = untrack(states.gamepadSwapIdx)
 					if activeSwapIdx then
 						states.gamepadSwapIdx(nil)
 						if activeSwapIdx ~= sourceIdx then
-							const currentItems = table.clone(states.items())
-							currentItems[sourceIdx], currentItems[activeSwapIdx] =
-								currentItems[activeSwapIdx], currentItems[sourceIdx]
-							states.items(currentItems)
+							slotUtils.swap(sourceIdx, activeSwapIdx)
 						end
+						return
+					else
+						states.gamepadSwapIdx(sourceIdx)
 						return
 					end
 				end
 
-				const i = props.item()
+				const i = untrack(item)
 				if not i then
 					return
 				end
-
-				if preferredInput() == Enum.PreferredInput.Gamepad and states.opened() then
-					states.gamepadSwapIdx(sourceIdx)
-					return
-				end
-
 				const now = os.clock()
 				if now - lastClickTime < settings.doubleClickTime then
 					lastClickTime = 0
@@ -253,7 +194,7 @@ const function slot(props: Props): Frame
 					end
 				else
 					lastClickTime = now
-					states.equippedItem(if i == states.equippedItem() then nil else i)
+					states.equippedItem(if i == untrack(states.equippedItem) then nil else i)
 				end
 			end,
 			MouseEnter = function()
@@ -317,6 +258,11 @@ const function slot(props: Props): Frame
 				end
 			end,
 
+			create("UITextSizeConstraint")({
+				MaxTextSize = px.scale(theme.theme.slotTextSize),
+				MinTextSize = px.scale(12),
+			}),
+
 			create("UIPadding")({
 				PaddingBottom = px.udim(0, 5),
 				PaddingLeft = px.udim(0, 5),
@@ -324,13 +270,8 @@ const function slot(props: Props): Frame
 				PaddingTop = px.udim(0, 5),
 			}),
 
-			create("UITextSizeConstraint")({
-				MaxTextSize = px.scale(states.attributes.TextSize),
-				MinTextSize = px.scale(12),
-			}),
-
 			create("UICorner")({
-				CornerRadius = states.attributes.CornerRadius,
+				CornerRadius = theme.theme.slotCornerRadius,
 			}),
 
 			show(cond.all(props.inHotbar, states.keyboardHint), function()
@@ -339,17 +280,13 @@ const function slot(props: Props): Frame
 					BackgroundTransparency = 1,
 					AutomaticSize = Enum.AutomaticSize.XY,
 					Text = getSlotNumber(),
-					TextColor3 = states.attributes.TextColor3,
-					TextSize = px.scale(states.attributes.TextSize),
+					TextColor3 = colorSpring(theme.theme.slotTextColor),
+					TextSize = px.scale(theme.theme.slotTextSize),
 					FontFace = function()
-						return Font.new(
-							states.attributes.FontFace().Family,
-							Enum.FontWeight.Heavy,
-							Enum.FontStyle.Normal
-						)
+						return Font.new(theme.theme.slotFontFace().Family, Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
 					end,
-					TextStrokeColor3 = states.attributes.TextStrokeColor3,
-					TextStrokeTransparency = states.attributes.TextStrokeTransparency,
+					TextStrokeColor3 = colorSpring(theme.theme.textStrokeColor),
+					TextStrokeTransparency = theme.theme.textStrokeTransparency,
 					ZIndex = function()
 						return zindex() + 1
 					end,
@@ -366,23 +303,19 @@ const function slot(props: Props): Frame
 					ZIndex = zindex,
 
 					create("UICorner")({
-						CornerRadius = states.attributes.CornerRadius,
+						CornerRadius = theme.theme.slotCornerRadius,
 					}),
 				})
 			end),
-			show(cond.all(props.item, cond.eq(states.equippedItem, props.item)), function()
+			show(cond.all(item, cond.eq(states.equippedItem, item)), function()
 				return create("UIStroke")({
 					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-					Color = states.attributes.EquipBorderColor3,
+					Color = theme.theme.slotEquipStrokeColor,
 					LineJoinMode = Enum.LineJoinMode.Round,
-					Thickness = px.scale(states.attributes.EquipBorderSizePixel),
+					Thickness = px.scale(theme.theme.slotEquipStrokeThickness),
 				})
 			end),
-			show(function()
-				const slots = states.slots()
-				const sourceIdx = getSourceIdx() or (if props.inHotbar then props.order else slots + props.order)
-				return props.item() ~= nil and (isDragging() or states.gamepadSwapIdx() == sourceIdx)
-			end, function()
+			show(cond.all(item, cond.any(isDragging, cond.eq(states.gamepadSwapIdx, getSourceIdx))), function()
 				return create("UIStroke")({
 					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 					BorderStrokePosition = Enum.BorderStrokePosition.Inner,
@@ -390,10 +323,11 @@ const function slot(props: Props): Frame
 					Thickness = px.scale(2),
 				})
 			end),
-			show(cond.all(props.inHotbar, cond.neq(tooltipText, ""), isHovering), function()
+			show(cond.all(props.inHotbar, cond.neq(tooltipText, ""), isHovering), function(_, present)
 				return tooltip({
 					text = tooltipText,
-				})
+					visible = present,
+				}), 0.2
 			end),
 		}),
 	})

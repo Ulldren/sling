@@ -1,12 +1,11 @@
 const px = require("../utils/px")
-const states = require("../states")
-const usePreferredTransparency = require("../hooks/usePreferredTransparency")
 const vide = require("../../vide")
+const theme = require("../theme")
+const usePreferredTransparency = require("../hooks/usePreferredTransparency")
+const colorSpring = require("../utils/colorSpring")
 const cond = require("../utils/cond")
 
-const SEARCH_BORDER_COLOR: Color3 = Color3.new(1, 1, 1)
-const SEARCH_BORDER_TRANSPARENCY: number = 0.8
-const SEARCH_TEXT_OFFSET: number = 8
+const SEARCH_PADDING: number = 8
 const SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
 
 const create = vide.create
@@ -23,20 +22,21 @@ const function searchbar(props: Props)
 
 	return create("TextBox")({
 		Name = "Search",
-		BackgroundColor3 = states.attributes.BackgroundColor3,
+		BackgroundColor3 = colorSpring(theme.theme.searchBackgroundColor),
 		BackgroundTransparency = function()
-			return (states.attributes.BackgroundTransparency() - 0.1) * preferredTransparency()
+			return theme.theme.searchBackgroundTransparency() * preferredTransparency()
 		end,
 		ClearTextOnFocus = false,
 		ClipsDescendants = true,
-		FontFace = states.attributes.FontFace,
+		FontFace = theme.theme.searchFontFace,
 		PlaceholderText = "Search",
+		PlaceholderColor3 = colorSpring(theme.theme.searchPlaceholderColor),
 		Size = px.udim2(1, 0, 0, 30),
 		Text = searchText,
-		TextColor3 = states.attributes.TextColor3,
-		TextSize = px.scale(states.attributes.TextSize),
-		TextStrokeColor3 = states.attributes.TextStrokeColor3,
-		TextStrokeTransparency = states.attributes.TextStrokeTransparency,
+		TextColor3 = colorSpring(theme.theme.searchTextColor),
+		TextSize = px.scale(theme.theme.searchTextSize),
+		TextStrokeColor3 = colorSpring(theme.theme.textStrokeColor),
+		TextStrokeTransparency = theme.theme.textStrokeTransparency,
 		TextXAlignment = Enum.TextXAlignment.Left,
 
 		changed("Text", function(value: string)
@@ -44,19 +44,19 @@ const function searchbar(props: Props)
 		end),
 
 		create("UIPadding")({
-			PaddingLeft = px.udim(0, SEARCH_TEXT_OFFSET),
-			PaddingRight = px.udim(0, SEARCH_TEXT_OFFSET),
-			PaddingTop = px.udim(0, SEARCH_TEXT_OFFSET),
-			PaddingBottom = px.udim(0, SEARCH_TEXT_OFFSET),
+			PaddingLeft = px.udim(0, SEARCH_PADDING),
+			PaddingRight = px.udim(0, SEARCH_PADDING),
+			PaddingTop = px.udim(0, SEARCH_PADDING),
+			PaddingBottom = px.udim(0, SEARCH_PADDING),
 		}),
 		create("UIStroke")({
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-			Color = SEARCH_BORDER_COLOR,
-			Transparency = SEARCH_BORDER_TRANSPARENCY,
+			Color = theme.theme.searchStrokeColor,
+			Transparency = theme.theme.searchStrokeTransparency,
 			Thickness = px.scale(1),
 		}),
 		create("UICorner")({
-			CornerRadius = states.attributes.SmallCornerRadius,
+			CornerRadius = theme.theme.searchCornerRadius,
 		}),
 		create("ImageButton")({
 			Name = "Clear",
@@ -66,6 +66,7 @@ const function searchbar(props: Props)
 			Selectable = false,
 			Size = UDim2.fromScale(1, 1),
 			Image = SEARCH_IMAGE_X,
+			ImageColor3 = colorSpring(theme.theme.searchTextColor),
 			Visible = cond.neq(searchText, ""),
 
 			Activated = function()

@@ -8,9 +8,8 @@ A modern and reactive backpack system for Roblox, built using [Vide](https://git
 
 ## ⚡ Features
 
-- **Ideal for Vide Users**: Built from the ground up for developers utilizing [Vide](https://github.com/centau/vide), ensuring seamless integration, consistent reactive state paradigms, and near-zero performance cost.
-- **Familiar Yet Modern UI**: Maintains a highly intuitive layout familiar to Roblox players, matching the core interface patterns they expect, but elevated with a sleek, premium, and modern aesthetic.
-- **Code-Free Customization**: Instantly customize fonts, colors, and layouts directly from Roblox Studio's **Attributes** panel without writing or modifying a single line of code.
+- **Familiar UI**: Maintains a highly intuitive layout familiar to Roblox players, matching the core interface patterns they expect, but elevated with a sleek, premium, and modern aesthetic.
+- **Customizable Themes**: Highly customizable theme properties using `setTheme`. Easily switch between predefined themes (`default` and `white`) or define your own.
 - **Total Architectural Freedom**: Highly modular source code. You have absolute freedom to edit, extend, or rewrite UI components to match any unique design or specific gameplay behavior.
 - **Custom Categorization**: Group your inventory items into tab categories (e.g., Weapons, Potions, Resources) using simple, custom declarative predicate functions.
 
@@ -76,6 +75,27 @@ end)
 disconnect()
 ```
 
+### 4. Changing Themes
+Seamlessly update colors, fonts, corner radius, and stroke values on the fly with smooth transition animations:
+```lua
+const VideBackpack = require("@game/ReplicatedStorage/Packages/VideBackpack")
+
+-- Switch to the light theme (white)
+VideBackpack.setTheme(VideBackpack.themes.white)
+
+-- Switch to the default theme (dark)
+VideBackpack.setTheme(VideBackpack.themes.default)
+
+-- Or create a custom theme
+local customTheme = {
+    backgroundColor = Color3.fromHex("#492a17ff"),
+    textColor = Color3.fromHex("#e09e74ff"),
+    ...
+} :: VideBackpack.ThemeConfig
+
+VideBackpack.setTheme(customTheme)
+```
+
 ---
 
 ## 🛠️ API Reference
@@ -138,6 +158,13 @@ if icon then
 end
 ```
 
+#### `setTheme(config: ThemeConfig)`
+Sets the active theme configuration.
+- **`config`**: The new `ThemeConfig` layout to apply. Individual values are automatically animated using spring physics.
+```lua
+VideBackpack.setTheme(VideBackpack.themes.white)
+```
+
 ---
 
 ### Events (Hooks)
@@ -164,8 +191,8 @@ end)
 ```
 
 #### `onBackpackEquipped(callback: (item: Tool | HopperBin) -> ()) -> (() -> ())`
-Fires when the player equips an item from their inventory.
-- **`item`**: The `Tool` or `HopperBin` that was equipped.
+Fires when the player equips an item on character.
+- **`item`**: The `Tool` that was equipped.
 ```lua
 VideBackpack.onBackpackEquipped(function(item)
     print("Equipped item:", item.Name)
@@ -174,15 +201,24 @@ end)
 
 #### `onBackpackUnequipped(callback: (item: Tool | HopperBin) -> ()) -> (() -> ())`
 Fires when the player unequips their currently active item.
-- **`item`**: The `Tool` or `HopperBin` that was unequipped.
+- **`item`**: The `Tool` that was unequipped.
 ```lua
 VideBackpack.onBackpackUnequipped(function(item)
     print("Unequipped item:", item.Name)
 end)
 ```
 
+#### `onBackpackAdded(callback: (item: Tool | HopperBin) -> ()) -> (() -> ())`
+Fires when an item is added to the player's backpack.
+- **`item`**: The `Tool` or `HopperBin` that was added.
+```lua
+VideBackpack.onBackpackAdded(function(item)
+    print("Added to backpack:", item.Name)
+end)
+```
+
 #### `onBackpackRemoved(callback: (item: Tool | HopperBin) -> ()) -> (() -> ())`
-Fires when an item is removed entirely from the player's inventory or backpack.
+Fires when an item is removed entirely from the player's backpack.
 - **`item`**: The `Tool` or `HopperBin` that was removed.
 ```lua
 VideBackpack.onBackpackRemoved(function(item)
@@ -194,7 +230,7 @@ end)
 Fires when the backpack becomes entirely empty (contains no items).
 ```lua
 VideBackpack.onBackpackEmpty(function()
-    print("The inventory is now empty!")
+    print("The backpack is now empty!")
 end)
 ```
 

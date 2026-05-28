@@ -1,7 +1,6 @@
 const GuiService = game:GetService("GuiService")
 const Players = game:GetService("Players")
 const StarterGui = game:GetService("StarterGui")
-const StarterPack = game:GetService("StarterPack")
 const UserInputService = game:GetService("UserInputService")
 
 const vide = require("../../vide")
@@ -20,12 +19,10 @@ const mount = vide.mount
 const cleanup = vide.cleanup
 const create = vide.create
 const effect = vide.effect
-const show = vide.show
+const untrack = vide.untrack
 
 const player = Players.LocalPlayer
 const playerGui = player:WaitForChild("PlayerGui")
-
-const targetScript = script.Parent
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
@@ -66,10 +63,9 @@ const function render()
 			-- Change slot selection
 			const slotNum = KEY_TO_SLOT[input.KeyCode]
 			if slotNum and slotNum <= states.slots() then
-				const items = states.items()
-				const item = items[slotNum]
-				if item then
-					states.equippedItem(if item == states.equippedItem() then nil else item)
+				const entry = untrack(states.items)[slotNum]
+				if entry and entry.item then
+					states.equippedItem(if entry.item == untrack(states.equippedItem) then nil else entry.item)
 				end
 			end
 		end
@@ -78,14 +74,15 @@ const function render()
 			-- Change slot selection
 			if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
 				const moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
-				const slots = states.slots()
-				const items = states.items()
-				const equipped = states.equippedItem()
+				const slots = untrack(states.slots)
+				const items = untrack(states.items)
+				const equipped = untrack(states.equippedItem)
 
 				local equippedIdx = nil
 				if equipped then
 					for idx = 1, slots do
-						if items[idx] == equipped then
+						const entry = items[idx]
+						if entry and entry.item == equipped then
 							equippedIdx = idx
 							break
 						end
@@ -104,19 +101,18 @@ const function render()
 							newPos = slots
 							hitEdge = true
 						end
-
-						if items[newPos] ~= nil then
+						if items[newPos] and items[newPos].item then
 							break
 						end
 					end
-					states.equippedItem(if hitEdge then nil else items[newPos])
+					states.equippedItem(if hitEdge then nil else items[newPos].item)
 				else
 					const startIdx = if moveDirection == 1 then 1 else slots
 					const endIdx = if moveDirection == 1 then slots else 1
 					for idx = startIdx, endIdx, moveDirection do
-						const item = items[idx]
-						if item then
-							states.equippedItem(item)
+						const entry = items[idx]
+						if entry and entry.item then
+							states.equippedItem(entry.item)
 							break
 						end
 					end
@@ -166,19 +162,17 @@ const function render()
 			return instance:IsA("Tool") or instance:IsA("HopperBin")
 		end
 
-		const savedLayout = {}
-		local lastRespawnTime = 0
-
 		const function refreshItems()
-			const current = states.items()
-			const active = {}
+			const currentItems = untrack(states.items)
+			const activeItems = {}
 			local equipped = nil
 
+			-- Find all items in character and backpack
 			const character = player.Character
 			if character then
 				for _, child in character:GetChildren() do
 					if isItem(child) then
-						active[child] = true
+						activeItems[child] = true
 						equipped = child
 					end
 				end
@@ -187,71 +181,77 @@ const function render()
 			if backpack then
 				for _, child in backpack:GetChildren() do
 					if isItem(child) then
-						active[child] = true
+						activeItems[child] = true
 					end
 				end
 			end
 
+			local newCount = 0
 			const newList = {}
-			for i, item in current do
-				if active[item] then
-					newList[i] = item
-					active[item] = nil
+			for i, entry in currentItems do
+				const item = entry.item
+				if item and activeItems[item] then
+					newList[i] = entry
+					activeItems[item] = nil
+					newCount += 1
 				else
-					for _, listener in events.backpackRemoved.callbacks do
-						task.spawn(listener, item)
-					end
-				end
-			end
-
-			for item in active do
-				local targetIdx = nil
-				local isStarterTool = false
-				const starterGear = player:FindFirstChild("StarterGear")
-				if (starterGear and starterGear:FindFirstChild(item.Name)) or StarterPack:FindFirstChild(item.Name) then
-					isStarterTool = true
-				end
-
-				if isStarterTool and os.clock() - lastRespawnTime < 3.0 and savedLayout[item.Name] then
-					const indices = savedLayout[item.Name]
-					for k, savedIdx in indices do
-						if newList[savedIdx] == nil then
-							targetIdx = savedIdx
-							table.remove(indices, k)
-							break
+					if item then
+						for _, listener in events.backpackRemoved.callbacks do
+							task.spawn(listener, item)
 						end
 					end
+					newList[i] = { item = nil }
 				end
+			end
 
-				if not targetIdx then
-					targetIdx = 1
-					while newList[targetIdx] ~= nil do
-						targetIdx = targetIdx + 1
+			for item in activeItems do
+				local targetIdx = nil
+				for idx = 1, #newList do
+					if newList[idx].item == nil then
+						targetIdx = idx
+						break
 					end
 				end
-				newList[targetIdx] = item
+				if not targetIdx then
+					targetIdx = #newList + 1
+				end
+				newList[targetIdx] = { item = item }
+				newCount += 1
+
+				for _, listener in events.backpackAdded.callbacks do
+					task.spawn(listener, item)
+				end
 			end
 
-			local currentCount = 0
-			for _, item in current do
-				if item then
-					currentCount = currentCount + 1
+			const slots = untrack(states.slots)
+			for i = 1, slots do
+				if newList[i] == nil then
+					newList[i] = { item = nil }
 				end
 			end
-			local newCount = 0
-			for _, item in newList do
-				if item then
-					newCount = newCount + 1
+
+			local itemsChanged = false
+			if #newList ~= #currentItems then
+				itemsChanged = true
+			else
+				for i = 1, #newList do
+					if newList[i] ~= currentItems[i] then
+						itemsChanged = true
+						break
+					end
 				end
 			end
-			if newCount == 0 and currentCount > 0 then
+
+			if newCount == 0 and itemsChanged then
 				for _, listener in events.backpackEmpty.callbacks do
 					task.spawn(listener)
 				end
 			end
 
 			states.equippedItem(equipped)
-			states.items(newList)
+			if itemsChanged then
+				states.items(newList)
+			end
 		end
 
 		const function onChildAdded(child: Instance)
@@ -345,43 +345,11 @@ const function render()
 		cleanup(player.CharacterAdded:Connect(function(character)
 			disconnectCharacter()
 			states.equippedItem(nil)
-
-			table.clear(savedLayout)
-			for index, item in states.items() do
-				if item then
-					const name = item.Name
-					if not savedLayout[name] then
-						savedLayout[name] = {}
-					end
-					table.insert(savedLayout[name], index)
-				end
-			end
-			lastRespawnTime = os.clock()
-
 			refreshItems()
 			connectCharacter(character)
 		end))
 
 		cleanup(disconnectCharacter)
-
-		const attributeConnections: { RBXScriptConnection } = {}
-		for attributeName, source in states.attributes :: { [string]: vide.Source<any> } do
-			if targetScript:GetAttribute(attributeName) then
-				source(targetScript:GetAttribute(attributeName))
-			end
-			table.insert(
-				attributeConnections,
-				targetScript:GetAttributeChangedSignal(attributeName):Connect(function()
-					source(targetScript:GetAttribute(attributeName))
-				end)
-			)
-		end
-		cleanup(function()
-			for _, conn in attributeConnections do
-				conn:Disconnect()
-			end
-			table.clear(attributeConnections)
-		end)
 
 		const preferredInput = usePreferredInput()
 		effect(function()
@@ -395,17 +363,16 @@ const function render()
 
 		px.usePx()
 
-		return show(states.enabled, function()
-			return create("ScreenGui")({
-				Name = "BackpackGui",
-				DisplayOrder = 120,
-				IgnoreGuiInset = true,
-				ResetOnSpawn = false,
-				ZIndexBehavior = Enum.ZIndexBehavior.Global,
+		return create("ScreenGui")({
+			Name = "BackpackGui",
+			DisplayOrder = 120,
+			IgnoreGuiInset = true,
+			ResetOnSpawn = false,
+			ZIndexBehavior = Enum.ZIndexBehavior.Global,
+			Enabled = states.enabled,
 
-				app(),
-			})
-		end)
+			app(),
+		})
 	end, playerGui)
 end
 

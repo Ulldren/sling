@@ -49,11 +49,9 @@ const function hotbar(): Frame
 			end)
 			return show(cond.any(states.opened, item), function()
 				return slot({
-					item = item,
+					entry = entry,
 					order = order,
-					unlocked = function()
-						return states.opened() and item() ~= nil
-					end,
+					unlocked = cond.all(states.opened, item),
 					inHotbar = true,
 				})
 			end)

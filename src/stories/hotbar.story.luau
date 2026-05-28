@@ -19,9 +19,13 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		const item = Instance.new("Tool")
-		item.Name = "Tool"
-		item.ToolTip = "Tooltip"
+		const function createSword()
+			const tool = Instance.new("Tool")
+			tool.Name = "Sword"
+			tool.TextureId = "rbxasset://Textures/Sword128.png"
+			tool.ToolTip = "A cool sword"
+			return { item = tool }
+		end
 
 		effect(function()
 			states.opened(props.controls.opened())
@@ -29,7 +33,7 @@ return {
 			states.keyboardHint(props.controls.keyboardHint())
 		end)
 
-		states.items({ item })
+		states.items({ createSword() })
 		states.equippedItem(nil)
 
 		return vide.apply(hotbar())({

@@ -6,7 +6,7 @@ return table.freeze({
 	hotbarSlotsPortrait = 3,
 
 	inventoryRowsFull = 4,
-	inventoryRowsMini = 3,
+	inventoryRowsMini = 2,
 	inventoryRowsPortrait = 4,
 
 	doubleClickTime = 0.3,

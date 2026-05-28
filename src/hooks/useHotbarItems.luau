@@ -8,7 +8,8 @@ const function useHotbarItems()
 
 		const newHotbar = table.create(slots)
 		for i = 1, slots do
-			newHotbar[i] = { item = items[i] }
+			const entry = items[i] or { item = nil }
+			newHotbar[i] = entry
 		end
 		return newHotbar
 	end)

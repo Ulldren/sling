@@ -6,18 +6,13 @@ const function useInventoryItems()
 		const slots = states.slots()
 		const items = states.items()
 
-		local maxIdx = slots
-		for idx in items do
-			if idx > maxIdx then
-				maxIdx = idx
-			end
-		end
-
 		const newInventory = {}
-		for i = slots + 1, maxIdx do
-			const item = items[i]
-			if item then
-				table.insert(newInventory, item)
+		local count = 0
+		for i = slots + 1, #items do
+			const entry = items[i]
+			if entry and entry.item ~= nil then
+				count += 1
+				newInventory[count] = entry
 			end
 		end
 		return newInventory

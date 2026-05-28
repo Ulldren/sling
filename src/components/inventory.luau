@@ -4,9 +4,11 @@ const searchbar = require("./searchbar")
 const settings = require("../settings")
 const slot = require("./slot")
 const states = require("../states")
-const useBackgroundTransparency = require("../hooks/useBackgroundTransparency")
 const useInventoryItems = require("../hooks/useInventoryItems")
 const vide = require("../../vide")
+const theme = require("../theme")
+const usePreferredTransparency = require("../hooks/usePreferredTransparency")
+const colorSpring = require("../utils/colorSpring")
 const cond = require("../utils/cond")
 
 const derive = vide.derive
@@ -42,17 +44,22 @@ const function inventory(): Frame
 		return tokens
 	end)
 
+	const preferredTransparency = usePreferredTransparency()
+
 	return create("Frame")({
 		Name = "Inventory",
-		BackgroundColor3 = states.attributes.BackgroundColor3,
-		BackgroundTransparency = useBackgroundTransparency(),
+		BackgroundColor3 = colorSpring(theme.theme.backgroundColor),
+		BackgroundTransparency = function()
+			return theme.theme.backgroundTransparency() * preferredTransparency()
+		end,
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Size = function()
 			return UDim2.fromOffset(states.width(), 0)
 		end,
+		Visible = states.opened,
 
 		create("UICorner")({
-			CornerRadius = states.attributes.CornerRadius,
+			CornerRadius = theme.theme.cornerRadius,
 		}),
 
 		create("UIListLayout")({}),
@@ -103,9 +110,9 @@ const function inventory(): Frame
 					Wraps = true,
 				}),
 
-				indexes(useInventoryItems(), function(item, order)
-					return show(function()
-						const currentItem = item()
+				indexes(useInventoryItems(), function(entry, order)
+					local visible = derive(function()
+						const currentItem = entry().item
 						if not currentItem then
 							return false
 						end
@@ -134,13 +141,13 @@ const function inventory(): Frame
 						end
 
 						return false
-					end, function()
-						return slot({
-							item = item,
-							order = order,
-							unlocked = source(true),
-						})
 					end)
+					return slot({
+						entry = entry,
+						order = order,
+						visible = visible,
+						unlocked = source(true),
+					})
 				end),
 			}),
 		}),

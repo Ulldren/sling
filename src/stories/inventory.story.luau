@@ -16,13 +16,16 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		const itemsTbl = {}
-		for _ = 1, 15 do
+		const function createSword()
 			const tool = Instance.new("Tool")
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"
-			table.insert(itemsTbl, tool)
+			return { item = tool }
+		end
+		const itemsTbl = {}
+		for _ = 1, 15 do
+			table.insert(itemsTbl, createSword())
 		end
 
 		vide.effect(function()

@@ -30,7 +30,7 @@ return {
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"
-			return tool
+			return { item = tool }
 		end
 
 		const function category(name: string): types.Category
@@ -64,7 +64,7 @@ return {
 			states.categories(getCategories())
 		end)
 
-		states.items({ [1] = createSword(), [11] = createSword(), [12] = createSword() })
+		states.items({ createSword(), createSword(), createSword() })
 
 		return app()
 	end,

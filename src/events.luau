@@ -24,6 +24,7 @@ return {
 	backpackEmpty = createEvent(),
 	backpackEquipped = createEvent() :: Event<types.InventoryItem>,
 	backpackUnequipped = createEvent() :: Event<types.InventoryItem>,
+	backpackAdded = createEvent() :: Event<types.InventoryItem>,
 	backpackRemoved = createEvent() :: Event<types.InventoryItem>,
 	inventoryOpened = createEvent(),
 	inventoryClosed = createEvent(),

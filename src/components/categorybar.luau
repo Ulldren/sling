@@ -2,6 +2,8 @@ const category = require("./category")
 const px = require("../utils/px")
 const states = require("../states")
 const vide = require("../../vide")
+const theme = require("../theme")
+const colorSpring = require("../utils/colorSpring")
 
 const create = vide.create
 const indexes = vide.indexes
@@ -21,23 +23,23 @@ const function categorybar()
 	return create("Frame")({
 		Name = "CategoryBar",
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundColor3 = states.attributes.BackgroundColor3,
+		BackgroundColor3 = colorSpring(theme.theme.backgroundColor),
 		Size = px.udim2(1, 0, 0, 35),
 
 		create("UICorner")({
-			CornerRadius = states.attributes.CornerRadius,
+			CornerRadius = theme.theme.cornerRadius,
 		}),
 
 		create("Frame")({
 			AnchorPoint = Vector2.new(0.5, 1),
-			BackgroundColor3 = states.attributes.BackgroundColor3,
+			BackgroundColor3 = colorSpring(theme.theme.backgroundColor),
 			Position = UDim2.fromScale(0.5, 1),
 			Size = UDim2.fromScale(1, 0.5),
 		}),
 
 		create("Frame")({
 			AnchorPoint = Vector2.new(0.5, 1),
-			BackgroundColor3 = Color3.new(1, 1, 1),
+			BackgroundColor3 = colorSpring(theme.theme.textColor),
 			BackgroundTransparency = 0.8,
 			Position = UDim2.fromScale(0.5, 1),
 			Size = px.udim2(1, 0, 0, 1),
@@ -45,7 +47,7 @@ const function categorybar()
 
 		create("Frame")({
 			AnchorPoint = Vector2.new(0, 1),
-			BackgroundColor3 = states.attributes.SelectionColor3,
+			BackgroundColor3 = colorSpring(theme.theme.textColor),
 			Position = spring(function()
 				return UDim2.fromScale((selectedCategoryIndex() - 1) / #states.categories(), 1)
 			end, 0.2),

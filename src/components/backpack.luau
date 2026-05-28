@@ -5,7 +5,6 @@ const vide = require("../../vide")
 
 const create = vide.create
 const effect = vide.effect
-const show = vide.show
 
 const function backpack()
 	effect(function()
@@ -23,7 +22,7 @@ const function backpack()
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 		}),
 
-		show(states.opened, inventory),
+		inventory(),
 		hotbar(),
 	})
 end

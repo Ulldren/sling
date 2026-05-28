@@ -1,8 +1,9 @@
 const UserInputService = game:GetService("UserInputService")
 
 const px = require("../utils/px")
-const states = require("../states")
 const vide = require("../../vide")
+const theme = require("../theme")
+const colorSpring = require("../utils/colorSpring")
 
 const create = vide.create
 
@@ -35,11 +36,11 @@ const function inventoryHint(props: Props)
 			AutomaticSize = Enum.AutomaticSize.XY,
 			BackgroundTransparency = 1,
 			FontFace = function()
-				return Font.new(states.attributes.FontFace().Family, Enum.FontWeight.Medium, Enum.FontStyle.Normal)
+				return Font.new(theme.theme.hintFontFace().Family, Enum.FontWeight.Medium, Enum.FontStyle.Normal)
 			end,
 			Text = props.text,
-			TextColor3 = states.attributes.TextColor3,
-			TextSize = px.scale(states.attributes.TextSize),
+			TextColor3 = colorSpring(theme.theme.hintTextColor),
+			TextSize = px.scale(theme.theme.hintTextSize),
 			TextXAlignment = Enum.TextXAlignment.Left,
 		}),
 	})

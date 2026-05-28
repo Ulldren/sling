@@ -2,6 +2,8 @@ const px = require("../utils/px")
 const states = require("../states")
 const types = require("../types")
 const vide = require("../../vide")
+const theme = require("../theme")
+const colorSpring = require("../utils/colorSpring")
 const cond = require("../utils/cond")
 
 const create = vide.create
@@ -26,14 +28,14 @@ const function category(props: Props)
 	return create("TextButton")({
 		BackgroundTransparency = 1,
 		FontFace = function()
-			return Font.new(states.attributes.FontFace().Family, Enum.FontWeight.Bold)
+			return Font.new(theme.theme.fontFace().Family, Enum.FontWeight.Bold)
 		end,
 		Size = spring(function()
 			const sizeX = 1 / #states.categories()
 			return UDim2.fromScale(sizeX, 1)
 		end, 0.2),
-		TextColor3 = Color3.new(1, 1, 1),
-		TextSize = px.scale(states.attributes.TextSize),
+		TextColor3 = colorSpring(theme.theme.textColor),
+		TextSize = px.scale(theme.theme.textSize),
 		Text = categoryName,
 		TextTransparency = spring(cond.ifelse(isSelected, 0, 0.4), 0.2),
 		TextTruncate = Enum.TextTruncate.AtEnd,
@@ -49,7 +51,7 @@ const function category(props: Props)
 		end, function()
 			return create("Frame")({
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = Color3.new(1, 1, 1),
+				BackgroundColor3 = colorSpring(theme.theme.textColor),
 				BackgroundTransparency = 0.8,
 				Position = UDim2.fromScale(1, 0.5),
 				Size = px.udim2(0, 1, 1, -8),
