@@ -236,6 +236,12 @@ end)
 
 ---
 
+## 🤝 Credits
+
+- Special thanks to [Purse](https://github.com/ryanlua/purse) by [ryanlua](https://github.com/ryanlua) for some utility implementations used in this project.
+
+---
+
 ## 📄 License
 
 VideBackpack is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
