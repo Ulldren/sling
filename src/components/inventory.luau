@@ -111,7 +111,7 @@ const function inventory(): Frame
 				}),
 
 				indexes(useInventoryItems(), function(entry, order)
-					local visible = derive(function()
+					const visible = derive(function()
 						const currentItem = entry().item
 						if not currentItem then
 							return false

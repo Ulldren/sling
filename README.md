@@ -87,7 +87,7 @@ VideBackpack.setTheme(VideBackpack.themes.white)
 VideBackpack.setTheme(VideBackpack.themes.default)
 
 -- Or create a custom theme
-local customTheme = {
+const customTheme = {
     backgroundColor = Color3.fromHex("#492a17ff"),
     textColor = Color3.fromHex("#e09e74ff"),
     ...
