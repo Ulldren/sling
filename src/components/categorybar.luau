@@ -1,17 +1,17 @@
-const category = require("./category")
-const px = require("../utils/px")
-const states = require("../states")
-const vide = require("../../vide")
-const theme = require("../theme")
-const colorSpring = require("../utils/colorSpring")
+local category = require("./category")
+local px = require("../utils/px")
+local states = require("../states")
+local vide = require("../../vide")
+local theme = require("../theme")
+local colorSpring = require("../utils/colorSpring")
 
-const create = vide.create
-const indexes = vide.indexes
-const spring = vide.spring
-const derive = vide.derive
+local create = vide.create
+local indexes = vide.indexes
+local spring = vide.spring
+local derive = vide.derive
 
-const function categorybar()
-	const selectedCategoryIndex = derive(function()
+local function categorybar()
+	local selectedCategoryIndex = derive(function()
 		for index, category in states.categories() do
 			if category.category == states.selectedCategory() then
 				return index

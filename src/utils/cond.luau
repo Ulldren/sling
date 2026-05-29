@@ -1,24 +1,24 @@
-const vide = require("../../vide")
+local vide = require("../../vide")
 
-const read = vide.read
+local read = vide.read
 
 type Can<T> = vide.Source<T> | T
 
-const function ifelse<T>(fn: Can<unknown>, a: Can<T>, b: Can<T>)
+local function ifelse<T>(fn: Can<unknown>, a: Can<T>, b: Can<T>)
 	return function()
 		return if read(fn) then read(a) else read(b)
 	end
 end
 
-const function nott(fn)
+local function nott(fn)
 	return function()
 		return not read(fn)
 	end
 end
 
-const function all(...)
-	const count = select("#", ...)
-	const args = { ... }
+local function all(...)
+	local count = select("#", ...)
+	local args = { ... }
 	return function()
 		for i = 1, count do
 			if not read(args[i]) then
@@ -29,9 +29,9 @@ const function all(...)
 	end
 end
 
-const function any(...)
-	const count = select("#", ...)
-	const args = { ... }
+local function any(...)
+	local count = select("#", ...)
+	local args = { ... }
 	return function()
 		for i = 1, count do
 			if read(args[i]) then
@@ -42,43 +42,43 @@ const function any(...)
 	end
 end
 
-const function len<T>(a: Can<{ T }>)
+local function len<T>(a: Can<{ T }>)
 	return function()
 		return #read(a)
 	end
 end
 
-const function eq<T>(a: Can<T>, b: Can<T>)
+local function eq<T>(a: Can<T>, b: Can<T>)
 	return function()
 		return read(a) == read(b)
 	end
 end
 
-const function neq<T>(a: Can<T>, b: Can<T>)
+local function neq<T>(a: Can<T>, b: Can<T>)
 	return function()
 		return read(a) ~= read(b)
 	end
 end
 
-const function gt(a: Can<number>, b: Can<number>)
+local function gt(a: Can<number>, b: Can<number>)
 	return function()
 		return read(a) > read(b) :: any
 	end
 end
 
-const function lt(a: Can<number>, b: Can<number>)
+local function lt(a: Can<number>, b: Can<number>)
 	return function()
 		return read(a) < read(b) :: any
 	end
 end
 
-const function gte(a: Can<number>, b: Can<number>)
+local function gte(a: Can<number>, b: Can<number>)
 	return function()
 		return read(a) >= read(b) :: any
 	end
 end
 
-const function lte(a: Can<number>, b: Can<number>)
+local function lte(a: Can<number>, b: Can<number>)
 	return function()
 		return read(a) <= read(b) :: any
 	end

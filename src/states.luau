@@ -1,8 +1,8 @@
-const settings = require("./settings")
-const types = require("./types")
-const vide = require("../vide")
+local settings = require("./settings")
+local types = require("./types")
+local vide = require("../vide")
 
-const source = vide.source
+local source = vide.source
 
 return {
 	enabled = source(true),

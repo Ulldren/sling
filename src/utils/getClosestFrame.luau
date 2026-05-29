@@ -1,4 +1,4 @@
-const function getClosestFrame(pos: Vector2, parent: Instance, maxDistance: number?): (GuiObject?, number?)
+local function getClosestFrame(pos: Vector2, parent: Instance, maxDistance: number?): (GuiObject?, number?)
 	local closestFrame: GuiObject? = nil
 	local minDistance: number = maxDistance or math.huge
 
@@ -7,8 +7,8 @@ const function getClosestFrame(pos: Vector2, parent: Instance, maxDistance: numb
 			continue
 		end
 
-		const center = frame.AbsolutePosition + frame.AbsoluteSize / 2
-		const distance = (pos - center).Magnitude
+		local center = frame.AbsolutePosition + frame.AbsoluteSize / 2
+		local distance = (pos - center).Magnitude
 
 		if distance < minDistance then
 			minDistance = distance

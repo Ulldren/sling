@@ -1,7 +1,7 @@
-const events = require("../events")
-const states = require("../states")
+local events = require("../events")
+local states = require("../states")
 
-const function openInventory()
+local function openInventory()
 	if states.opened() then
 		return
 	end

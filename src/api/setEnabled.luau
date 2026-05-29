@@ -1,6 +1,6 @@
-const states = require("../states")
+local states = require("../states")
 
-const function setEnabled(value: boolean)
+local function setEnabled(value: boolean)
 	states.enabled(value)
 end
 

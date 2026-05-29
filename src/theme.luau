@@ -1,17 +1,17 @@
-const types = require("./types")
-const vide = require("../vide")
-const themes = require("./themes")
+local types = require("./types")
+local vide = require("../vide")
+local themes = require("./themes")
 
-const source = vide.source
-const read = vide.read
+local source = vide.source
+local read = vide.read
 
-const default = themes.default
+local default = themes.default
 
-const selectedTheme: vide.Source<types.ThemeConfig> = source(default :: any)
+local selectedTheme: vide.Source<types.ThemeConfig> = source(default :: any)
 
 type Can<T> = types.Can<T>
 
-const function selectProp(prop: string, defaultProp: string?): () -> any
+local function selectProp(prop: string, defaultProp: string?): () -> any
 	return function()
 		return read(selectedTheme()[prop])
 			or read(default[prop])

@@ -1,6 +1,6 @@
-const vide = require("../../vide")
+local vide = require("../../vide")
 
-const function useEventListener<T>(event: RBXScriptSignal<T>, callback: (T) -> ()): ()
+local function useEventListener<T>(event: RBXScriptSignal<T>, callback: (T) -> ()): ()
 	vide.cleanup(event:Connect(callback))
 end
 

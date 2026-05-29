@@ -1,9 +1,9 @@
-const closeInventory = require("./api/closeInventory")
-const events = require("./events")
-const openInventory = require("./api/openInventory")
-const topbarplus = require("../topbarplus")
+local closeInventory = require("./api/closeInventory")
+local events = require("./events")
+local openInventory = require("./api/openInventory")
+local topbarplus = require("../topbarplus")
 
-const icon = topbarplus.new()
+local icon = topbarplus.new()
 icon:setName("VideBackpack")
 icon:modifyTheme({
 	{ "IconLabelContainer", "TargetWidth", 0 }, -- Force minimum width

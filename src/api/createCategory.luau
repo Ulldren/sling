@@ -1,5 +1,5 @@
-const states = require("../states")
-const types = require("../types")
+local states = require("../states")
+local types = require("../types")
 
 --[=[
 	Creates a new category for the inventory.
@@ -10,9 +10,9 @@ const types = require("../types")
 	end)
     ```
 ]=]
-const function createCategory(category: string, predicate: types.CategoryPredicate)
-	const state = states.categories()
-	const newCategory = { category = category, predicate = predicate }
+local function createCategory(category: string, predicate: types.CategoryPredicate)
+	local state = states.categories()
+	local newCategory = { category = category, predicate = predicate }
 	table.insert(state, newCategory)
 	states.categories(state)
 end

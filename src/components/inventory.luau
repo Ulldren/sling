@@ -1,32 +1,32 @@
-const categorybar = require("./categorybar")
-const px = require("../utils/px")
-const searchbar = require("./searchbar")
-const settings = require("../settings")
-const slot = require("./slot")
-const states = require("../states")
-const useInventoryItems = require("../hooks/useInventoryItems")
-const vide = require("../../vide")
-const theme = require("../theme")
-const usePreferredTransparency = require("../hooks/usePreferredTransparency")
-const colorSpring = require("../utils/colorSpring")
-const cond = require("../utils/cond")
+local categorybar = require("./categorybar")
+local px = require("../utils/px")
+local searchbar = require("./searchbar")
+local settings = require("../settings")
+local slot = require("./slot")
+local states = require("../states")
+local useInventoryItems = require("../hooks/useInventoryItems")
+local vide = require("../../vide")
+local theme = require("../theme")
+local usePreferredTransparency = require("../hooks/usePreferredTransparency")
+local colorSpring = require("../utils/colorSpring")
+local cond = require("../utils/cond")
 
-const derive = vide.derive
-const create = vide.create
-const source = vide.source
-const indexes = vide.indexes
-const show = vide.show
-const action = vide.action
+local derive = vide.derive
+local create = vide.create
+local source = vide.source
+local indexes = vide.indexes
+local show = vide.show
+local action = vide.action
 
-const function inventory(): Frame
-	const height = derive(function()
+local function inventory(): Frame
+	local height = derive(function()
 		return states.rows() * (settings.slotSize + 5) - 5
 	end)
-	const searchText = source("")
+	local searchText = source("")
 
-	const selectedIndex = derive(function()
-		const selectedCategory = states.selectedCategory()
-		const categories = states.categories()
+	local selectedIndex = derive(function()
+		local selectedCategory = states.selectedCategory()
+		local categories = states.categories()
 		for i, category in categories do
 			if category.category == selectedCategory then
 				return i
@@ -35,16 +35,16 @@ const function inventory(): Frame
 		return 0
 	end)
 
-	const searchTokens = derive(function()
-		const text = searchText():lower()
-		const tokens = {}
+	local searchTokens = derive(function()
+		local text = searchText():lower()
+		local tokens = {}
 		for token in text:gmatch("%S+") do
 			table.insert(tokens, token)
 		end
 		return tokens
 	end)
 
-	const preferredTransparency = usePreferredTransparency()
+	local preferredTransparency = usePreferredTransparency()
 
 	return create("Frame")({
 		Name = "Inventory",
@@ -111,24 +111,24 @@ const function inventory(): Frame
 				}),
 
 				indexes(useInventoryItems(), function(entry, order)
-					const visible = derive(function()
-						const currentItem = entry().item
+					local visible = derive(function()
+						local currentItem = entry().item
 						if not currentItem then
 							return false
 						end
 
-						const selectedIdx = selectedIndex()
-						const selectedCategory = states.categories()[selectedIdx]
+						local selectedIdx = selectedIndex()
+						local selectedCategory = states.categories()[selectedIdx]
 						if selectedCategory and not selectedCategory.predicate(currentItem) then
 							return false
 						end
 
-						const tokens = searchTokens()
+						local tokens = searchTokens()
 						if #tokens == 0 then
 							return true
 						end
 
-						const name = currentItem.Name:lower()
+						local name = currentItem.Name:lower()
 						local tooltipText = ""
 						if currentItem:IsA("Tool") then
 							tooltipText = (currentItem :: Tool).ToolTip:lower()

@@ -1,21 +1,21 @@
-const px = require("../utils/px")
-const vide = require("../../vide")
-const theme = require("../theme")
-const colorSpring = require("../utils/colorSpring")
-const cond = require("../utils/cond")
+local px = require("../utils/px")
+local vide = require("../../vide")
+local theme = require("../theme")
+local colorSpring = require("../utils/colorSpring")
+local cond = require("../utils/cond")
 
-const create = vide.create
-const spring = vide.spring
-const source = vide.source
-const effect = vide.effect
+local create = vide.create
+local spring = vide.spring
+local source = vide.source
+local effect = vide.effect
 
 type Props = {
 	text: vide.Source<string>,
 	visible: vide.Source<boolean>?,
 }
 
-const function tooltip(props: Props)
-	const visible: vide.Source<boolean> = source(false)
+local function tooltip(props: Props)
+	local visible: vide.Source<boolean> = source(false)
 
 	if props.visible then
 		effect(function()

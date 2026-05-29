@@ -1,17 +1,17 @@
-const states = require("../states")
-const vide = require("../../vide")
+local states = require("../states")
+local vide = require("../../vide")
 
-const untrack = vide.untrack
+local untrack = vide.untrack
 
-const function swap(idxA: number, idxB: number)
+local function swap(idxA: number, idxB: number)
 	if not idxA or not idxB then
 		return
 	end
-	const slots = untrack(states.slots)
-	const newItems = table.clone(untrack(states.items))
+	local slots = untrack(states.slots)
+	local newItems = table.clone(untrack(states.items))
 
-	const entryA = newItems[idxA] or { item = nil }
-	const entryB = newItems[idxB] or { item = nil }
+	local entryA = newItems[idxA] or { item = nil }
+	local entryB = newItems[idxB] or { item = nil }
 
 	newItems[idxA], newItems[idxB] = entryB, entryA
 
@@ -23,7 +23,7 @@ const function swap(idxA: number, idxB: number)
 	-- Shift items down in the inventory to close gaps
 	local invIndex = slots + 1
 	for i = invIndex, #newItems do
-		const e = newItems[i]
+		local e = newItems[i]
 		if e and e.item then
 			if i > invIndex then
 				newItems[i] = nil
@@ -37,30 +37,30 @@ const function swap(idxA: number, idxB: number)
 	states.items(newItems)
 end
 
-const function moveToInventory(idx: number)
+local function moveToInventory(idx: number)
 	if not idx then
 		return
 	end
-	const slots = untrack(states.slots)
+	local slots = untrack(states.slots)
 	if idx > slots then
 		return
 	end
-	const items = untrack(states.items)
-	const itemToMove = items[idx]
+	local items = untrack(states.items)
+	local itemToMove = items[idx]
 	if not itemToMove or itemToMove.item == nil then
 		return
 	end
 	swap(idx, #items + 1)
 end
 
-const function moveToHotbar(idx: number)
+local function moveToHotbar(idx: number)
 	if not idx then
 		return
 	end
-	const slots = untrack(states.slots)
-	const currentItems = untrack(states.items)
+	local slots = untrack(states.slots)
+	local currentItems = untrack(states.items)
 	for i = 1, slots do
-		const entry = currentItems[i]
+		local entry = currentItems[i]
 		if not entry or entry.item == nil then
 			swap(idx, i)
 			return

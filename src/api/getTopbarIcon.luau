@@ -1,6 +1,6 @@
-const topbarplus = require("../../topbarplus")
+local topbarplus = require("../../topbarplus")
 
-const function getTopbarIcon()
+local function getTopbarIcon()
 	return topbarplus.getIcon("VideBackpack") :: topbarplus.Icon?
 end
 

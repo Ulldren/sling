@@ -1,4 +1,4 @@
-const types = require("./types")
+local types = require("./types")
 
 type ThemeConfig = types.ThemeConfig
 

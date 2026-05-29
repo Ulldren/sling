@@ -1,15 +1,15 @@
-const backpack = require("./backpack")
-const inventoryHint = require("./inventoryHint")
-const settings = require("../settings")
-const states = require("../states")
-const vide = require("../../vide")
-const cond = require("../utils/cond")
+local backpack = require("./backpack")
+local inventoryHint = require("./inventoryHint")
+local settings = require("../settings")
+local states = require("../states")
+local vide = require("../../vide")
+local cond = require("../utils/cond")
 
-const create = vide.create
-const show = vide.show
-const action = vide.action
+local create = vide.create
+local show = vide.show
+local action = vide.action
 
-const function app()
+local function app()
 	return create("Frame")({
 		Name = "App",
 		Size = UDim2.fromScale(1, 1),

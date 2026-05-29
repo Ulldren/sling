@@ -1,6 +1,6 @@
-const states = require("../states")
+local states = require("../states")
 
-const function isInventoryOpen()
+local function isInventoryOpen()
 	return states.opened()
 end
 

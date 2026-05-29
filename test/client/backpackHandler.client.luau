@@ -1,9 +1,9 @@
-const backpack = require("../VideBackpackLoader/VideBackpack")
+local backpack = require("../VideBackpackLoader/VideBackpack")
 
 -- Set theme
 
 task.spawn(function()
-	const themes = { "default", "white" }
+	local themes = { "default", "white" }
 	local index = 1
 	while true do
 		task.wait(10)

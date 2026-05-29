@@ -1,29 +1,29 @@
-const GuiService = game:GetService("GuiService")
-const UserInputService = game:GetService("UserInputService")
+local GuiService = game:GetService("GuiService")
+local UserInputService = game:GetService("UserInputService")
 
-const checkBounds = require("../utils/checkBounds")
-const getClosestFrame = require("../utils/getClosestFrame")
-const px = require("../utils/px")
-const settings = require("../settings")
-const states = require("../states")
-const tooltip = require("./tooltip")
-const types = require("../types")
-const usePreferredInput = require("../hooks/usePreferredInput")
-const vide = require("../../vide")
-const theme = require("../theme")
-const usePreferredTransparency = require("../hooks/usePreferredTransparency")
-const colorSpring = require("../utils/colorSpring")
-const cond = require("../utils/cond")
-const slotUtils = require("../utils/slotUtils")
+local checkBounds = require("../utils/checkBounds")
+local getClosestFrame = require("../utils/getClosestFrame")
+local px = require("../utils/px")
+local settings = require("../settings")
+local states = require("../states")
+local tooltip = require("./tooltip")
+local types = require("../types")
+local usePreferredInput = require("../hooks/usePreferredInput")
+local vide = require("../../vide")
+local theme = require("../theme")
+local usePreferredTransparency = require("../hooks/usePreferredTransparency")
+local colorSpring = require("../utils/colorSpring")
+local cond = require("../utils/cond")
+local slotUtils = require("../utils/slotUtils")
 
-const create = vide.create
-const show = vide.show
-const source = vide.source
-const effect = vide.effect
-const cleanup = vide.cleanup
-const action = vide.action
-const untrack = vide.untrack
-const derive = vide.derive
+local create = vide.create
+local show = vide.show
+local source = vide.source
+local effect = vide.effect
+local cleanup = vide.cleanup
+local action = vide.action
+local untrack = vide.untrack
+local derive = vide.derive
 
 type Props = {
 	entry: vide.Source<types.ItemEntry>,
@@ -33,32 +33,32 @@ type Props = {
 	inHotbar: boolean?,
 }
 
-const function slot(props: Props): Frame
-	const entry = props.entry
-	const item = vide.derive(function()
+local function slot(props: Props): Frame
+	local entry = props.entry
+	local item = vide.derive(function()
 		return entry().item
 	end)
 
-	const isHovering = source(false)
-	const isDragging = source(false)
+	local isHovering = source(false)
+	local isDragging = source(false)
 
-	const slotRef = source(nil :: TextButton?)
-	const slotFrameRef = source(nil :: Frame?)
+	local slotRef = source(nil :: TextButton?)
+	local slotFrameRef = source(nil :: Frame?)
 
-	const slotSize = px.offset(settings.slotSize, settings.slotSize)
-	const preferredInput = usePreferredInput()
-	const preferredTransparency = usePreferredTransparency()
-	const backgroundTransparency = vide.derive(function()
+	local slotSize = px.offset(settings.slotSize, settings.slotSize)
+	local preferredInput = usePreferredInput()
+	local preferredTransparency = usePreferredTransparency()
+	local backgroundTransparency = vide.derive(function()
 		return theme.theme.slotBackgroundTransparency() * preferredTransparency()
 	end)
-	const zindex = vide.derive(cond.ifelse(isDragging, 2, 1))
+	local zindex = vide.derive(cond.ifelse(isDragging, 2, 1))
 
-	const itemName = source("")
-	const itemImage = source("")
-	const tooltipText = source("")
+	local itemName = source("")
+	local itemImage = source("")
+	local tooltipText = source("")
 
 	effect(function()
-		const i = item()
+		local i = item()
 		if i == nil then
 			itemName("")
 			itemImage("")
@@ -72,7 +72,7 @@ const function slot(props: Props): Frame
 		end))
 
 		if i:IsA("Tool") then
-			const tool = i :: Tool
+			local tool = i :: Tool
 			itemImage(tool.TextureId)
 			tooltipText(tool.ToolTip)
 			cleanup(tool:GetPropertyChangedSignal("TextureId"):Connect(function()
@@ -87,14 +87,14 @@ const function slot(props: Props): Frame
 		end
 	end)
 
-	const getSourceIdx = derive(function()
-		const e = props.entry()
+	local getSourceIdx = derive(function()
+		local e = props.entry()
 		return table.find(states.items(), e) :: number
 	end)
 
 	local lastClickTime = 0
 
-	const function getSlotNumber(): string
+	local function getSlotNumber(): string
 		if props.order >= 1 and props.order < 10 then
 			return tostring(props.order)
 		elseif props.order == 10 then
@@ -103,21 +103,21 @@ const function slot(props: Props): Frame
 		return ""
 	end
 
-	const function swap(targetIdx: number)
-		const sourceIdx = untrack(getSourceIdx)
-		const currentItems = untrack(states.items)
-		const itemA = currentItems[sourceIdx]
+	local function swap(targetIdx: number)
+		local sourceIdx = untrack(getSourceIdx)
+		local currentItems = untrack(states.items)
+		local itemA = currentItems[sourceIdx]
 		if not itemA or itemA.item == nil then
 			return
 		end
 		slotUtils.swap(sourceIdx, targetIdx)
 	end
 
-	const function moveToInventory()
+	local function moveToInventory()
 		slotUtils.moveToInventory(getSourceIdx())
 	end
 
-	const function moveToHotbar()
+	local function moveToHotbar()
 		slotUtils.moveToHotbar(getSourceIdx())
 	end
 
@@ -133,7 +133,7 @@ const function slot(props: Props): Frame
 		end
 
 		if input.KeyCode == settings.gamepadRemoveKey then
-			const slotBtn = slotRef()
+			local slotBtn = slotRef()
 			if slotBtn and GuiService.SelectedObject == slotBtn then
 				moveToInventory()
 			end
@@ -166,9 +166,9 @@ const function slot(props: Props): Frame
 			action(slotRef) :: any,
 
 			MouseButton1Click = function()
-				const sourceIdx = untrack(getSourceIdx)
+				local sourceIdx = untrack(getSourceIdx)
 				if preferredInput() == Enum.PreferredInput.Gamepad and untrack(states.opened) then
-					const activeSwapIdx = untrack(states.gamepadSwapIdx)
+					local activeSwapIdx = untrack(states.gamepadSwapIdx)
 					if activeSwapIdx then
 						states.gamepadSwapIdx(nil)
 						if activeSwapIdx ~= sourceIdx then
@@ -181,11 +181,11 @@ const function slot(props: Props): Frame
 					end
 				end
 
-				const i = untrack(item)
+				local i = untrack(item)
 				if not i then
 					return
 				end
-				const now = os.clock()
+				local now = os.clock()
 				if now - lastClickTime < settings.doubleClickTime then
 					lastClickTime = 0
 
@@ -206,13 +206,13 @@ const function slot(props: Props): Frame
 			DragBegin = function()
 				isDragging(true)
 
-				const slot = slotRef()
-				const app = states.appRef()
+				local slot = slotRef()
+				local app = states.appRef()
 				if not slot or not app then
 					return
 				end
 				if not props.inHotbar then
-					const newPosition = UDim2.new(
+					local newPosition = UDim2.new(
 						0,
 						slot.AbsolutePosition.X - app.AbsolutePosition.X,
 						0,
@@ -225,8 +225,8 @@ const function slot(props: Props): Frame
 			DragStopped = function(x: number, y: number)
 				isDragging(false)
 
-				const slot = slotRef()
-				const slotFrame = slotFrameRef()
+				local slot = slotRef()
+				local slotFrame = slotFrameRef()
 				if not slot or not slotFrame then
 					return
 				end
@@ -236,17 +236,17 @@ const function slot(props: Props): Frame
 				end
 				slot.Position = UDim2.new()
 
-				const abpos = Vector2.new(x, y)
-				const hotbar = states.hotbarRef()
+				local abpos = Vector2.new(x, y)
+				local hotbar = states.hotbarRef()
 
 				local insideHotbar = false
 
 				if hotbar then
 					insideHotbar = checkBounds(abpos, hotbar)
 					if insideHotbar then
-						const closest = getClosestFrame(abpos, hotbar, settings.slotSize / 2)
+						local closest = getClosestFrame(abpos, hotbar, settings.slotSize / 2)
 						if closest and closest ~= slotFrame then
-							const targetOrder = closest.LayoutOrder
+							local targetOrder = closest.LayoutOrder
 							swap(targetOrder)
 							return
 						end

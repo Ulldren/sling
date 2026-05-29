@@ -1,11 +1,11 @@
 --!nonstrict
-const hotbar = require("../components/hotbar")
-const states = require("../states")
-const vide = require("../../vide")
+local hotbar = require("../components/hotbar")
+local states = require("../states")
+local vide = require("../../vide")
 
-const effect = vide.effect
+local effect = vide.effect
 
-const controls = {
+local controls = {
 	opened = true,
 	slots = 10,
 	keyboardHint = true,
@@ -19,8 +19,8 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		const function createSword()
-			const tool = Instance.new("Tool")
+		local function createSword()
+			local tool = Instance.new("Tool")
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"

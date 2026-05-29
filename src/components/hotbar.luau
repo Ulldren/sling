@@ -1,21 +1,21 @@
-const px = require("../utils/px")
-const settings = require("../settings")
-const slot = require("./slot")
-const states = require("../states")
-const useHotbarItems = require("../hooks/useHotbarItems")
-const vide = require("../../vide")
-const cond = require("../utils/cond")
+local px = require("../utils/px")
+local settings = require("../settings")
+local slot = require("./slot")
+local states = require("../states")
+local useHotbarItems = require("../hooks/useHotbarItems")
+local vide = require("../../vide")
+local cond = require("../utils/cond")
 
-const create = vide.create
-const indexes = vide.indexes
-const derive = vide.derive
-const show = vide.show
-const changed = vide.changed
-const action = vide.action
+local create = vide.create
+local indexes = vide.indexes
+local derive = vide.derive
+local show = vide.show
+local changed = vide.changed
+local action = vide.action
 
-const HOTBAR_PADDING = 5
+local HOTBAR_PADDING = 5
 
-const function hotbar(): Frame
+local function hotbar(): Frame
 	return create("Frame")({
 		Name = "Hotbar",
 		AutomaticSize = Enum.AutomaticSize.X,
@@ -44,7 +44,7 @@ const function hotbar(): Frame
 		}),
 
 		indexes(useHotbarItems(), function(entry, order)
-			const item = derive(function()
+			local item = derive(function()
 				return entry().item
 			end)
 			return show(cond.any(states.opened, item), function()

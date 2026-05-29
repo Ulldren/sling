@@ -1,4 +1,4 @@
-const types = require("./types")
+local types = require("./types")
 
 type Listener<Args... = ...any> = (Args...) -> ()
 type Event<Args... = ...any> = {
@@ -6,8 +6,8 @@ type Event<Args... = ...any> = {
 	on: (listener: Listener<Args...>) -> () -> (),
 }
 
-const function createEvent<Args...>()
-	const callbacks: { Listener<Args...> } = {}
+local function createEvent<Args...>()
+	local callbacks: { Listener<Args...> } = {}
 
 	return table.freeze({
 		callbacks = callbacks,

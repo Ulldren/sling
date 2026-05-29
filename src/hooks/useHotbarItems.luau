@@ -1,14 +1,14 @@
-const states = require("../states")
-const vide = require("../../vide")
+local states = require("../states")
+local vide = require("../../vide")
 
-const function useHotbarItems()
+local function useHotbarItems()
 	return vide.derive(function()
-		const slots = states.slots()
-		const items = states.items()
+		local slots = states.slots()
+		local items = states.items()
 
-		const newHotbar = table.create(slots)
+		local newHotbar = table.create(slots)
 		for i = 1, slots do
-			const entry = items[i] or { item = nil }
+			local entry = items[i] or { item = nil }
 			newHotbar[i] = entry
 		end
 		return newHotbar

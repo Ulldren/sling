@@ -1,9 +1,9 @@
 --!nonstrict
-const inventory = require("../components/inventory")
-const states = require("../states")
-const vide = require("../../vide")
+local inventory = require("../components/inventory")
+local states = require("../states")
+local vide = require("../../vide")
 
-const controls = {
+local controls = {
 	width = 655,
 	rows = 4,
 }
@@ -16,14 +16,14 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		const function createSword()
-			const tool = Instance.new("Tool")
+		local function createSword()
+			local tool = Instance.new("Tool")
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"
 			return { item = tool }
 		end
-		const itemsTbl = {}
+		local itemsTbl = {}
 		for _ = 1, 15 do
 			table.insert(itemsTbl, createSword())
 		end

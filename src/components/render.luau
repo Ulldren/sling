@@ -1,32 +1,32 @@
-const GuiService = game:GetService("GuiService")
-const Players = game:GetService("Players")
-const StarterGui = game:GetService("StarterGui")
-const UserInputService = game:GetService("UserInputService")
+local GuiService = game:GetService("GuiService")
+local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
 
-const vide = require("../../vide")
-const app = require("./app")
-const closeInventory = require("../api/closeInventory")
-const createCategory = require("../api/createCategory")
-const events = require("../events")
-const px = require("../utils/px")
-const setEnabled = require("../api/setEnabled")
-const settings = require("../settings")
-const states = require("../states")
-const types = require("../types")
-const usePreferredInput = require("../hooks/usePreferredInput")
+local vide = require("../../vide")
+local app = require("./app")
+local closeInventory = require("../api/closeInventory")
+local createCategory = require("../api/createCategory")
+local events = require("../events")
+local px = require("../utils/px")
+local setEnabled = require("../api/setEnabled")
+local settings = require("../settings")
+local states = require("../states")
+local types = require("../types")
+local usePreferredInput = require("../hooks/usePreferredInput")
 
-const mount = vide.mount
-const cleanup = vide.cleanup
-const create = vide.create
-const effect = vide.effect
-const untrack = vide.untrack
+local mount = vide.mount
+local cleanup = vide.cleanup
+local create = vide.create
+local effect = vide.effect
+local untrack = vide.untrack
 
-const player = Players.LocalPlayer
-const playerGui = player:WaitForChild("PlayerGui")
+local player = Players.LocalPlayer
+local playerGui = player:WaitForChild("PlayerGui")
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
-const KEY_TO_SLOT = {
+local KEY_TO_SLOT = {
 	[Enum.KeyCode.One] = 1,
 	[Enum.KeyCode.Two] = 2,
 	[Enum.KeyCode.Three] = 3,
@@ -39,7 +39,7 @@ const KEY_TO_SLOT = {
 	[Enum.KeyCode.Zero] = 10,
 }
 
-const GAMEPAD_INPUT_TYPES = {
+local GAMEPAD_INPUT_TYPES = {
 	[Enum.UserInputType.Gamepad1] = true,
 	[Enum.UserInputType.Gamepad2] = true,
 	[Enum.UserInputType.Gamepad3] = true,
@@ -50,7 +50,7 @@ const GAMEPAD_INPUT_TYPES = {
 	[Enum.UserInputType.Gamepad8] = true,
 }
 
-const function render()
+local function render()
 	return mount(function()
 		cleanup(GuiService.MenuOpened:Connect(function()
 			setEnabled(false)
@@ -59,29 +59,29 @@ const function render()
 			setEnabled(true)
 		end))
 
-		const function handleKeyboardControls(input: InputObject)
+		local function handleKeyboardControls(input: InputObject)
 			-- Change slot selection
-			const slotNum = KEY_TO_SLOT[input.KeyCode]
+			local slotNum = KEY_TO_SLOT[input.KeyCode]
 			if slotNum and slotNum <= states.slots() then
-				const entry = untrack(states.items)[slotNum]
+				local entry = untrack(states.items)[slotNum]
 				if entry and entry.item then
 					states.equippedItem(if entry.item == untrack(states.equippedItem) then nil else entry.item)
 				end
 			end
 		end
 
-		const function handleGamepadControls(input: InputObject)
+		local function handleGamepadControls(input: InputObject)
 			-- Change slot selection
 			if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
-				const moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
-				const slots = untrack(states.slots)
-				const items = untrack(states.items)
-				const equipped = untrack(states.equippedItem)
+				local moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
+				local slots = untrack(states.slots)
+				local items = untrack(states.items)
+				local equipped = untrack(states.equippedItem)
 
 				local equippedIdx = nil
 				if equipped then
 					for idx = 1, slots do
-						const entry = items[idx]
+						local entry = items[idx]
 						if entry and entry.item == equipped then
 							equippedIdx = idx
 							break
@@ -107,10 +107,10 @@ const function render()
 					end
 					states.equippedItem(if hitEdge then nil else items[newPos].item)
 				else
-					const startIdx = if moveDirection == 1 then 1 else slots
-					const endIdx = if moveDirection == 1 then slots else 1
+					local startIdx = if moveDirection == 1 then 1 else slots
+					local endIdx = if moveDirection == 1 then slots else 1
 					for idx = startIdx, endIdx, moveDirection do
-						const entry = items[idx]
+						local entry = items[idx]
 						if entry and entry.item then
 							states.equippedItem(entry.item)
 							break
@@ -127,7 +127,7 @@ const function render()
 
 		cleanup(UserInputService.InputBegan:Connect(function(input, gameProcessedEvent)
 			if not gameProcessedEvent then
-				const inputType = input.UserInputType
+				local inputType = input.UserInputType
 				if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
 					closeInventory()
 				elseif inputType == Enum.UserInputType.Keyboard then
@@ -138,9 +138,9 @@ const function render()
 			end
 		end))
 
-		const function updateBackpackSize()
-			const screenOrientation = playerGui.CurrentScreenOrientation
-			const viewportSize = GuiService.ViewportDisplaySize
+		local function updateBackpackSize()
+			local screenOrientation = playerGui.CurrentScreenOrientation
+			local viewportSize = GuiService.ViewportDisplaySize
 
 			if screenOrientation == Enum.ScreenOrientation.Portrait then
 				states.slots(settings.hotbarSlotsPortrait)
@@ -158,17 +158,17 @@ const function render()
 		cleanup(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"):Connect(updateBackpackSize))
 		cleanup(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"):Connect(updateBackpackSize))
 
-		const function isItem(instance: Instance): boolean
+		local function isItem(instance: Instance): boolean
 			return instance:IsA("Tool") or instance:IsA("HopperBin")
 		end
 
-		const function refreshItems()
-			const currentItems = untrack(states.items)
-			const activeItems = {}
+		local function refreshItems()
+			local currentItems = untrack(states.items)
+			local activeItems = {}
 			local equipped = nil
 
 			-- Find all items in character and backpack
-			const character = player.Character
+			local character = player.Character
 			if character then
 				for _, child in character:GetChildren() do
 					if isItem(child) then
@@ -177,7 +177,7 @@ const function render()
 					end
 				end
 			end
-			const backpack = player:FindFirstChildOfClass("Backpack")
+			local backpack = player:FindFirstChildOfClass("Backpack")
 			if backpack then
 				for _, child in backpack:GetChildren() do
 					if isItem(child) then
@@ -187,9 +187,9 @@ const function render()
 			end
 
 			local newCount = 0
-			const newList = {}
+			local newList = {}
 			for i, entry in currentItems do
-				const item = entry.item
+				local item = entry.item
 				if item and activeItems[item] then
 					newList[i] = entry
 					activeItems[item] = nil
@@ -223,7 +223,7 @@ const function render()
 				end
 			end
 
-			const slots = untrack(states.slots)
+			local slots = untrack(states.slots)
 			for i = 1, slots do
 				if newList[i] == nil then
 					newList[i] = { item = nil }
@@ -254,25 +254,25 @@ const function render()
 			end
 		end
 
-		const function onChildAdded(child: Instance)
+		local function onChildAdded(child: Instance)
 			if isItem(child) then
 				refreshItems()
 			end
 		end
 
-		const function onChildRemoved(child: Instance)
+		local function onChildRemoved(child: Instance)
 			if isItem(child) then
 				refreshItems()
 			end
 		end
 
 		effect(function()
-			const tool = states.equippedItem()
-			const character = player.Character
+			local tool = states.equippedItem()
+			local character = player.Character
 			if not character then
 				return
 			end
-			const humanoid = character:FindFirstChildOfClass("Humanoid")
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
 			if not humanoid then
 				return
 			end
@@ -297,7 +297,7 @@ const function render()
 
 		local lastEquipped: types.InventoryItem? = nil
 		effect(function()
-			const currentEquipped = states.equippedItem()
+			local currentEquipped = states.equippedItem()
 			if currentEquipped ~= lastEquipped then
 				if lastEquipped then
 					for _, listener in events.backpackUnequipped.callbacks do
@@ -313,16 +313,16 @@ const function render()
 			end
 		end)
 
-		const characterConnections: { RBXScriptConnection } = {}
+		local characterConnections: { RBXScriptConnection } = {}
 
-		const function disconnectCharacter()
+		local function disconnectCharacter()
 			for _, conn in characterConnections do
 				conn:Disconnect()
 			end
 			table.clear(characterConnections)
 		end
 
-		const function connectCharacter(character: Model)
+		local function connectCharacter(character: Model)
 			for _, child in character:GetChildren() do
 				if isItem(child) then
 					states.equippedItem(child :: types.InventoryItem)
@@ -333,7 +333,7 @@ const function render()
 			table.insert(characterConnections, character.ChildAdded:Connect(onChildAdded))
 			table.insert(characterConnections, character.ChildRemoved:Connect(onChildRemoved))
 
-			const backpack = player:WaitForChild("Backpack")
+			local backpack = player:WaitForChild("Backpack")
 			table.insert(characterConnections, backpack.ChildAdded:Connect(onChildAdded))
 			table.insert(characterConnections, backpack.ChildRemoved:Connect(onChildRemoved))
 		end
@@ -351,7 +351,7 @@ const function render()
 
 		cleanup(disconnectCharacter)
 
-		const preferredInput = usePreferredInput()
+		local preferredInput = usePreferredInput()
 		effect(function()
 			states.keyboardHint(preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
 			states.gamepadHint(preferredInput() == Enum.PreferredInput.Gamepad)

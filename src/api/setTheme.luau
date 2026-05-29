@@ -1,7 +1,7 @@
-const theme = require("../theme")
-const types = require("../types")
+local theme = require("../theme")
+local types = require("../types")
 
-const function setTheme(config: types.ThemeConfig)
+local function setTheme(config: types.ThemeConfig)
 	theme.selected(config)
 end
 

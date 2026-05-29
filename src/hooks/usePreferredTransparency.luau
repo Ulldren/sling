@@ -1,10 +1,10 @@
-const GuiService = game:GetService("GuiService")
+local GuiService = game:GetService("GuiService")
 
-const useEventListener = require("./useEventListener")
-const vide = require("../../vide")
+local useEventListener = require("./useEventListener")
+local vide = require("../../vide")
 
-const function usePreferredTransparency(): () -> number
-	const preferredTransparency = vide.source(GuiService.PreferredTransparency)
+local function usePreferredTransparency(): () -> number
+	local preferredTransparency = vide.source(GuiService.PreferredTransparency)
 
 	useEventListener(GuiService:GetPropertyChangedSignal("PreferredTransparency"), function()
 		preferredTransparency(GuiService.PreferredTransparency)

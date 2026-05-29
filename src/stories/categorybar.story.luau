@@ -1,14 +1,14 @@
-const categorybar = require("../components/categorybar")
-const states = require("../states")
-const types = require("../types")
-const vide = require("../../vide")
+local categorybar = require("../components/categorybar")
+local states = require("../states")
+local types = require("../types")
+local vide = require("../../vide")
 
-const apply = vide.apply
+local apply = vide.apply
 
 return {
 	vide = vide,
 	story = function()
-		const function category(name: string): types.Category
+		local function category(name: string): types.Category
 			return {
 				category = name,
 				icon = "rbxasset://textures/ui/TopBar/inventoryOn.png",

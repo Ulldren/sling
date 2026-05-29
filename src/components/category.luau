@@ -1,27 +1,27 @@
-const px = require("../utils/px")
-const states = require("../states")
-const types = require("../types")
-const vide = require("../../vide")
-const theme = require("../theme")
-const colorSpring = require("../utils/colorSpring")
-const cond = require("../utils/cond")
+local px = require("../utils/px")
+local states = require("../states")
+local types = require("../types")
+local vide = require("../../vide")
+local theme = require("../theme")
+local colorSpring = require("../utils/colorSpring")
+local cond = require("../utils/cond")
 
-const create = vide.create
-const derive = vide.derive
-const show = vide.show
-const spring = vide.spring
+local create = vide.create
+local derive = vide.derive
+local show = vide.show
+local spring = vide.spring
 
 type Props = {
 	category: () -> types.Category,
 }
 
-const function category(props: Props)
-	const category = props.category
+local function category(props: Props)
+	local category = props.category
 
-	const categoryName = derive(function()
+	local categoryName = derive(function()
 		return category().category
 	end)
-	const isSelected = derive(function()
+	local isSelected = derive(function()
 		return categoryName() == states.selectedCategory()
 	end)
 
@@ -31,7 +31,7 @@ const function category(props: Props)
 			return Font.new(theme.theme.fontFace().Family, Enum.FontWeight.Bold)
 		end,
 		Size = spring(function()
-			const sizeX = 1 / #states.categories()
+			local sizeX = 1 / #states.categories()
 			return UDim2.fromScale(sizeX, 1)
 		end, 0.2),
 		TextColor3 = colorSpring(theme.theme.textColor),
@@ -46,7 +46,7 @@ const function category(props: Props)
 		end,
 
 		show(function()
-			const categories = states.categories()
+			local categories = states.categories()
 			return categories[#categories] ~= category()
 		end, function()
 			return create("Frame")({

@@ -1,15 +1,15 @@
-const states = require("../states")
-const vide = require("../../vide")
+local states = require("../states")
+local vide = require("../../vide")
 
-const function useInventoryItems()
+local function useInventoryItems()
 	return vide.derive(function()
-		const slots = states.slots()
-		const items = states.items()
+		local slots = states.slots()
+		local items = states.items()
 
-		const newInventory = {}
+		local newInventory = {}
 		local count = 0
 		for i = slots + 1, #items do
-			const entry = items[i]
+			local entry = items[i]
 			if entry and entry.item ~= nil then
 				count += 1
 				newInventory[count] = entry

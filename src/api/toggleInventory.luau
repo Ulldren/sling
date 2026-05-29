@@ -1,8 +1,8 @@
-const closeInventory = require("./closeInventory")
-const isInventoryOpen = require("./isInventoryOpen")
-const openInventory = require("./openInventory")
+local closeInventory = require("./closeInventory")
+local isInventoryOpen = require("./isInventoryOpen")
+local openInventory = require("./openInventory")
 
-const function toggleInventory()
+local function toggleInventory()
 	if isInventoryOpen() then
 		closeInventory()
 	else
