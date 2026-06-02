@@ -421,10 +421,6 @@ local function useBackpack()
 	createCategory("All", function()
 		return true
 	end)
-
-	effect(function()
-		print(states.items())
-	end)
 end
 
 return useBackpack
