@@ -1,7 +1,3 @@
-export type ItemEntry = {
-	item: BackpackItem?,
-}
-
 export type CategoryPredicate = (item: BackpackItem) -> boolean
 export type Category = {
 	category: string,

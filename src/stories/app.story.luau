@@ -30,7 +30,7 @@ return {
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"
-			return { item = tool }
+			return tool
 		end
 
 		local function category(name: string): types.Category

@@ -4,7 +4,6 @@ local px = require("../utils/px")
 local states = require("../states")
 local theme = require("../theme")
 local tooltip = require("./tooltip")
-local types = require("../types")
 local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local useSlot = require("../hooks/backpack/useSlot")
 local vide = require("../../vide")
@@ -15,7 +14,7 @@ local action = vide.action
 local derive = vide.derive
 
 type Props = {
-	entry: vide.Source<types.ItemEntry>,
+	item: vide.Source<BackpackItem?>,
 	order: number,
 	visible: vide.Source<boolean>?,
 	unlocked: vide.Source<boolean>?,
@@ -24,7 +23,7 @@ type Props = {
 
 local function slot(props: Props): Frame
 	local s = useSlot({
-		entry = props.entry,
+		item = props.item,
 		order = props.order,
 		inHotbar = props.inHotbar,
 	})

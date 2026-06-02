@@ -3,12 +3,22 @@ local vide = require("../../vide")
 
 local untrack = vide.untrack
 
+local function getMaxIndex(items: typeof(states.items())?): number
+	local currentItems = items or untrack(states.items)
+	local maxIndex = 0
+	for idx in currentItems do
+		if idx > maxIndex then
+			maxIndex = idx
+		end
+	end
+	return maxIndex
+end
+
 local function findLowestEmptyHotbarSlot(): number?
 	local slots = untrack(states.slots)
-	local currentItems = untrack(states.items)
+	local items = untrack(states.items)
 	for i = 1, slots do
-		local entry = currentItems[i]
-		if not entry or entry.item == nil then
+		if not items[i] then
 			return i
 		end
 	end
@@ -17,14 +27,15 @@ end
 
 local function findLowestEmptyInventorySlot(): number
 	local slots = untrack(states.slots)
-	local currentItems = untrack(states.items)
-	for i = slots + 1, #currentItems do
-		local entry = currentItems[i]
-		if not entry or entry.item == nil then
+	local items = untrack(states.items)
+	local initialCount = slots + 1
+	local maxItems = math.max(getMaxIndex(), initialCount)
+	for i = initialCount, maxItems do
+		if not items[i] then
 			return i
 		end
 	end
-	return #currentItems + 1
+	return maxItems + 1
 end
 
 local function findLowestEmptySlot(): number
@@ -38,16 +49,14 @@ end
 local function closeInventoryGaps(items: typeof(states.items()))
 	local slots = untrack(states.slots)
 	local invIndex = slots + 1
-	for i = invIndex, #items do
-		local e = items[i]
-		if e and e.item then
+	local maxItems = math.max(getMaxIndex(items), invIndex)
+	for i = invIndex, maxItems do
+		local item = items[i]
+		if item then
 			if i > invIndex then
-				items[i] = nil
-				items[invIndex] = e
+				items[i], items[invIndex] = nil, item
 			end
-			invIndex = invIndex + 1
-		else
-			items[i] = nil
+			invIndex += 1
 		end
 	end
 end
@@ -59,17 +68,11 @@ local function swap(idxA: number, idxB: number)
 	local slots = untrack(states.slots)
 	local newItems = untrack(states.items)
 
-	local entryA = newItems[idxA] or { item = nil }
-	local entryB = newItems[idxB] or { item = nil }
+	newItems[idxA], newItems[idxB] = newItems[idxB], newItems[idxA]
 
-	newItems[idxA], newItems[idxB] = entryB, entryA
-
-	if idxA <= slots and idxB <= slots then
-		states.items(newItems)
-		return
+	if idxA > slots or idxB > slots then
+		closeInventoryGaps(newItems)
 	end
-
-	closeInventoryGaps(newItems)
 	states.items(newItems)
 end
 
@@ -90,14 +93,32 @@ local function moveToInventory(idx: number)
 		return
 	end
 	local items = untrack(states.items)
-	local itemToMove = items[idx]
-	if not itemToMove or itemToMove.item == nil then
+	if not items[idx] then
 		return
 	end
-	swap(idx, #items + 1)
+	local targetIdx = findLowestEmptyInventorySlot()
+	swap(idx, targetIdx)
+end
+
+local function insertToLowestSlot(item: BackpackItem)
+	local index = findLowestEmptySlot()
+	local currentItems = untrack(states.items)
+	currentItems[index] = item
+	states.items(currentItems)
+end
+
+local function removeSlot(idx: number)
+	local slots = untrack(states.slots)
+	local currentItems = untrack(states.items)
+	currentItems[idx] = nil
+	if idx > slots then
+		closeInventoryGaps(currentItems)
+	end
+	states.items(currentItems)
 end
 
 return {
+	getMaxIndex = getMaxIndex,
 	findLowestEmptyHotbarSlot = findLowestEmptyHotbarSlot,
 	findLowestEmptyInventorySlot = findLowestEmptyInventorySlot,
 	findLowestEmptySlot = findLowestEmptySlot,
@@ -105,4 +126,6 @@ return {
 	swap = swap,
 	moveToHotbar = moveToHotbar,
 	moveToInventory = moveToInventory,
+	insertToLowestSlot = insertToLowestSlot,
+	removeSlot = removeSlot,
 }

@@ -6,7 +6,6 @@ local px = require("../../utils/px")
 local settings = require("../../settings")
 local slotUtils = require("../../utils/slotUtils")
 local states = require("../../states")
-local types = require("../../types")
 local useEventListener = require("../useEventListener")
 local usePreferredInput = require("../usePreferredInput")
 local vide = require("../../../vide")
@@ -16,15 +15,43 @@ local untrack = vide.untrack
 local source = vide.source
 local derive = vide.derive
 
+local function checkBounds(pos: Vector2, target: GuiObject): boolean
+	local absPos = target.AbsolutePosition
+	local absSize = target.AbsoluteSize
+	return pos.X >= absPos.X and pos.X <= absPos.X + absSize.X and pos.Y >= absPos.Y and pos.Y <= absPos.Y + absSize.Y
+end
+
+local function getClosestFrame(pos: Vector2, parent: Instance, maxDistance: number?): (GuiObject?, number?)
+	local closestFrame: GuiObject? = nil
+	local minDistance: number = maxDistance or math.huge
+
+	for _, frame in parent:GetChildren() do
+		if not frame:IsA("GuiObject") then
+			continue
+		end
+
+		local center = frame.AbsolutePosition + frame.AbsoluteSize / 2
+		local distance = (pos - center).Magnitude
+
+		if distance < minDistance then
+			minDistance = distance
+			closestFrame = frame
+		end
+	end
+
+	if closestFrame then
+		return closestFrame, minDistance
+	else
+		return nil, nil
+	end
+end
+
 local function useSlot(props: {
-	entry: vide.Source<types.ItemEntry>,
+	item: vide.Source<BackpackItem?>,
 	order: number,
 	inHotbar: boolean?,
 })
-	local entry = props.entry
-	local item = derive(function()
-		return entry().item
-	end)
+	local item = props.item
 
 	local isHovering = source(false)
 	local isDragging = source(false)
@@ -41,8 +68,15 @@ local function useSlot(props: {
 	local tooltipText = source("")
 
 	local getSourceIdx = derive(function()
-		local e = props.entry()
-		return table.find(states.items(), e) :: number
+		local currentItem = item()
+		if currentItem then
+			for i, v in untrack(states.items) do
+				if v == currentItem then
+					return i
+				end
+			end
+		end
+		return if props.inHotbar then props.order else states.slots() + props.order
 	end)
 
 	local function getSlotNumber(): string
@@ -56,9 +90,8 @@ local function useSlot(props: {
 
 	local function swap(targetIdx: number)
 		local sourceIdx = untrack(getSourceIdx)
-		local currentItems = untrack(states.items)
-		local itemA = currentItems[sourceIdx]
-		if not itemA or itemA.item == nil then
+		local items = untrack(states.items)
+		if not items[sourceIdx] then
 			return
 		end
 		slotUtils.swap(sourceIdx, targetIdx)
@@ -126,40 +159,6 @@ local function useSlot(props: {
 		end
 	end
 
-	local function checkBounds(pos: Vector2, target: GuiObject): boolean
-		local absPos = target.AbsolutePosition
-		local absSize = target.AbsoluteSize
-		return pos.X >= absPos.X
-			and pos.X <= absPos.X + absSize.X
-			and pos.Y >= absPos.Y
-			and pos.Y <= absPos.Y + absSize.Y
-	end
-
-	local function getClosestFrame(pos: Vector2, parent: Instance, maxDistance: number?): (GuiObject?, number?)
-		local closestFrame: GuiObject? = nil
-		local minDistance: number = maxDistance or math.huge
-
-		for _, frame in parent:GetChildren() do
-			if not frame:IsA("GuiObject") then
-				continue
-			end
-
-			local center = frame.AbsolutePosition + frame.AbsoluteSize / 2
-			local distance = (pos - center).Magnitude
-
-			if distance < minDistance then
-				minDistance = distance
-				closestFrame = frame
-			end
-		end
-
-		if closestFrame then
-			return closestFrame, minDistance
-		else
-			return nil, nil
-		end
-	end
-
 	local function onDragStopped(x: number, y: number)
 		isDragging(false)
 
@@ -199,7 +198,7 @@ local function useSlot(props: {
 
 	effect(function()
 		local i = item()
-		if i == nil then
+		if not i then
 			itemName("")
 			itemImage("")
 			tooltipText("")

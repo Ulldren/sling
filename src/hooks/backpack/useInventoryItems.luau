@@ -1,3 +1,4 @@
+local slotUtils = require("../../utils/slotUtils")
 local states = require("../../states")
 local vide = require("../../../vide")
 
@@ -7,14 +8,16 @@ local function useInventoryItems()
 	return derive(function()
 		local slots = states.slots()
 		local items = states.items()
+		local initialCount = slots + 1
+		local maxIndex = math.max(slotUtils.getMaxIndex(), initialCount)
 
 		local newInventory = {}
 		local count = 0
-		for i = slots + 1, #items do
-			local entry = items[i]
-			if entry and entry.item ~= nil then
+		for i = initialCount, maxIndex do
+			local item = items[i]
+			if item then
 				count += 1
-				newInventory[count] = entry
+				newInventory[count] = item
 			end
 		end
 		return newInventory

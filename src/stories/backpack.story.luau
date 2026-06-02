@@ -20,12 +20,9 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		local function createSword()
+		local function createTool()
 			local tool = Instance.new("Tool")
-			tool.Name = "Sword"
-			tool.TextureId = "rbxasset://Textures/Sword128.png"
-			tool.ToolTip = "A cool sword"
-			return { item = tool }
+			return tool
 		end
 
 		effect(function()
@@ -33,7 +30,7 @@ return {
 			states.slots(math.floor(props.controls.slots()))
 			states.rows(math.floor(props.controls.rows()))
 			states.keyboardHint(props.controls.keyboardHint())
-			states.items({ createSword() })
+			states.items({ createTool() })
 		end)
 
 		return vide.apply(backpack())({

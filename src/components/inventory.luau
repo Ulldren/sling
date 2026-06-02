@@ -105,9 +105,9 @@ local function inventory(): Frame
 					Wraps = true,
 				}),
 
-				indexes(useInventoryItems(), function(entry, order)
+				indexes(useInventoryItems(), function(item, order)
 					local visible = derive(function()
-						local currentItem = entry().item
+						local currentItem = item()
 						if not currentItem then
 							return false
 						end
@@ -120,7 +120,7 @@ local function inventory(): Frame
 						return searchMatches(currentItem)
 					end)
 					return slot({
-						entry = entry,
+						item = item,
 						order = order,
 						visible = visible,
 						unlocked = source(true),

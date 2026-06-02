@@ -1,6 +1,5 @@
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
-local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 
 local closeInventory = require("../../api/closeInventory")
@@ -8,6 +7,7 @@ local createCategory = require("../../api/createCategory")
 local events = require("../../events")
 local setEnabled = require("../../api/setEnabled")
 local settings = require("../../settings")
+local slotUtils = require("../../utils/slotUtils")
 local states = require("../../states")
 local useEventListener = require("../useEventListener")
 local usePreferredInput = require("../usePreferredInput")
@@ -16,6 +16,7 @@ local vide = require("../../../vide")
 local cleanup = vide.cleanup
 local effect = vide.effect
 local untrack = vide.untrack
+local derive = vide.derive
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui") :: PlayerGui
@@ -45,8 +46,6 @@ local GAMEPAD_INPUT_TYPES = {
 }
 
 local function useBackpack()
-	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
-
 	useEventListener(GuiService.MenuOpened, function()
 		setEnabled(false)
 	end)
@@ -57,10 +56,13 @@ local function useBackpack()
 	local function handleKeyboardControls(input: InputObject)
 		-- Change slot selection
 		local slotNum = KEY_TO_SLOT[input.KeyCode]
-		if slotNum and slotNum <= states.slots() then
-			local entry = untrack(states.items)[slotNum]
-			if entry and entry.item then
-				states.equippedItem(if entry.item == untrack(states.equippedItem) then nil else entry.item)
+		local slots = untrack(states.slots)
+		if slotNum and slotNum <= slots then
+			local items = untrack(states.items)
+			local item = items[slotNum]
+			if item then
+				local equipped = untrack(states.equippedItem)
+				states.equippedItem(if item == equipped then nil else item)
 			end
 		end
 	end
@@ -76,8 +78,8 @@ local function useBackpack()
 			local equippedIdx = nil
 			if equipped then
 				for idx = 1, slots do
-					local entry = items[idx]
-					if entry and entry.item == equipped then
+					local item = items[idx]
+					if item and item == equipped then
 						equippedIdx = idx
 						break
 					end
@@ -96,18 +98,18 @@ local function useBackpack()
 						newPos = slots
 						hitEdge = true
 					end
-					if items[newPos] and items[newPos].item then
+					if items[newPos] then
 						break
 					end
 				end
-				states.equippedItem(if hitEdge then nil else items[newPos].item)
+				states.equippedItem(if hitEdge then nil else items[newPos])
 			else
 				local startIdx = if moveDirection == 1 then 1 else slots
 				local endIdx = if moveDirection == 1 then slots else 1
 				for idx = startIdx, endIdx, moveDirection do
-					local entry = items[idx]
-					if entry and entry.item then
-						states.equippedItem(entry.item)
+					local item = items[idx]
+					if item then
+						states.equippedItem(item)
 						break
 					end
 				end
@@ -153,11 +155,8 @@ local function useBackpack()
 	useEventListener(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"), updateBackpackSize)
 	useEventListener(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"), updateBackpackSize)
 
-	local function isBackpackItem(instance: Instance): boolean
-		return instance:IsA("Tool") or instance:IsA("HopperBin")
-	end
-
-	local function refreshItems()
+	do
+		--[[local function refreshItems()
 		local currentItems = untrack(states.items)
 		local activeItems = {}
 		local equipped = nil
@@ -247,104 +246,166 @@ local function useBackpack()
 		if itemsChanged then
 			states.items(newList)
 		end
-	end
+	end]]
 
-	local function onChildAdded(child: Instance)
-		if isBackpackItem(child) then
-			refreshItems()
-		end
-	end
+		local itemsIndex = derive(function()
+			local items = states.items()
+			local map = {}
+			for i, item in items do
+				map[item] = i
+			end
+			return map
+		end)
 
-	local function onChildRemoved(child: Instance)
-		if isBackpackItem(child) then
-			refreshItems()
-		end
-	end
+		local backpack: Backpack = nil
+		local character: Model = nil
 
-	effect(function()
-		local tool = states.equippedItem()
-		local character = player.Character
-		if not character then
-			return
+		local function isBackpackItem(instance: Instance): boolean
+			return instance:IsA("Tool") or instance:IsA("HopperBin")
 		end
-		local humanoid = character:FindFirstChildOfClass("Humanoid")
-		if not humanoid then
-			return
-		end
-		if tool then
-			if tool.Parent == character then
+
+		local function onItemAdded(item: BackpackItem)
+			if item.Parent == character and untrack(states.equippedItem) ~= item then
+				states.equippedItem(item)
+			end
+
+			if untrack(itemsIndex)[item] then
 				return
 			end
+			slotUtils.insertToLowestSlot(item)
 
-			if tool:IsA("HopperBin") then -- NOTE: HopperBin
-				warn(`Cannot select '{tool.Name}' hopper. HopperBin is deprecated and not supported.`)
-				task.defer(function()
-					states.equippedItem(nil)
-				end)
+			for _, listener in events.backpackAdded.callbacks do
+				task.spawn(listener, item)
+			end
+		end
+
+		local function onItemRemoved(item: BackpackItem)
+			local parent = item.Parent
+			if parent ~= character and untrack(states.equippedItem) == item then
+				states.equippedItem(nil)
+			end
+
+			if parent == backpack or parent == character then
 				return
 			end
+			local index = untrack(itemsIndex)[item]
+			if not index then
+				return
+			end
+			slotUtils.removeSlot(index)
 
-			humanoid:EquipTool(tool)
-		else
-			humanoid:UnequipTools()
-		end
-	end)
+			for _, listener in events.backpackRemoved.callbacks do
+				task.spawn(listener, item)
+			end
 
-	local lastEquipped: BackpackItem? = nil
-	effect(function()
-		local currentEquipped = states.equippedItem()
-		if currentEquipped ~= lastEquipped then
-			if lastEquipped then
-				for _, listener in events.backpackUnequipped.callbacks do
-					task.spawn(listener, lastEquipped)
+			if slotUtils.getMaxIndex() == 0 then
+				for _, listener in events.backpackEmpty.callbacks do
+					task.spawn(listener)
 				end
 			end
-			if currentEquipped then
-				for _, listener in events.backpackEquipped.callbacks do
-					task.spawn(listener, currentEquipped)
+		end
+
+		local function onChildAdded(child: Instance)
+			if not isBackpackItem(child) then
+				return
+			end
+			onItemAdded(child :: BackpackItem)
+		end
+
+		local function onChildRemoved(child: Instance)
+			if not isBackpackItem(child) then
+				return
+			end
+			onItemRemoved(child :: BackpackItem)
+		end
+
+		effect(function()
+			local tool = states.equippedItem()
+			local character = player.Character
+			if not character then
+				return
+			end
+			local humanoid = character:FindFirstChildOfClass("Humanoid")
+			if not humanoid then
+				return
+			end
+			if tool then
+				if tool.Parent == character then
+					return
+				end
+
+				if tool:IsA("HopperBin") then -- NOTE: HopperBin
+					warn(`Cannot select '{tool.Name}' hopper. HopperBin is deprecated and not supported.`)
+					task.defer(function()
+						states.equippedItem(nil)
+					end)
+					return
+				end
+
+				humanoid:EquipTool(tool)
+			else
+				humanoid:UnequipTools()
+			end
+		end)
+
+		local lastEquipped: BackpackItem? = nil
+		effect(function()
+			local currentEquipped = states.equippedItem()
+			if currentEquipped ~= lastEquipped then
+				if lastEquipped then
+					for _, listener in events.backpackUnequipped.callbacks do
+						task.spawn(listener, lastEquipped)
+					end
+				end
+				if currentEquipped then
+					for _, listener in events.backpackEquipped.callbacks do
+						task.spawn(listener, currentEquipped)
+					end
+				end
+				lastEquipped = currentEquipped
+			end
+		end)
+
+		local connections: { RBXScriptConnection } = {}
+
+		local function disconnectCharacter()
+			for _, conn in connections do
+				conn:Disconnect()
+			end
+			table.clear(connections)
+			states.equippedItem(nil)
+			states.items({})
+		end
+
+		local function connectCharacter(char: Model)
+			disconnectCharacter()
+
+			character = char
+			backpack = player:WaitForChild("Backpack")
+
+			for _, child in character:GetChildren() do
+				if isBackpackItem(child) then
+					onItemAdded(child :: BackpackItem)
 				end
 			end
-			lastEquipped = currentEquipped
-		end
-	end)
+			table.insert(connections, character.ChildAdded:Connect(onChildAdded))
+			table.insert(connections, character.ChildRemoved:Connect(onChildRemoved))
 
-	local characterConnections: { RBXScriptConnection } = {}
-
-	local function disconnectCharacter()
-		for _, conn in characterConnections do
-			conn:Disconnect()
-		end
-		table.clear(characterConnections)
-	end
-
-	local function connectCharacter(character: Model)
-		for _, child in character:GetChildren() do
-			if isBackpackItem(child) then
-				states.equippedItem(child :: BackpackItem)
-				break
+			for _, child in backpack:GetChildren() do
+				onItemAdded(child :: BackpackItem)
 			end
+			table.insert(connections, backpack.ChildAdded:Connect(onChildAdded))
+			table.insert(connections, backpack.ChildRemoved:Connect(onChildRemoved))
 		end
 
-		table.insert(characterConnections, character.ChildAdded:Connect(onChildAdded))
-		table.insert(characterConnections, character.ChildRemoved:Connect(onChildRemoved))
+		if player.Character then
+			connectCharacter(player.Character)
+		end
 
-		local backpack = player:WaitForChild("Backpack")
-		table.insert(characterConnections, backpack.ChildAdded:Connect(onChildAdded))
-		table.insert(characterConnections, backpack.ChildRemoved:Connect(onChildRemoved))
+		useEventListener(player.CharacterAdded, connectCharacter)
+
+		cleanup(disconnectCharacter)
 	end
-
-	if player.Character then
-		connectCharacter(player.Character)
-	end
-
-	useEventListener(player.CharacterAdded, function(character)
-		disconnectCharacter()
-		states.equippedItem(nil)
-		refreshItems()
-		connectCharacter(character)
-	end)
-
-	cleanup(disconnectCharacter)
 
 	local preferredInput = usePreferredInput()
 	effect(function()
@@ -359,6 +420,10 @@ local function useBackpack()
 
 	createCategory("All", function()
 		return true
+	end)
+
+	effect(function()
+		print(states.items())
 	end)
 end
 

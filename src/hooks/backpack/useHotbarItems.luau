@@ -10,8 +10,8 @@ local function useHotbarItems()
 
 		local newHotbar = table.create(slots)
 		for i = 1, slots do
-			local entry = items[i] or { item = nil }
-			newHotbar[i] = entry
+			local item = items[i]
+			newHotbar[i] = { item = item }
 		end
 		return newHotbar
 	end)

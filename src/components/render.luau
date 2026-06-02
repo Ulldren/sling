@@ -1,4 +1,5 @@
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 
 local app = require("./app")
 local px = require("../utils/px")
@@ -11,6 +12,8 @@ local create = vide.create
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
+
+StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
 local function render()
 	return mount(function()

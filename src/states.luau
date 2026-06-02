@@ -19,7 +19,7 @@ return {
 	categories = source({} :: { types.Category }),
 	selectedCategory = source(""),
 
-	items = source({} :: { types.ItemEntry }),
+	items = source({} :: { BackpackItem }),
 	equippedItem = source(nil :: BackpackItem?),
 
 	appRef = source(nil :: Frame?),

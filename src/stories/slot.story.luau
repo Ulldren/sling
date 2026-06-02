@@ -14,7 +14,7 @@ return {
 		cleanup(item)
 
 		return vide.apply(slot({
-			entry = source({ item = item }),
+			item = source(item),
 			equipped = source(nil),
 			order = 1,
 			unlocked = source(true),

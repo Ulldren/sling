@@ -24,7 +24,11 @@ return {
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"
-			return { item = tool }
+			return tool
+		end
+		local function createTool()
+			local tool = Instance.new("Tool")
+			return tool
 		end
 
 		effect(function()
@@ -33,7 +37,7 @@ return {
 			states.keyboardHint(props.controls.keyboardHint())
 		end)
 
-		states.items({ createSword() })
+		states.items({ createSword(), createTool() })
 		states.equippedItem(nil)
 
 		return vide.apply(hotbar())({

@@ -21,7 +21,7 @@ return {
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
 			tool.ToolTip = "A cool sword"
-			return { item = tool }
+			return tool
 		end
 		local itemsTbl = {}
 		for _ = 1, 15 do
