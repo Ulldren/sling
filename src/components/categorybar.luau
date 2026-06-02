@@ -1,9 +1,9 @@
 local category = require("./category")
+local colorSpring = require("../utils/colorSpring")
 local px = require("../utils/px")
 local states = require("../states")
-local vide = require("../../vide")
 local theme = require("../theme")
-local colorSpring = require("../utils/colorSpring")
+local vide = require("../../vide")
 
 local create = vide.create
 local indexes = vide.indexes
@@ -12,12 +12,14 @@ local derive = vide.derive
 
 local function categorybar()
 	local selectedCategoryIndex = derive(function()
-		for index, category in states.categories() do
-			if category.category == states.selectedCategory() then
-				return index
+		local selectedCategory = states.selectedCategory()
+		local categories = states.categories()
+		for i, category in categories do
+			if category.category == selectedCategory then
+				return i
 			end
 		end
-		return 1
+		return 0
 	end)
 
 	return create("Frame")({

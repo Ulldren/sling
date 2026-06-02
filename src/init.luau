@@ -5,12 +5,12 @@ local getTopbarIcon = require("@self/api/getTopbarIcon")
 local isEnabled = require("@self/api/isEnabled")
 local isInventoryOpen = require("@self/api/isInventoryOpen")
 local openInventory = require("@self/api/openInventory")
+local render = require("@self/components/render")
 local setEnabled = require("@self/api/setEnabled")
+local setTheme = require("@self/api/setTheme")
+local themes = require("@self/themes")
 local toggleInventory = require("@self/api/toggleInventory")
 local types = require("@self/types")
-local themes = require("@self/themes")
-local setTheme = require("@self/api/setTheme")
-local render = require("@self/components/render")
 
 export type ThemeConfig = types.ThemeConfig
 

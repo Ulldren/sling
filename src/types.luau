@@ -1,10 +1,8 @@
-export type InventoryItem = Tool | HopperBin
-
 export type ItemEntry = {
-	item: InventoryItem?,
+	item: BackpackItem?,
 }
 
-export type CategoryPredicate = (item: InventoryItem) -> boolean
+export type CategoryPredicate = (item: BackpackItem) -> boolean
 export type Category = {
 	category: string,
 	predicate: CategoryPredicate,

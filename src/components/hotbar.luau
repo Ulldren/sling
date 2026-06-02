@@ -1,10 +1,10 @@
+local cond = require("../utils/cond")
 local px = require("../utils/px")
 local settings = require("../settings")
 local slot = require("./slot")
 local states = require("../states")
-local useHotbarItems = require("../hooks/useHotbarItems")
+local useHotbarItems = require("../hooks/backpack/useHotbarItems")
 local vide = require("../../vide")
-local cond = require("../utils/cond")
 
 local create = vide.create
 local indexes = vide.indexes

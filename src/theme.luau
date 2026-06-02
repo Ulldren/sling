@@ -1,6 +1,6 @@
+local themes = require("./themes")
 local types = require("./types")
 local vide = require("../vide")
-local themes = require("./themes")
 
 local source = vide.source
 local read = vide.read

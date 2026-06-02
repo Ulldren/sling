@@ -1,9 +1,9 @@
-local px = require("../utils/px")
-local vide = require("../../vide")
-local theme = require("../theme")
-local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local colorSpring = require("../utils/colorSpring")
 local cond = require("../utils/cond")
+local px = require("../utils/px")
+local theme = require("../theme")
+local usePreferredTransparency = require("../hooks/usePreferredTransparency")
+local vide = require("../../vide")
 
 local SEARCH_PADDING: number = 8
 local SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"

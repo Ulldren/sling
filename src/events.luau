@@ -1,5 +1,3 @@
-local types = require("./types")
-
 type Listener<Args... = ...any> = (Args...) -> ()
 type Event<Args... = ...any> = {
 	callbacks: { Listener<Args...> },
@@ -22,10 +20,10 @@ end
 
 return {
 	backpackEmpty = createEvent(),
-	backpackEquipped = createEvent() :: Event<types.InventoryItem>,
-	backpackUnequipped = createEvent() :: Event<types.InventoryItem>,
-	backpackAdded = createEvent() :: Event<types.InventoryItem>,
-	backpackRemoved = createEvent() :: Event<types.InventoryItem>,
+	backpackEquipped = createEvent() :: Event<BackpackItem>,
+	backpackUnequipped = createEvent() :: Event<BackpackItem>,
+	backpackAdded = createEvent() :: Event<BackpackItem>,
+	backpackRemoved = createEvent() :: Event<BackpackItem>,
 	inventoryOpened = createEvent(),
 	inventoryClosed = createEvent(),
 }

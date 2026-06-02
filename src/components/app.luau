@@ -1,9 +1,9 @@
 local backpack = require("./backpack")
+local cond = require("../utils/cond")
 local inventoryHint = require("./inventoryHint")
 local settings = require("../settings")
 local states = require("../states")
 local vide = require("../../vide")
-local cond = require("../utils/cond")
 
 local create = vide.create
 local show = vide.show

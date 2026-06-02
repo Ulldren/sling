@@ -1,15 +1,16 @@
 local categorybar = require("./categorybar")
+local colorSpring = require("../utils/colorSpring")
+local cond = require("../utils/cond")
 local px = require("../utils/px")
 local searchbar = require("./searchbar")
 local settings = require("../settings")
 local slot = require("./slot")
 local states = require("../states")
-local useInventoryItems = require("../hooks/useInventoryItems")
-local vide = require("../../vide")
 local theme = require("../theme")
+local useInventoryItems = require("../hooks/backpack/useInventoryItems")
 local usePreferredTransparency = require("../hooks/usePreferredTransparency")
-local colorSpring = require("../utils/colorSpring")
-local cond = require("../utils/cond")
+local useSearch = require("../hooks/backpack/useSearch")
+local vide = require("../../vide")
 
 local derive = vide.derive
 local create = vide.create
@@ -22,9 +23,8 @@ local function inventory(): Frame
 	local height = derive(function()
 		return states.rows() * (settings.slotSize + 5) - 5
 	end)
-	local searchText = source("")
 
-	local selectedIndex = derive(function()
+	local selectedCategoryIndex = derive(function()
 		local selectedCategory = states.selectedCategory()
 		local categories = states.categories()
 		for i, category in categories do
@@ -35,14 +35,9 @@ local function inventory(): Frame
 		return 0
 	end)
 
-	local searchTokens = derive(function()
-		local text = searchText():lower()
-		local tokens = {}
-		for token in text:gmatch("%S+") do
-			table.insert(tokens, token)
-		end
-		return tokens
-	end)
+	local search = useSearch()
+	local searchText = search.searchText
+	local searchMatches = search.searchMatches
 
 	local preferredTransparency = usePreferredTransparency()
 
@@ -117,30 +112,12 @@ local function inventory(): Frame
 							return false
 						end
 
-						local selectedIdx = selectedIndex()
+						local selectedIdx = selectedCategoryIndex()
 						local selectedCategory = states.categories()[selectedIdx]
 						if selectedCategory and not selectedCategory.predicate(currentItem) then
 							return false
 						end
-
-						local tokens = searchTokens()
-						if #tokens == 0 then
-							return true
-						end
-
-						local name = currentItem.Name:lower()
-						local tooltipText = ""
-						if currentItem:IsA("Tool") then
-							tooltipText = (currentItem :: Tool).ToolTip:lower()
-						end
-
-						for _, token in tokens do
-							if name:find(token, 1, true) or tooltipText:find(token, 1, true) then
-								return true
-							end
-						end
-
-						return false
+						return searchMatches(currentItem)
 					end)
 					return slot({
 						entry = entry,

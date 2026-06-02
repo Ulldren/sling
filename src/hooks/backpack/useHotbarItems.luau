@@ -1,8 +1,10 @@
-local states = require("../states")
-local vide = require("../../vide")
+local states = require("../../states")
+local vide = require("../../../vide")
+
+local derive = vide.derive
 
 local function useHotbarItems()
-	return vide.derive(function()
+	return derive(function()
 		local slots = states.slots()
 		local items = states.items()
 
