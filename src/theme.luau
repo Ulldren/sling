@@ -1,4 +1,4 @@
-local themes = require("./themes")
+local themes = require("./constants/themes")
 local types = require("./types")
 local vide = require("../vide")
 

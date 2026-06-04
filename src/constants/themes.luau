@@ -1,4 +1,4 @@
-local types = require("./types")
+local types = require("../types")
 
 type ThemeConfig = types.ThemeConfig
 
@@ -11,8 +11,8 @@ return {
 		fontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Medium),
 		textColor = Color3.fromHex("#ffffff"),
 		textSize = 16,
-		smallTextSize = 16,
-		textStrokeColor = Color3.fromRGB(0, 0, 0),
+		smallTextSize = 14,
+		textStrokeColor = Color3.fromHex("#000000"),
 		textStrokeTransparency = 0.5,
 
 		slotEquipStrokeColor = Color3.fromHex("#335fff"),
@@ -21,7 +21,7 @@ return {
 		searchBackgroundTransparency = 0.2,
 		searchStrokeColor = Color3.fromHex("#ffffff"),
 		searchStrokeTransparency = 0.8,
-		searchPlaceholderColor = Color3.fromHex("#afafaf"),
+		searchPlaceholderColor = Color3.fromHex("#7f7f7f"),
 
 		tooltipBackgroundTransparency = 0,
 	} :: ThemeConfig,

@@ -1,4 +1,4 @@
-local settings = require("./settings")
+local config = require("./constants/config")
 local types = require("./types")
 local vide = require("../vide")
 
@@ -8,13 +8,13 @@ return {
 	enabled = source(true),
 	opened = source(false),
 
-	slots = source(settings.hotbarSlotsFull),
-	rows = source(settings.inventoryRowsFull),
+	slots = source(config.hotbarSlotsFull),
+	rows = source(config.inventoryRowsFull),
 	width = source(655),
 
 	keyboardHint = source(false),
 	gamepadHint = source(false),
-	gamepadSwapIdx = source(nil :: number?),
+	gamepadSwapIndex = source(nil :: number?),
 
 	categories = source({} :: { types.Category }),
 	selectedCategory = source(""),
@@ -22,7 +22,7 @@ return {
 	items = source({} :: { BackpackItem }),
 	equippedItem = source(nil :: BackpackItem?),
 
-	appRef = source(nil :: Frame?),
+	appRef = source(nil :: GuiObject?),
 	hotbarRef = source(nil :: Frame?),
 	inventoryGridRef = source(nil :: ScrollingFrame?),
 }

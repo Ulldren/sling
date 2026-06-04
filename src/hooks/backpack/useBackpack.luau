@@ -3,17 +3,17 @@ local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
 
 local closeInventory = require("../../api/closeInventory")
+local config = require("../../constants/config")
 local createCategory = require("../../api/createCategory")
 local events = require("../../events")
 local setEnabled = require("../../api/setEnabled")
-local settings = require("../../settings")
 local slotUtils = require("../../utils/slotUtils")
 local states = require("../../states")
+local useCharacter = require("../useCharacter")
 local useEventListener = require("../useEventListener")
 local usePreferredInput = require("../usePreferredInput")
 local vide = require("../../../vide")
 
-local cleanup = vide.cleanup
 local effect = vide.effect
 local untrack = vide.untrack
 local derive = vide.derive
@@ -53,85 +53,213 @@ local function useBackpack()
 		setEnabled(true)
 	end)
 
-	local function handleKeyboardControls(input: InputObject)
-		-- Change slot selection
-		local slotNum = KEY_TO_SLOT[input.KeyCode]
-		local slots = untrack(states.slots)
-		if slotNum and slotNum <= slots then
-			local items = untrack(states.items)
-			local item = items[slotNum]
-			if item then
-				local equipped = untrack(states.equippedItem)
-				states.equippedItem(if item == equipped then nil else item)
-			end
-		end
-	end
-
-	local function handleGamepadControls(input: InputObject)
-		-- Change slot selection
-		if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
-			local moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
-			local slots = untrack(states.slots)
-			local items = untrack(states.items)
-			local equipped = untrack(states.equippedItem)
-
-			local equippedIdx = nil
-			if equipped then
-				for idx = 1, slots do
-					local item = items[idx]
-					if item and item == equipped then
-						equippedIdx = idx
-						break
-					end
-				end
-			end
-
-			if equippedIdx then
-				local newPos = equippedIdx
-				local hitEdge = false
-				for _ = 1, slots do
-					newPos += moveDirection
-					if newPos > slots then
-						newPos = 1
-						hitEdge = true
-					elseif newPos < 1 then
-						newPos = slots
-						hitEdge = true
-					end
-					if items[newPos] then
-						break
-					end
-				end
-				states.equippedItem(if hitEdge then nil else items[newPos])
-			else
-				local startIdx = if moveDirection == 1 then 1 else slots
-				local endIdx = if moveDirection == 1 then slots else 1
-				for idx = startIdx, endIdx, moveDirection do
-					local item = items[idx]
-					if item then
-						states.equippedItem(item)
-						break
-					end
-				end
-			end
-			-- Close inventory
-		elseif input.KeyCode == settings.gamepadCloseKey or input.KeyCode == settings.gamepadCloseSecondaryKey then
-			if states.opened() then
-				closeInventory()
-			end
-		end
-	end
-
 	useEventListener(UserInputService.InputBegan, function(input, gameProcessedEvent)
-		if not gameProcessedEvent then
-			local inputType = input.UserInputType
-			if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
-				closeInventory()
-			elseif inputType == Enum.UserInputType.Keyboard then
-				handleKeyboardControls(input)
-			elseif GAMEPAD_INPUT_TYPES[inputType] then
-				handleGamepadControls(input)
+		if gameProcessedEvent then
+			return
+		end
+		local inputType = input.UserInputType
+		if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
+			closeInventory()
+		elseif inputType == Enum.UserInputType.Keyboard then
+			local slotNum = KEY_TO_SLOT[input.KeyCode]
+			local slots = untrack(states.slots)
+			if slotNum and slotNum <= slots then
+				local items = untrack(states.items)
+				local item = items[slotNum]
+				if item then
+					local equipped = untrack(states.equippedItem)
+					states.equippedItem(if item == equipped then nil else item)
+				end
 			end
+		elseif GAMEPAD_INPUT_TYPES[inputType] then
+			if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
+				local moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
+				local slots = untrack(states.slots)
+				local items = untrack(states.items)
+				local equipped = untrack(states.equippedItem)
+
+				local equippedIndex = nil
+				if equipped then
+					for index = 1, slots do
+						local item = items[index]
+						if item and item == equipped then
+							equippedIndex = index
+							break
+						end
+					end
+				end
+
+				if equippedIndex then
+					local newPos = equippedIndex
+					local hitEdge = false
+					for _ = 1, slots do
+						newPos += moveDirection
+						if newPos > slots then
+							newPos = 1
+							hitEdge = true
+						elseif newPos < 1 then
+							newPos = slots
+							hitEdge = true
+						end
+						if items[newPos] then
+							break
+						end
+					end
+					states.equippedItem(if hitEdge then nil else items[newPos])
+				else
+					local startIndex = if moveDirection == 1 then 1 else slots
+					local endIndex = if moveDirection == 1 then slots else 1
+					for index = startIndex, endIndex, moveDirection do
+						local item = items[index]
+						if item then
+							states.equippedItem(item)
+							break
+						end
+					end
+				end
+			-- Remove item
+			elseif input.KeyCode == config.gamepadRemoveKey then
+				for _, listener in events.gamepadRemove.callbacks do
+					task.spawn(listener)
+				end
+			-- Close inventory
+			elseif input.KeyCode == config.gamepadCloseKey or input.KeyCode == config.gamepadCloseSecondaryKey then
+				closeInventory()
+			end
+		end
+	end)
+
+	local itemsIndex = derive(function()
+		local items = states.items()
+		local map = {}
+		for i, item in items do
+			map[item] = i
+		end
+		return map
+	end)
+
+	local backpack: Backpack = player:WaitForChild("Backpack")
+	local character = useCharacter()
+
+	local function onItemAdded(item: BackpackItem)
+		local char = untrack(character)
+		if item.Parent == char and untrack(states.equippedItem) ~= item then
+			states.equippedItem(item)
+		end
+
+		if untrack(itemsIndex)[item] then
+			return
+		end
+		slotUtils.insertToLowestSlot(item)
+
+		for _, listener in events.backpackAdded.callbacks do
+			task.spawn(listener, item)
+		end
+	end
+
+	local function onItemRemoved(item: BackpackItem)
+		local parent = item.Parent
+		local char = untrack(character)
+		if parent ~= char and untrack(states.equippedItem) == item then
+			states.equippedItem(nil)
+		end
+
+		if parent == backpack or parent == char then
+			return
+		end
+		local index = untrack(itemsIndex)[item]
+		if not index then
+			return
+		end
+		slotUtils.removeSlot(index)
+
+		for _, listener in events.backpackRemoved.callbacks do
+			task.spawn(listener, item)
+		end
+
+		if slotUtils.getMaxIndex() == 0 then
+			for _, listener in events.backpackEmpty.callbacks do
+				task.spawn(listener)
+			end
+		end
+	end
+
+	local function onChildAdded(child: Instance)
+		if child:IsA("BackpackItem") then
+			onItemAdded(child)
+		end
+	end
+
+	local function onChildRemoved(child: Instance)
+		if child:IsA("BackpackItem") then
+			onItemRemoved(child)
+		end
+	end
+
+	local function observeItems(parent: Instance)
+		for _, child in parent:GetChildren() do
+			onChildAdded(child)
+		end
+		useEventListener(parent.ChildAdded, onChildAdded)
+		useEventListener(parent.ChildRemoved, onChildRemoved)
+	end
+
+	effect(function()
+		local char = character()
+		if not char then
+			return
+		end
+
+		states.equippedItem(nil)
+		states.items({})
+
+		-- update backpack reference
+		backpack = player:FindFirstChild("Backpack")
+
+		observeItems(char)
+		observeItems(backpack)
+	end)
+
+	effect(function()
+		local equipped = states.equippedItem()
+		local char = untrack(character)
+		local humanoid = char and char:FindFirstChildOfClass("Humanoid")
+		if not humanoid then
+			return
+		end
+		if equipped then
+			if equipped.Parent == char then
+				return
+			end
+
+			if equipped:IsA("HopperBin") then -- NOTE: HopperBin
+				warn(`Cannot select '{equipped.Name}' hopper. HopperBin is deprecated and not supported.`)
+				task.defer(function()
+					states.equippedItem(nil)
+				end)
+			else
+				humanoid:EquipTool(equipped :: Tool)
+			end
+		else
+			humanoid:UnequipTools()
+		end
+	end)
+
+	local lastEquipped: BackpackItem? = nil
+	effect(function()
+		local equipped = states.equippedItem()
+		if equipped ~= lastEquipped then
+			if lastEquipped then
+				for _, listener in events.backpackUnequipped.callbacks do
+					task.spawn(listener, lastEquipped)
+				end
+			end
+			if equipped then
+				for _, listener in events.backpackEquipped.callbacks do
+					task.spawn(listener, equipped)
+				end
+			end
+			lastEquipped = equipped
 		end
 	end)
 
@@ -140,14 +268,14 @@ local function useBackpack()
 		local viewportSize = GuiService.ViewportDisplaySize
 
 		if screenOrientation == Enum.ScreenOrientation.Portrait then
-			states.slots(settings.hotbarSlotsPortrait)
-			states.rows(settings.inventoryRowsPortrait)
+			states.slots(config.hotbarSlotsPortrait)
+			states.rows(config.inventoryRowsPortrait)
 		elseif viewportSize == Enum.DisplaySize.Small then
-			states.slots(settings.hotbarSlotsMini)
-			states.rows(settings.inventoryRowsMini)
+			states.slots(config.hotbarSlotsMini)
+			states.rows(config.inventoryRowsMini)
 		else
-			states.slots(settings.hotbarSlotsFull)
-			states.rows(settings.inventoryRowsFull)
+			states.slots(config.hotbarSlotsFull)
+			states.rows(config.inventoryRowsFull)
 		end
 	end
 
@@ -155,262 +283,29 @@ local function useBackpack()
 	useEventListener(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"), updateBackpackSize)
 	useEventListener(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"), updateBackpackSize)
 
-	do
-		--[[local function refreshItems()
-		local currentItems = untrack(states.items)
-		local activeItems = {}
-		local equipped = nil
-
-		-- Find all items in character and backpack
-		local character = player.Character
-		if character then
-			for _, child in character:GetChildren() do
-				if isBackpackItem(child) then
-					activeItems[child] = true
-					equipped = child
-				end
-			end
-		end
-		local backpack = player:FindFirstChildOfClass("Backpack")
-		if backpack then
-			for _, child in backpack:GetChildren() do
-				if isBackpackItem(child) then
-					activeItems[child] = true
-				end
-			end
-		end
-
-		local newCount = 0
-		local newList = {}
-		for i, entry in currentItems do
-			local item = entry.item
-			if item and activeItems[item] then
-				newList[i] = entry
-				activeItems[item] = nil
-				newCount += 1
-			else
-				if item then
-					for _, listener in events.backpackRemoved.callbacks do
-						task.spawn(listener, item)
-					end
-				end
-				newList[i] = { item = nil }
-			end
-		end
-
-		for item in activeItems do
-			local targetIdx = nil
-			for idx = 1, #newList do
-				if newList[idx].item == nil then
-					targetIdx = idx
-					break
-				end
-			end
-			if not targetIdx then
-				targetIdx = #newList + 1
-			end
-			newList[targetIdx] = { item = item }
-			newCount += 1
-
-			for _, listener in events.backpackAdded.callbacks do
-				task.spawn(listener, item)
-			end
-		end
-
-		local slots = untrack(states.slots)
-		for i = 1, slots do
-			if newList[i] == nil then
-				newList[i] = { item = nil }
-			end
-		end
-
-		local itemsChanged = false
-		if #newList ~= #currentItems then
-			itemsChanged = true
-		else
-			for i = 1, #newList do
-				if newList[i] ~= currentItems[i] then
-					itemsChanged = true
-					break
-				end
-			end
-		end
-
-		if newCount == 0 and itemsChanged then
-			for _, listener in events.backpackEmpty.callbacks do
-				task.spawn(listener)
-			end
-		end
-
-		states.equippedItem(equipped)
-		if itemsChanged then
-			states.items(newList)
-		end
-	end]]
-
-		local itemsIndex = derive(function()
-			local items = states.items()
-			local map = {}
-			for i, item in items do
-				map[item] = i
-			end
-			return map
-		end)
-
-		local backpack: Backpack = nil
-		local character: Model = nil
-
-		local function isBackpackItem(instance: Instance): boolean
-			return instance:IsA("Tool") or instance:IsA("HopperBin")
-		end
-
-		local function onItemAdded(item: BackpackItem)
-			if item.Parent == character and untrack(states.equippedItem) ~= item then
-				states.equippedItem(item)
-			end
-
-			if untrack(itemsIndex)[item] then
-				return
-			end
-			slotUtils.insertToLowestSlot(item)
-
-			for _, listener in events.backpackAdded.callbacks do
-				task.spawn(listener, item)
-			end
-		end
-
-		local function onItemRemoved(item: BackpackItem)
-			local parent = item.Parent
-			if parent ~= character and untrack(states.equippedItem) == item then
-				states.equippedItem(nil)
-			end
-
-			if parent == backpack or parent == character then
-				return
-			end
-			local index = untrack(itemsIndex)[item]
-			if not index then
-				return
-			end
-			slotUtils.removeSlot(index)
-
-			for _, listener in events.backpackRemoved.callbacks do
-				task.spawn(listener, item)
-			end
-
-			if slotUtils.getMaxIndex() == 0 then
-				for _, listener in events.backpackEmpty.callbacks do
-					task.spawn(listener)
-				end
-			end
-		end
-
-		local function onChildAdded(child: Instance)
-			if not isBackpackItem(child) then
-				return
-			end
-			onItemAdded(child :: BackpackItem)
-		end
-
-		local function onChildRemoved(child: Instance)
-			if not isBackpackItem(child) then
-				return
-			end
-			onItemRemoved(child :: BackpackItem)
-		end
-
-		effect(function()
-			local tool = states.equippedItem()
-			local character = player.Character
-			if not character then
-				return
-			end
-			local humanoid = character:FindFirstChildOfClass("Humanoid")
-			if not humanoid then
-				return
-			end
-			if tool then
-				if tool.Parent == character then
-					return
-				end
-
-				if tool:IsA("HopperBin") then -- NOTE: HopperBin
-					warn(`Cannot select '{tool.Name}' hopper. HopperBin is deprecated and not supported.`)
-					task.defer(function()
-						states.equippedItem(nil)
-					end)
-					return
-				end
-
-				humanoid:EquipTool(tool)
-			else
-				humanoid:UnequipTools()
-			end
-		end)
-
-		local lastEquipped: BackpackItem? = nil
-		effect(function()
-			local currentEquipped = states.equippedItem()
-			if currentEquipped ~= lastEquipped then
-				if lastEquipped then
-					for _, listener in events.backpackUnequipped.callbacks do
-						task.spawn(listener, lastEquipped)
-					end
-				end
-				if currentEquipped then
-					for _, listener in events.backpackEquipped.callbacks do
-						task.spawn(listener, currentEquipped)
-					end
-				end
-				lastEquipped = currentEquipped
-			end
-		end)
-
-		local connections: { RBXScriptConnection } = {}
-
-		local function disconnectCharacter()
-			for _, conn in connections do
-				conn:Disconnect()
-			end
-			table.clear(connections)
-			states.equippedItem(nil)
-			states.items({})
-		end
-
-		local function connectCharacter(char: Model)
-			disconnectCharacter()
-
-			character = char
-			backpack = player:WaitForChild("Backpack")
-
-			for _, child in character:GetChildren() do
-				if isBackpackItem(child) then
-					onItemAdded(child :: BackpackItem)
-				end
-			end
-			table.insert(connections, character.ChildAdded:Connect(onChildAdded))
-			table.insert(connections, character.ChildRemoved:Connect(onChildRemoved))
-
-			for _, child in backpack:GetChildren() do
-				onItemAdded(child :: BackpackItem)
-			end
-			table.insert(connections, backpack.ChildAdded:Connect(onChildAdded))
-			table.insert(connections, backpack.ChildRemoved:Connect(onChildRemoved))
-		end
-
-		if player.Character then
-			connectCharacter(player.Character)
-		end
-
-		useEventListener(player.CharacterAdded, connectCharacter)
-
-		cleanup(disconnectCharacter)
-	end
-
 	local preferredInput = usePreferredInput()
 	effect(function()
 		states.keyboardHint(preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
 		states.gamepadHint(preferredInput() == Enum.PreferredInput.Gamepad)
+	end)
+
+	local lastOpened = states.opened()
+	effect(function()
+		local opened = states.opened()
+		if opened ~= lastOpened then
+			lastOpened = opened
+
+			if opened then
+				for _, listener in events.inventoryOpened.callbacks do
+					task.spawn(listener)
+				end
+			else
+				states.gamepadSwapIndex(nil)
+				for _, listener in events.inventoryClosed.callbacks do
+					task.spawn(listener)
+				end
+			end
+		end
 	end)
 
 	effect(function()

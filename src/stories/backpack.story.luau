@@ -1,15 +1,20 @@
 --!nonstrict
 local backpack = require("../components/backpack")
 local states = require("../states")
+local types = require("../types")
 local vide = require("../../vide")
 
+local derive = vide.derive
 local effect = vide.effect
+local action = vide.action
 
 local controls = {
+	keyboardHint = true,
+	gamepadHint = true,
+	opened = true,
 	slots = 10,
 	rows = 4,
-	opened = true,
-	keyboardHint = true,
+	categories = 4,
 }
 
 type Props = {
@@ -20,22 +25,50 @@ return {
 	vide = vide,
 	controls = controls,
 	story = function(props: Props)
-		local function createTool()
+		local function createSword()
 			local tool = Instance.new("Tool")
+			tool.Name = "Sword"
+			tool.TextureId = "rbxasset://Textures/Sword128.png"
+			tool.ToolTip = "A cool sword"
 			return tool
 		end
+
+		local function category(name: string): types.Category
+			return {
+				category = name,
+				predicate = function()
+					return true
+				end,
+			}
+		end
+
+		local getCategories = derive(function()
+			local count = props.controls.categories()
+			local categories = {}
+			if count < 1 then
+				return categories
+			end
+			for i = 1, count do
+				local categoryVal = category("category " .. i)
+				table.insert(categories, categoryVal)
+			end
+			return categories
+		end)
 
 		effect(function()
 			states.opened(props.controls.opened())
 			states.slots(math.floor(props.controls.slots()))
 			states.rows(math.floor(props.controls.rows()))
 			states.keyboardHint(props.controls.keyboardHint())
-			states.items({ createTool() })
+			states.gamepadHint(props.controls.gamepadHint())
+			states.categories(getCategories())
 		end)
 
-		return vide.apply(backpack())({
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-		})
+		states.items({ createSword(), createSword(), createSword() })
+
+		return {
+			action(states.appRef),
+			backpack(),
+		}
 	end,
 }

@@ -1,7 +1,6 @@
 /*.lock
 /*.rbxlx
-
 sourcemap.json
 .vscode
-
+AGENT.md
 Packages/

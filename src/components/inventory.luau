@@ -1,13 +1,14 @@
 local categorybar = require("./categorybar")
 local colorSpring = require("../utils/colorSpring")
 local cond = require("../utils/cond")
+local config = require("../constants/config")
 local px = require("../utils/px")
 local searchbar = require("./searchbar")
-local settings = require("../settings")
 local slot = require("./slot")
 local states = require("../states")
 local theme = require("../theme")
 local useInventoryItems = require("../hooks/backpack/useInventoryItems")
+local usePreferredInput = require("../hooks/usePreferredInput")
 local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local useSearch = require("../hooks/backpack/useSearch")
 local vide = require("../../vide")
@@ -21,7 +22,7 @@ local action = vide.action
 
 local function inventory(): Frame
 	local height = derive(function()
-		return states.rows() * (settings.slotSize + 5) - 5
+		return states.rows() * (config.slotSize + 5) - 5
 	end)
 
 	local selectedCategoryIndex = derive(function()
@@ -40,6 +41,7 @@ local function inventory(): Frame
 	local searchMatches = search.searchMatches
 
 	local preferredTransparency = usePreferredTransparency()
+	local preferredInput = usePreferredInput()
 
 	return create("Frame")({
 		Name = "Inventory",
@@ -79,9 +81,11 @@ local function inventory(): Frame
 				Padding = px.udim(0, 5),
 			}),
 
-			searchbar({
-				searchText = searchText,
-			}),
+			show(cond.neq(preferredInput, Enum.PreferredInput.Gamepad), function()
+				return searchbar({
+					searchText = searchText,
+				})
+			end),
 
 			create("ScrollingFrame")({
 				AutomaticCanvasSize = Enum.AutomaticSize.Y,
@@ -112,8 +116,8 @@ local function inventory(): Frame
 							return false
 						end
 
-						local selectedIdx = selectedCategoryIndex()
-						local selectedCategory = states.categories()[selectedIdx]
+						local index = selectedCategoryIndex()
+						local selectedCategory = states.categories()[index]
 						if selectedCategory and not selectedCategory.predicate(currentItem) then
 							return false
 						end

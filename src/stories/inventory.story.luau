@@ -39,9 +39,13 @@ return {
 		states.categories({})
 		states.selectedCategory("")
 
-		return vide.apply(inventory())({
-			AnchorPoint = Vector2.new(0.5, 0.5),
-			Position = UDim2.fromScale(0.5, 0.5),
-		})
+		return {
+			vide.action(states.appRef),
+
+			vide.apply(inventory())({
+				AnchorPoint = Vector2.new(0.5, 0.5),
+				Position = UDim2.fromScale(0.5, 0.5),
+			}),
+		}
 	end,
 }

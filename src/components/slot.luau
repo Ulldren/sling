@@ -1,5 +1,6 @@
 local colorSpring = require("../utils/colorSpring")
 local cond = require("../utils/cond")
+local config = require("../constants/config")
 local px = require("../utils/px")
 local states = require("../states")
 local theme = require("../theme")
@@ -12,6 +13,7 @@ local create = vide.create
 local show = vide.show
 local action = vide.action
 local derive = vide.derive
+local source = vide.source
 
 type Props = {
 	item: vide.Source<BackpackItem?>,
@@ -22,29 +24,34 @@ type Props = {
 }
 
 local function slot(props: Props): Frame
+	local item = props.item
+
 	local s = useSlot({
-		item = props.item,
+		item = item,
 		order = props.order,
 		inHotbar = props.inHotbar,
 	})
 
-	local slotSize = s.slotSize
-	local zindex = s.zindex
-	local item = s.item
 	local itemName = s.itemName
 	local itemImage = s.itemImage
 	local tooltipText = s.tooltipText
+	local slotNumber = s.slotNumber
+
+	local slotSize = s.slotSize
+	local zindex = s.zindex
+
 	local slotRef = s.slotRef
 	local slotFrameRef = s.slotFrameRef
-	local isHovering = s.isHovering
+
 	local isDragging = s.isDragging
-	local getSourceIdx = s.getSourceIdx
-	local getSlotNumber = s.getSlotNumber
+
+	local getIndex = s.getIndex
+
 	local onClick = s.onClick
-	local onMouseEnter = s.onMouseEnter
-	local onMouseLeave = s.onMouseLeave
 	local onDragBegin = s.onDragBegin
 	local onDragStopped = s.onDragStopped
+
+	local isHovering = source(false)
 
 	local preferredTransparency = usePreferredTransparency()
 	local backgroundTransparency = derive(function()
@@ -54,7 +61,7 @@ local function slot(props: Props): Frame
 	return create("Frame")({
 		Name = tostring(props.order),
 		BackgroundTransparency = 1,
-		Size = slotSize,
+		Size = px.offset(config.slotSize, config.slotSize),
 		LayoutOrder = props.order,
 		Visible = props.visible,
 
@@ -77,8 +84,12 @@ local function slot(props: Props): Frame
 			action(slotRef) :: any,
 
 			MouseButton1Click = onClick,
-			MouseEnter = onMouseEnter,
-			MouseLeave = onMouseLeave,
+			MouseEnter = function()
+				isHovering(true)
+			end,
+			MouseLeave = function()
+				isHovering(false)
+			end,
 			DragBegin = onDragBegin,
 			DragStopped = onDragStopped,
 
@@ -103,7 +114,7 @@ local function slot(props: Props): Frame
 					Name = "Number",
 					BackgroundTransparency = 1,
 					AutomaticSize = Enum.AutomaticSize.XY,
-					Text = getSlotNumber,
+					Text = slotNumber,
 					TextColor3 = colorSpring(theme.theme.slotTextColor),
 					TextSize = px.scale(theme.theme.slotTextSize),
 					FontFace = function()
@@ -136,12 +147,13 @@ local function slot(props: Props): Frame
 					Thickness = px.scale(theme.theme.slotEquipStrokeThickness),
 				})
 			end),
-			show(cond.all(item, cond.any(isDragging, cond.eq(states.gamepadSwapIdx, getSourceIdx))), function()
+			show(cond.any(cond.all(item, isDragging), cond.eq(states.gamepadSwapIndex, getIndex)), function()
 				return create("UIStroke")({
 					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 					BorderStrokePosition = Enum.BorderStrokePosition.Inner,
 					Color = Color3.fromRGB(255, 255, 255),
 					Thickness = px.scale(2),
+					Transparency = cond.ifelse(item, 0, 0.5),
 				})
 			end),
 			show(cond.all(props.inHotbar, cond.neq(tooltipText, ""), isHovering), function(_, present)

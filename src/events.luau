@@ -12,7 +12,10 @@ local function createEvent<Args...>()
 		on = function(listener: Listener<Args...>)
 			table.insert(callbacks, listener)
 			return function()
-				table.remove(callbacks, table.find(callbacks, listener))
+				local index = table.find(callbacks, listener)
+				if index then
+					table.remove(callbacks, index)
+				end
 			end
 		end,
 	})
@@ -26,4 +29,7 @@ return {
 	backpackRemoved = createEvent() :: Event<BackpackItem>,
 	inventoryOpened = createEvent(),
 	inventoryClosed = createEvent(),
+
+	-- internal
+	gamepadRemove = createEvent(),
 }

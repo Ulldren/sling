@@ -1,6 +1,6 @@
 local cond = require("../utils/cond")
+local config = require("../constants/config")
 local px = require("../utils/px")
-local settings = require("../settings")
 local slot = require("./slot")
 local states = require("../states")
 local useHotbarItems = require("../hooks/backpack/useHotbarItems")
@@ -19,7 +19,7 @@ local function hotbar(): Frame
 	return create("Frame")({
 		Name = "Hotbar",
 		AutomaticSize = Enum.AutomaticSize.X,
-		Size = px.offset(0, settings.slotSize + HOTBAR_PADDING * 2),
+		Size = px.offset(0, config.slotSize + HOTBAR_PADDING * 2),
 		BackgroundTransparency = 1,
 		LayoutOrder = 1,
 

@@ -1,19 +1,21 @@
 local GuiService = game:GetService("GuiService")
-local UserInputService = game:GetService("UserInputService")
 
 local cond = require("../../utils/cond")
+local config = require("../../constants/config")
+local events = require("../../events")
 local px = require("../../utils/px")
-local settings = require("../../settings")
 local slotUtils = require("../../utils/slotUtils")
 local states = require("../../states")
 local useEventListener = require("../useEventListener")
 local usePreferredInput = require("../usePreferredInput")
 local vide = require("../../../vide")
 
+local cleanup = vide.cleanup
 local effect = vide.effect
 local untrack = vide.untrack
 local source = vide.source
 local derive = vide.derive
+local spring = vide.spring
 
 local function checkBounds(pos: Vector2, target: GuiObject): boolean
 	local absPos = target.AbsolutePosition
@@ -53,13 +55,15 @@ local function useSlot(props: {
 })
 	local item = props.item
 
-	local isHovering = source(false)
 	local isDragging = source(false)
 
 	local slotRef = source(nil :: TextButton?)
 	local slotFrameRef = source(nil :: Frame?)
 
-	local slotSize = px.offset(settings.slotSize, settings.slotSize)
+	local DEFAULT_SLOT_SIZE_PIXEL = config.slotSize
+
+	local slotSizePixel = source(DEFAULT_SLOT_SIZE_PIXEL)
+	local slotSize = spring(px.offset(slotSizePixel, slotSizePixel), 0.1)
 	local preferredInput = usePreferredInput()
 	local zindex = derive(cond.ifelse(isDragging, 2, 1))
 
@@ -67,7 +71,7 @@ local function useSlot(props: {
 	local itemImage = source("")
 	local tooltipText = source("")
 
-	local getSourceIdx = derive(function()
+	local getIndex = derive(function()
 		local currentItem = item()
 		if currentItem then
 			for i, v in untrack(states.items) do
@@ -79,37 +83,41 @@ local function useSlot(props: {
 		return if props.inHotbar then props.order else states.slots() + props.order
 	end)
 
-	local function getSlotNumber(): string
-		if props.order >= 1 and props.order < 10 then
-			return tostring(props.order)
-		elseif props.order == 10 then
-			return "0"
-		end
-		return ""
+	local slotNumber = ""
+	if props.order >= 1 and props.order < 10 then
+		slotNumber = tostring(props.order)
+	elseif props.order == 10 then
+		slotNumber = "0"
 	end
 
-	local function swap(targetIdx: number)
-		local sourceIdx = untrack(getSourceIdx)
+	local function swap(targetIndex: number)
+		local index = untrack(getIndex)
 		local items = untrack(states.items)
-		if not items[sourceIdx] then
+		if not items[index] then
 			return
 		end
-		slotUtils.swap(sourceIdx, targetIdx)
+		slotUtils.swap(index, targetIndex)
 	end
 
 	local lastClickTime = 0
 	local function onClick()
-		local sourceIdx = untrack(getSourceIdx)
+		local index = untrack(getIndex)
 		if preferredInput() == Enum.PreferredInput.Gamepad and untrack(states.opened) then
-			local activeSwapIdx = untrack(states.gamepadSwapIdx)
-			if activeSwapIdx then
-				states.gamepadSwapIdx(nil)
-				if activeSwapIdx ~= sourceIdx then
-					slotUtils.swap(sourceIdx, activeSwapIdx)
+			local activeSwapIndex = untrack(states.gamepadSwapIndex)
+			if activeSwapIndex then
+				states.gamepadSwapIndex(nil)
+				if activeSwapIndex ~= index then
+					slotUtils.swap(index, activeSwapIndex)
 				end
 				return
 			else
-				states.gamepadSwapIdx(sourceIdx)
+				states.gamepadSwapIndex(index)
+
+				slotSizePixel(DEFAULT_SLOT_SIZE_PIXEL * 1.2)
+				task.delay(0.1, function()
+					slotSizePixel(DEFAULT_SLOT_SIZE_PIXEL)
+				end)
+
 				return
 			end
 		end
@@ -119,24 +127,13 @@ local function useSlot(props: {
 			return
 		end
 		local now = os.clock()
-		if now - lastClickTime < settings.doubleClickTime then
+		if now - lastClickTime < config.doubleClickTime and not props.inHotbar then
 			lastClickTime = 0
-
-			if not props.inHotbar then
-				slotUtils.moveToHotbar(untrack(getSourceIdx))
-			end
+			slotUtils.moveToHotbar(untrack(getIndex))
 		else
 			lastClickTime = now
 			states.equippedItem(if i == untrack(states.equippedItem) then nil else i)
 		end
-	end
-
-	local function onMouseEnter()
-		isHovering(true)
-	end
-
-	local function onMouseLeave()
-		isHovering(false)
 	end
 
 	local function onDragBegin()
@@ -181,7 +178,7 @@ local function useSlot(props: {
 		if hotbar then
 			insideHotbar = checkBounds(abpos, hotbar)
 			if insideHotbar then
-				local closest = getClosestFrame(abpos, hotbar, settings.slotSize / 2)
+				local closest = getClosestFrame(abpos, hotbar, config.slotSize / 2)
 				if closest and closest ~= slotFrame then
 					local targetOrder = closest.LayoutOrder
 					swap(targetOrder)
@@ -191,8 +188,8 @@ local function useSlot(props: {
 		end
 
 		if props.inHotbar and not insideHotbar then
-			local sourceIdx = untrack(getSourceIdx)
-			slotUtils.moveToInventory(sourceIdx)
+			local index = untrack(getIndex)
+			slotUtils.moveToInventory(index)
 		end
 	end
 
@@ -226,10 +223,7 @@ local function useSlot(props: {
 		end
 	end)
 
-	useEventListener(UserInputService.InputBegan, function(input, gameProcessedEvent)
-		if gameProcessedEvent then
-			return
-		end
+	cleanup(events.gamepadRemove.on(function()
 		if not untrack(states.opened) then
 			return
 		end
@@ -237,37 +231,30 @@ local function useSlot(props: {
 			return
 		end
 
-		if input.KeyCode == settings.gamepadRemoveKey then
-			local slotBtn = slotRef()
-			if slotBtn and GuiService.SelectedObject == slotBtn then
-				local sourceIdx = untrack(getSourceIdx)
-				slotUtils.moveToInventory(sourceIdx)
-			end
+		local slotBtn = slotRef()
+		if slotBtn and GuiService.SelectedObject == slotBtn then
+			local index = untrack(getIndex)
+			slotUtils.moveToInventory(index)
 		end
-	end)
+	end))
 
 	return {
-		slotSize = slotSize,
-		zindex = zindex,
-
-		item = item,
 		itemName = itemName,
 		itemImage = itemImage,
 		tooltipText = tooltipText,
+		slotNumber = slotNumber,
+
+		slotSize = slotSize,
+		zindex = zindex,
 
 		slotRef = slotRef,
 		slotFrameRef = slotFrameRef,
 
-		isHovering = isHovering,
 		isDragging = isDragging,
 
-		getSourceIdx = getSourceIdx,
-
-		getSlotNumber = getSlotNumber,
+		getIndex = getIndex,
 
 		onClick = onClick,
-		onMouseEnter = onMouseEnter,
-		onMouseLeave = onMouseLeave,
 		onDragBegin = onDragBegin,
 		onDragStopped = onDragStopped,
 	}

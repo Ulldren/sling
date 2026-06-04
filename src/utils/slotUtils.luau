@@ -6,9 +6,9 @@ local untrack = vide.untrack
 local function getMaxIndex(items: typeof(states.items())?): number
 	local currentItems = items or untrack(states.items)
 	local maxIndex = 0
-	for idx in currentItems do
-		if idx > maxIndex then
-			maxIndex = idx
+	for index in currentItems do
+		if index > maxIndex then
+			maxIndex = index
 		end
 	end
 	return maxIndex
@@ -61,43 +61,43 @@ local function closeInventoryGaps(items: typeof(states.items()))
 	end
 end
 
-local function swap(idxA: number, idxB: number)
-	if not idxA or not idxB then
+local function swap(indexA: number, indexB: number)
+	if (not indexA or not indexB) or indexA == indexB then
 		return
 	end
 	local slots = untrack(states.slots)
 	local newItems = untrack(states.items)
 
-	newItems[idxA], newItems[idxB] = newItems[idxB], newItems[idxA]
+	newItems[indexA], newItems[indexB] = newItems[indexB], newItems[indexA]
 
-	if idxA > slots or idxB > slots then
+	if indexA > slots or indexB > slots then
 		closeInventoryGaps(newItems)
 	end
 	states.items(newItems)
 end
 
-local function moveToHotbar(idx: number)
-	if not idx then
+local function moveToHotbar(index: number)
+	if not index then
 		return
 	end
-	local targetIdx = findLowestEmptyHotbarSlot()
-	if not targetIdx then
+	local targetIndex = findLowestEmptyHotbarSlot()
+	if not targetIndex then
 		return
 	end
-	swap(idx, targetIdx)
+	swap(index, targetIndex)
 end
 
-local function moveToInventory(idx: number)
+local function moveToInventory(index: number)
 	local slots = untrack(states.slots)
-	if idx > slots then
+	if index > slots then
 		return
 	end
 	local items = untrack(states.items)
-	if not items[idx] then
+	if not items[index] then
 		return
 	end
-	local targetIdx = findLowestEmptyInventorySlot()
-	swap(idx, targetIdx)
+	local targetIndex = findLowestEmptyInventorySlot()
+	swap(index, targetIndex)
 end
 
 local function insertToLowestSlot(item: BackpackItem)
@@ -107,11 +107,11 @@ local function insertToLowestSlot(item: BackpackItem)
 	states.items(currentItems)
 end
 
-local function removeSlot(idx: number)
+local function removeSlot(index: number)
 	local slots = untrack(states.slots)
 	local currentItems = untrack(states.items)
-	currentItems[idx] = nil
-	if idx > slots then
+	currentItems[index] = nil
+	if index > slots then
 		closeInventoryGaps(currentItems)
 	end
 	states.items(currentItems)
