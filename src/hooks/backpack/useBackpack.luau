@@ -1,3 +1,4 @@
+local ContextActionService = game:GetService("ContextActionService")
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
 local UserInputService = game:GetService("UserInputService")
@@ -17,6 +18,7 @@ local vide = require("../../../vide")
 local effect = vide.effect
 local untrack = vide.untrack
 local derive = vide.derive
+local cleanup = vide.cleanup
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui") :: PlayerGui
@@ -34,17 +36,6 @@ local KEY_TO_SLOT = {
 	[Enum.KeyCode.Zero] = 10,
 }
 
-local GAMEPAD_INPUT_TYPES = {
-	[Enum.UserInputType.Gamepad1] = true,
-	[Enum.UserInputType.Gamepad2] = true,
-	[Enum.UserInputType.Gamepad3] = true,
-	[Enum.UserInputType.Gamepad4] = true,
-	[Enum.UserInputType.Gamepad5] = true,
-	[Enum.UserInputType.Gamepad6] = true,
-	[Enum.UserInputType.Gamepad7] = true,
-	[Enum.UserInputType.Gamepad8] = true,
-}
-
 local function useBackpack()
 	useEventListener(GuiService.MenuOpened, function()
 		setEnabled(false)
@@ -53,78 +44,47 @@ local function useBackpack()
 		setEnabled(true)
 	end)
 
-	useEventListener(UserInputService.InputBegan, function(input, gameProcessedEvent)
-		if gameProcessedEvent then
-			return
+	local function updateBackpackSize()
+		local screenOrientation = playerGui.CurrentScreenOrientation
+		local viewportSize = GuiService.ViewportDisplaySize
+
+		if screenOrientation == Enum.ScreenOrientation.Portrait then
+			states.slots(config.hotbarSlotsPortrait)
+			states.rows(config.inventoryRowsPortrait)
+		elseif viewportSize == Enum.DisplaySize.Small then
+			states.slots(config.hotbarSlotsMini)
+			states.rows(config.inventoryRowsMini)
+		else
+			states.slots(config.hotbarSlotsFull)
+			states.rows(config.inventoryRowsFull)
 		end
-		local inputType = input.UserInputType
-		if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
-			closeInventory()
-		elseif inputType == Enum.UserInputType.Keyboard then
-			local slotNum = KEY_TO_SLOT[input.KeyCode]
-			local slots = untrack(states.slots)
-			if slotNum and slotNum <= slots then
-				local items = untrack(states.items)
-				local item = items[slotNum]
-				if item then
-					local equipped = untrack(states.equippedItem)
-					states.equippedItem(if item == equipped then nil else item)
-				end
-			end
-		elseif GAMEPAD_INPUT_TYPES[inputType] then
-			if input.KeyCode == Enum.KeyCode.ButtonR1 or input.KeyCode == Enum.KeyCode.ButtonL1 then
-				local moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
-				local slots = untrack(states.slots)
-				local items = untrack(states.items)
-				local equipped = untrack(states.equippedItem)
+	end
 
-				local equippedIndex = nil
-				if equipped then
-					for index = 1, slots do
-						local item = items[index]
-						if item and item == equipped then
-							equippedIndex = index
-							break
-						end
-					end
-				end
+	updateBackpackSize()
+	useEventListener(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"), updateBackpackSize)
+	useEventListener(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"), updateBackpackSize)
 
-				if equippedIndex then
-					local newPos = equippedIndex
-					local hitEdge = false
-					for _ = 1, slots do
-						newPos += moveDirection
-						if newPos > slots then
-							newPos = 1
-							hitEdge = true
-						elseif newPos < 1 then
-							newPos = slots
-							hitEdge = true
-						end
-						if items[newPos] then
-							break
-						end
-					end
-					states.equippedItem(if hitEdge then nil else items[newPos])
-				else
-					local startIndex = if moveDirection == 1 then 1 else slots
-					local endIndex = if moveDirection == 1 then slots else 1
-					for index = startIndex, endIndex, moveDirection do
-						local item = items[index]
-						if item then
-							states.equippedItem(item)
-							break
-						end
-					end
-				end
-			-- Remove item
-			elseif input.KeyCode == config.gamepadRemoveKey then
-				for _, listener in events.gamepadRemove.callbacks do
+	local preferredInput = usePreferredInput()
+	effect(function()
+		states.keyboardHint(preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
+		states.gamepadHint(preferredInput() == Enum.PreferredInput.Gamepad)
+	end)
+
+	local lastOpened = states.opened()
+	effect(function()
+		local opened = states.opened()
+		if opened ~= lastOpened then
+			lastOpened = opened
+
+			if opened then
+				for _, listener in events.inventoryOpened.callbacks do
 					task.spawn(listener)
 				end
-			-- Close inventory
-			elseif input.KeyCode == config.gamepadCloseKey or input.KeyCode == config.gamepadCloseSecondaryKey then
-				closeInventory()
+			else
+				states.gamepadSwapIndex(nil)
+				for _, listener in events.inventoryClosed.callbacks do
+					task.spawn(listener)
+				end
 			end
 		end
 	end)
@@ -136,6 +96,145 @@ local function useBackpack()
 			map[item] = i
 		end
 		return map
+	end)
+
+	local lastChangeToolInput = nil
+	local lastChangeToolTime = nil
+	local maxEquipDeltaTime = 0.06
+
+	local function hotbarEquip(_, state: Enum.UserInputState, input: InputObject)
+		if state ~= Enum.UserInputState.Begin then
+			return
+		end
+		if lastChangeToolInput then
+			if
+				(lastChangeToolInput.KeyCode == Enum.KeyCode.ButtonR1 and input.KeyCode == Enum.KeyCode.ButtonL1)
+				or (lastChangeToolInput.KeyCode == Enum.KeyCode.ButtonL1 and input.KeyCode == Enum.KeyCode.ButtonR1)
+			then
+				if (tick() - lastChangeToolTime) <= maxEquipDeltaTime then
+					states.equippedItem(nil)
+					lastChangeToolInput = input
+					lastChangeToolTime = tick()
+					return
+				end
+			end
+		end
+
+		lastChangeToolInput = input
+		lastChangeToolTime = tick()
+
+		task.delay(maxEquipDeltaTime, function()
+			if lastChangeToolInput ~= input then
+				return
+			end
+
+			local moveDirection = if input.KeyCode == Enum.KeyCode.ButtonR1 then 1 else -1
+			local slots = untrack(states.slots)
+			local items = untrack(states.items)
+			local equipped = untrack(states.equippedItem)
+
+			local equippedIndex: number? = nil
+			if equipped then
+				equippedIndex = untrack(itemsIndex)[equipped]
+				if equippedIndex > slots then
+					equippedIndex = nil
+				end
+			end
+
+			if equippedIndex then
+				local newPos = equippedIndex
+				local hitEdge = false
+				for _ = 1, slots do
+					newPos += moveDirection
+					if newPos > slots then
+						newPos = 1
+						hitEdge = true
+					elseif newPos < 1 then
+						newPos = slots
+						hitEdge = true
+					end
+					if items[newPos] then
+						break
+					end
+				end
+				states.equippedItem(if hitEdge then nil else items[newPos])
+			else
+				local startIndex = if moveDirection == 1 then 1 else slots
+				local endIndex = if moveDirection == 1 then slots else 1
+				for index = startIndex, endIndex, moveDirection do
+					local item = items[index]
+					if item then
+						states.equippedItem(item)
+						break
+					end
+				end
+			end
+		end)
+	end
+
+	local function hotbarRemove(_, state: Enum.UserInputState, input: InputObject)
+		if state ~= Enum.UserInputState.Begin then
+			return
+		end
+		for _, listener in events.gamepadRemove.callbacks do
+			task.spawn(listener)
+		end
+	end
+
+	effect(function()
+		if preferredInput() == Enum.PreferredInput.Gamepad then
+			ContextActionService:BindAction(
+				"BackpackHotbarEquip",
+				hotbarEquip,
+				false,
+				Enum.KeyCode.ButtonL1,
+				Enum.KeyCode.ButtonR1
+			)
+
+			cleanup(function()
+				ContextActionService:UnbindAction("BackpackHotbarEquip")
+			end)
+
+			if states.opened() then
+				ContextActionService:BindAction(
+					"BackpackCloseInventory",
+					closeInventory,
+					false,
+					config.gamepadCloseKey,
+					config.gamepadCloseSecondaryKey
+				)
+
+				ContextActionService:BindAction("BackpackHotbarRemove", hotbarRemove, false, config.gamepadRemoveKey)
+
+				cleanup(function()
+					ContextActionService:UnbindAction("BackpackCloseInventory")
+					ContextActionService:UnbindAction("BackpackHotbarRemove")
+				end)
+			end
+		end
+	end)
+
+	useEventListener(UserInputService.InputBegan, function(input, gameProcessedEvent)
+		if gameProcessedEvent then
+			return
+		end
+		local inputType = input.UserInputType
+		if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
+			closeInventory()
+		elseif inputType == Enum.UserInputType.Keyboard then
+			local slotNum = KEY_TO_SLOT[input.KeyCode]
+			if slotNum then
+				local slots = untrack(states.slots)
+				if slotNum <= slots then
+					local items = untrack(states.items)
+					local item = items[slotNum]
+					if item then
+						local equipped = untrack(states.equippedItem)
+						states.equippedItem(if item == equipped then nil else item)
+					end
+				end
+			end
+		end
 	end)
 
 	local backpack: Backpack = player:WaitForChild("Backpack")
@@ -260,51 +359,6 @@ local function useBackpack()
 				end
 			end
 			lastEquipped = equipped
-		end
-	end)
-
-	local function updateBackpackSize()
-		local screenOrientation = playerGui.CurrentScreenOrientation
-		local viewportSize = GuiService.ViewportDisplaySize
-
-		if screenOrientation == Enum.ScreenOrientation.Portrait then
-			states.slots(config.hotbarSlotsPortrait)
-			states.rows(config.inventoryRowsPortrait)
-		elseif viewportSize == Enum.DisplaySize.Small then
-			states.slots(config.hotbarSlotsMini)
-			states.rows(config.inventoryRowsMini)
-		else
-			states.slots(config.hotbarSlotsFull)
-			states.rows(config.inventoryRowsFull)
-		end
-	end
-
-	updateBackpackSize()
-	useEventListener(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"), updateBackpackSize)
-	useEventListener(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"), updateBackpackSize)
-
-	local preferredInput = usePreferredInput()
-	effect(function()
-		states.keyboardHint(preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
-		states.gamepadHint(preferredInput() == Enum.PreferredInput.Gamepad)
-	end)
-
-	local lastOpened = states.opened()
-	effect(function()
-		local opened = states.opened()
-		if opened ~= lastOpened then
-			lastOpened = opened
-
-			if opened then
-				for _, listener in events.inventoryOpened.callbacks do
-					task.spawn(listener)
-				end
-			else
-				states.gamepadSwapIndex(nil)
-				for _, listener in events.inventoryClosed.callbacks do
-					task.spawn(listener)
-				end
-			end
 		end
 	end)
 

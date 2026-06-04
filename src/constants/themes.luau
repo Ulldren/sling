@@ -16,7 +16,7 @@ return {
 		textStrokeTransparency = 0.5,
 
 		slotEquipStrokeColor = Color3.fromHex("#335fff"),
-		slotEquipStrokeThickness = 4,
+		slotEquipStrokeThickness = 5,
 
 		searchBackgroundTransparency = 0.2,
 		searchStrokeColor = Color3.fromHex("#ffffff"),

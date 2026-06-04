@@ -28,11 +28,11 @@ local function useSearch()
 		end
 
 		for _, token in tokens do
-			if not (name:find(token, 1, true) or tooltipText:find(token, 1, true)) then
-				return false
+			if name:find(token, 1, true) or tooltipText:find(token, 1, true) then
+				return true
 			end
 		end
-		return true
+		return false
 	end
 
 	return {
