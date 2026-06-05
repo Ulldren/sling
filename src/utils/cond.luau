@@ -4,8 +4,8 @@ local read = vide.read
 
 type Can<T> = vide.Source<T> | T
 
-local function ifelse<T>(fn: Can<unknown>, a: Can<T>, b: Can<T>)
-	return function()
+local function ifelse<T0, T1>(fn: Can<unknown>, a: Can<T0>, b: Can<T1>)
+	return function(): T0 | T1
 		return if read(fn) then read(a) else read(b)
 	end
 end
@@ -43,8 +43,8 @@ local function any(...)
 end
 
 local function len<T>(a: Can<{ T }>)
-	return function()
-		return #read(a)
+	return function(): number
+		return #read(a) :: any
 	end
 end
 

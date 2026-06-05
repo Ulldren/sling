@@ -77,14 +77,10 @@ local function useBackpack()
 			lastOpened = opened
 
 			if opened then
-				for _, listener in events.inventoryOpened.callbacks do
-					task.spawn(listener)
-				end
+				events.inventoryOpened.fire()
 			else
 				states.gamepadSwapIndex(nil)
-				for _, listener in events.inventoryClosed.callbacks do
-					task.spawn(listener)
-				end
+				events.inventoryClosed.fire()
 			end
 		end
 	end)
@@ -98,15 +94,15 @@ local function useBackpack()
 		return map
 	end)
 
-	local lastChangeToolInput = nil
-	local lastChangeToolTime = nil
+	local lastChangeToolInput: InputObject? = nil
+	local lastChangeToolTime: number? = nil
 	local maxEquipDeltaTime = 0.06
 
-	local function hotbarEquip(_, state: Enum.UserInputState, input: InputObject)
+	local function hotbarEquip(_actionName: string, state: Enum.UserInputState, input: InputObject)
 		if state ~= Enum.UserInputState.Begin then
 			return
 		end
-		if lastChangeToolInput then
+		if lastChangeToolInput and lastChangeToolTime then
 			if
 				(lastChangeToolInput.KeyCode == Enum.KeyCode.ButtonR1 and input.KeyCode == Enum.KeyCode.ButtonL1)
 				or (lastChangeToolInput.KeyCode == Enum.KeyCode.ButtonL1 and input.KeyCode == Enum.KeyCode.ButtonR1)
@@ -172,13 +168,11 @@ local function useBackpack()
 		end)
 	end
 
-	local function hotbarRemove(_, state: Enum.UserInputState, input: InputObject)
+	local function hotbarRemove(_actionName: string, state: Enum.UserInputState, input: InputObject)
 		if state ~= Enum.UserInputState.Begin then
 			return
 		end
-		for _, listener in events.gamepadRemove.callbacks do
-			task.spawn(listener)
-		end
+		events.gamepadRemove.fire()
 	end
 
 	effect(function()
@@ -214,7 +208,7 @@ local function useBackpack()
 		end
 	end)
 
-	useEventListener(UserInputService.InputBegan, function(input, gameProcessedEvent)
+	useEventListener(UserInputService.InputBegan, function(input: InputObject, gameProcessedEvent: boolean)
 		if gameProcessedEvent then
 			return
 		end
@@ -251,9 +245,7 @@ local function useBackpack()
 		end
 		slotUtils.insertToLowestSlot(item)
 
-		for _, listener in events.backpackAdded.callbacks do
-			task.spawn(listener, item)
-		end
+		events.backpackAdded.fire(item)
 	end
 
 	local function onItemRemoved(item: BackpackItem)
@@ -272,14 +264,10 @@ local function useBackpack()
 		end
 		slotUtils.removeSlot(index)
 
-		for _, listener in events.backpackRemoved.callbacks do
-			task.spawn(listener, item)
-		end
+		events.backpackRemoved.fire(item)
 
 		if slotUtils.getMaxIndex() == 0 then
-			for _, listener in events.backpackEmpty.callbacks do
-				task.spawn(listener)
-			end
+			events.backpackEmpty.fire()
 		end
 	end
 
@@ -313,7 +301,7 @@ local function useBackpack()
 		states.items({})
 
 		-- update backpack reference
-		backpack = player:FindFirstChild("Backpack")
+		backpack = player:FindFirstChildOfClass("Backpack")
 
 		observeItems(char)
 		observeItems(backpack)
@@ -349,14 +337,10 @@ local function useBackpack()
 		local equipped = states.equippedItem()
 		if equipped ~= lastEquipped then
 			if lastEquipped then
-				for _, listener in events.backpackUnequipped.callbacks do
-					task.spawn(listener, lastEquipped)
-				end
+				events.backpackUnequipped.fire(lastEquipped)
 			end
 			if equipped then
-				for _, listener in events.backpackEquipped.callbacks do
-					task.spawn(listener, equipped)
-				end
+				events.backpackEquipped.fire(equipped)
 			end
 			lastEquipped = equipped
 		end
