@@ -35,7 +35,7 @@ local lightTheme = Icon.new()
 lightTheme:oneClick(true)
 lightTheme:setLabel("Light")
 lightTheme:bindEvent("deselected", function()
-	Sling.setTheme(Sling.themes.white)
+	Sling.setTheme(Sling.themes.light)
 end)
 
 icon:setDropdown({ defaultTheme, lightTheme })

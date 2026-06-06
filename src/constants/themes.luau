@@ -24,7 +24,7 @@ return {
 
 		tooltipBackgroundTransparency = 0,
 	} :: ThemeConfig,
-	white = {
+	light = {
 		backgroundColor = Color3.fromHex("#eff1f5"),
 		textStrokeTransparency = 1,
 		textColor = Color3.fromHex("#4c4f69"),

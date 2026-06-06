@@ -9,7 +9,7 @@ A modern and reactive backpack system for Roblox, built using [Vide](https://git
 ## ⚡ Features
 
 - **Familiar UI**: Maintains a highly intuitive layout familiar to Roblox players, matching the core interface patterns they expect, but elevated with a sleek, premium, and modern aesthetic.
-- **Customizable Themes**: Highly customizable theme properties using `setTheme`. Easily switch between predefined themes (`default` and `white`) or define your own.
+- **Customizable Themes**: Highly customizable theme properties using `setTheme`. Easily switch between predefined themes (`default` and `light`) or define your own.
 - **Total Architectural Freedom**: Highly modular source code. You have absolute freedom to edit, extend, or rewrite UI components to match any unique design or specific gameplay behavior.
 - **Custom Categorization**: Group your inventory items into tab categories (e.g., Weapons, Potions, Resources) using simple, custom declarative predicate functions.
 
@@ -80,8 +80,8 @@ Seamlessly update colors, fonts, corner radius, and stroke values on the fly wit
 ```lua
 local sling = require("@game/ReplicatedStorage/Packages/sling")
 
--- Switch to the light theme (white)
-sling.setTheme(sling.themes.white)
+-- Switch to the light theme (light)
+sling.setTheme(sling.themes.light)
 
 -- Switch to the default theme (dark)
 sling.setTheme(sling.themes.default)
@@ -162,7 +162,7 @@ end
 Sets the active theme configuration.
 - **`config`**: The new `ThemeConfig` layout to apply. Individual values are automatically animated using spring physics.
 ```lua
-sling.setTheme(sling.themes.white)
+sling.setTheme(sling.themes.light)
 ```
 
 ---
