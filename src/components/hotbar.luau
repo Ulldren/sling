@@ -3,7 +3,6 @@ local config = require("../constants/config")
 local px = require("../utils/px")
 local slot = require("./slot")
 local states = require("../states")
-local useHotbarItems = require("../hooks/backpack/useHotbarItems")
 local vide = require("../../vide")
 
 local create = vide.create
@@ -16,6 +15,18 @@ local action = vide.action
 local HOTBAR_PADDING = 5
 
 local function hotbar(): Frame
+	local items = derive(function()
+		local slots = states.slots()
+		local items = states.items()
+
+		local newItems = table.create(slots)
+		for i = 1, slots do
+			local item = items[i]
+			newItems[i] = { item = item }
+		end
+		return newItems
+	end)
+
 	return create("Frame")({
 		Name = "Hotbar",
 		AutomaticSize = Enum.AutomaticSize.X,
@@ -43,7 +54,7 @@ local function hotbar(): Frame
 			PaddingBottom = px.udim(0, HOTBAR_PADDING),
 		}),
 
-		indexes(useHotbarItems(), function(entry, order)
+		indexes(items, function(entry, order)
 			local item = derive(function()
 				return entry().item
 			end)

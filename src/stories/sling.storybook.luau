@@ -1,5 +1,5 @@
 return {
-	name = "VideBackpack",
+	name = "Sling",
 	storyRoots = {
 		script.Parent,
 	},

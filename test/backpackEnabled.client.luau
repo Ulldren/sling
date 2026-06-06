@@ -1,7 +1,7 @@
 local StarterGui = game:GetService("StarterGui")
 
-local Icon = require("../VideBackpackLoader/VideBackpack/Packages/topbarplus")
-local backpack = require("../VideBackpackLoader/VideBackpack")
+local Icon = require("../Sling/Packages/topbarplus")
+local Sling = require("../Sling")
 
 local icon = Icon.new()
 icon:modifyTheme({
@@ -27,7 +27,7 @@ icon:autoDeselect(false)
 icon:setCaption("Toggle Backpack")
 icon.toggled:Connect(function(isSelected, fromSource)
 	if fromSource == "User" then
-		backpack.setEnabled(isSelected)
+		Sling.setEnabled(isSelected)
 		StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, not isSelected)
 	end
 end)

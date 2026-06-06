@@ -7,10 +7,9 @@ local searchbar = require("./searchbar")
 local slot = require("./slot")
 local states = require("../states")
 local theme = require("../theme")
-local useInventoryItems = require("../hooks/backpack/useInventoryItems")
+local useInventory = require("../hooks/backpack/useInventory")
 local usePreferredInput = require("../hooks/usePreferredInput")
 local usePreferredTransparency = require("../hooks/usePreferredTransparency")
-local useSearch = require("../hooks/backpack/useSearch")
 local vide = require("../../vide")
 
 local derive = vide.derive
@@ -24,27 +23,13 @@ local function inventory(): Frame
 	local height = derive(function()
 		return states.rows() * (config.slotSize + 5) - 5
 	end)
-
-	local selectedCategoryIndex = derive(function()
-		local selectedCategory = states.selectedCategory()
-		local categories = states.categories()
-		for i, category in categories do
-			if category.category == selectedCategory then
-				return i
-			end
-		end
-		return 0
-	end)
-
-	local search = useSearch()
-	local searchText = search.searchText
-	local searchMatches = search.searchMatches
-
+	local inventory = useInventory()
 	local preferredTransparency = usePreferredTransparency()
 	local preferredInput = usePreferredInput()
 
 	return create("Frame")({
 		Name = "Inventory",
+		Active = true,
 		BackgroundColor3 = colorSpring(theme.theme.backgroundColor),
 		BackgroundTransparency = function()
 			return theme.theme.backgroundTransparency() * preferredTransparency()
@@ -83,7 +68,7 @@ local function inventory(): Frame
 
 			show(cond.neq(preferredInput, Enum.PreferredInput.Gamepad), function()
 				return searchbar({
-					searchText = searchText,
+					searchText = inventory.searchText,
 				})
 			end),
 
@@ -109,24 +94,14 @@ local function inventory(): Frame
 					Wraps = true,
 				}),
 
-				indexes(useInventoryItems(), function(item, order)
+				indexes(inventory.items, function(item, order)
 					local visible = derive(function()
-						local currentItem = item()
-						if not currentItem then
-							return false
-						end
-
-						local index = selectedCategoryIndex()
-						local selectedCategory = states.categories()[index]
-						if selectedCategory and not selectedCategory.predicate(currentItem) then
-							return false
-						end
-						return searchMatches(currentItem)
+						return inventory.isVisible(item())
 					end)
 					return slot({
 						item = item,
-						order = order,
 						visible = visible,
+						order = order,
 						unlocked = source(true),
 					})
 				end),

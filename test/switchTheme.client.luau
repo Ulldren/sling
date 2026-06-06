@@ -1,5 +1,5 @@
-local Icon = require("../VideBackpackLoader/VideBackpack/Packages/topbarplus")
-local backpack = require("../VideBackpackLoader/VideBackpack")
+local Icon = require("../Sling/Packages/topbarplus")
+local Sling = require("../Sling")
 
 local icon = Icon.new()
 icon:modifyTheme({
@@ -28,14 +28,14 @@ local defaultTheme = Icon.new()
 defaultTheme:oneClick(true)
 defaultTheme:setLabel("Dark")
 defaultTheme:bindEvent("deselected", function()
-	backpack.setTheme(backpack.themes.default)
+	Sling.setTheme(Sling.themes.default)
 end)
 
 local lightTheme = Icon.new()
 lightTheme:oneClick(true)
 lightTheme:setLabel("Light")
 lightTheme:bindEvent("deselected", function()
-	backpack.setTheme(backpack.themes.white)
+	Sling.setTheme(Sling.themes.white)
 end)
 
 icon:setDropdown({ defaultTheme, lightTheme })

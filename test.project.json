@@ -1,11 +1,11 @@
 {
-    "name": "VideBackpack-Test",
+    "name": "sling-test",
     "emitLegacyScripts": false,
     "tree": {
         "$className": "DataModel",
         "ReplicatedStorage": {
-            "VideBackpackLoader": {
-                "$path": "models/VideBackpackLoader"
+            "Sling": {
+                "$path": "models/Sling"
             },
             "test": {
                 "$path": "test"

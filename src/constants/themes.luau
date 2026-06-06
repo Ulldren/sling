@@ -21,7 +21,6 @@ return {
 		searchBackgroundTransparency = 0.2,
 		searchStrokeColor = Color3.fromHex("#ffffff"),
 		searchStrokeTransparency = 0.8,
-		searchPlaceholderColor = Color3.fromHex("#7f7f7f"),
 
 		tooltipBackgroundTransparency = 0,
 	} :: ThemeConfig,

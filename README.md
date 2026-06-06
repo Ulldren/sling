@@ -1,6 +1,6 @@
-# 🎒 VideBackpack
+# 🎒 Sling
 
-![VideBackpack Preview](assets/preview.png)
+![Sling Preview](assets/preview.png)
 
 A modern and reactive backpack system for Roblox, built using [Vide](https://github.com/centau/vide).
 
@@ -19,19 +19,19 @@ A modern and reactive backpack system for Roblox, built using [Vide](https://git
 
 ### Github Releases
 
-1. Download the `VideBackpack.rbxm` model file from the [Github Releases](https://github.com/GuiRios7/VideBackpack/releases).
+1. Download the `Sling.rbxm` model file from the [Github Releases](https://github.com/encodedlux/sling/releases).
 2. Open Roblox Studio and create a new place or open an existing place.
-3. In the Explorer window, insert **VideBackpack** into **ReplicatedStorage**.
-4. Select the **VideBackpack** model file you downloaded from GitHub.
+3. In the Explorer window, insert **Sling** into **ReplicatedStorage**.
+4. Select the **Sling** model file you downloaded from GitHub.
 
-**VideBackpack** uses [RunContext](https://devforum.roblox.com/t/live-script-runcontext/1938784) to run anywhere, so you do not need to move it from Workspace, though it is recommended to parent it to **ReplicatedStorage** for better practices and organization.
+**Sling** uses [RunContext](https://devforum.roblox.com/t/live-script-runcontext/1938784) to run anywhere, so you do not need to move it from Workspace, though it is recommended to parent it to **ReplicatedStorage** for better practices and organization.
 
 ### Wally
 
-Add **VideBackpack** to your `wally.toml` dependencies:
+Add **Sling** to your `wally.toml` dependencies:
 ```toml
 [dependencies]
-VideBackpack = "encodedlux/vide-backpack@0.1.0"
+sling = "encodedlux/sling@0.1.0"
 ```
 Then, run `wally install` in your project folder.
 
@@ -40,24 +40,24 @@ Then, run `wally install` in your project folder.
 ## 💡 Usage
 
 ### 1. Basic Setup
-Initialize VideBackpack in your client script:
+Initialize Sling in your client script:
 ```lua
--- Require VideBackpack to run startup
-require("@game/ReplicatedStorage/Packages/VideBackpack")
+-- Require Sling to run startup
+require("@game/ReplicatedStorage/Packages/sling")
 ```
 
 ### 2. Registering Custom Categories
 Group items dynamically based on tag configurations or attributes:
 ```lua
-local VideBackpack = require("@game/ReplicatedStorage/Packages/VideBackpack")
+local sling = require("@game/ReplicatedStorage/Packages/sling")
 
 -- Category for items tagged as "Consumable"
-VideBackpack.createCategory("Consumable", function(item)
+sling.createCategory("Consumable", function(item)
     return item:HasTag("Consumable")
 end)
 
 -- Category for tools whose name starts with "Sword"
-VideBackpack.createCategory("Swords", function(item)
+sling.createCategory("Swords", function(item)
     return string.match(item.Name, "^Sword") ~= nil
 end)
 ```
@@ -65,9 +65,9 @@ end)
 ### 3. Subscribing to Inventory Lifecycles
 Track when items are equipped and handle custom mechanics:
 ```lua
-local VideBackpack = require("@game/ReplicatedStorage/Packages/VideBackpack")
+local sling = require("@game/ReplicatedStorage/Packages/sling")
 
-local disconnect = VideBackpack.onBackpackEquipped(function(item)
+local disconnect = sling.onBackpackEquipped(function(item)
     print("Player is now holding their:", item.Name)
 end)
 
@@ -78,22 +78,22 @@ disconnect()
 ### 4. Changing Themes
 Seamlessly update colors, fonts, corner radius, and stroke values on the fly with smooth transition animations:
 ```lua
-local VideBackpack = require("@game/ReplicatedStorage/Packages/VideBackpack")
+local sling = require("@game/ReplicatedStorage/Packages/sling")
 
 -- Switch to the light theme (white)
-VideBackpack.setTheme(VideBackpack.themes.white)
+sling.setTheme(sling.themes.white)
 
 -- Switch to the default theme (dark)
-VideBackpack.setTheme(VideBackpack.themes.default)
+sling.setTheme(sling.themes.default)
 
 -- Or create a custom theme
 local customTheme = {
     backgroundColor = Color3.fromHex("#492a17ff"),
     textColor = Color3.fromHex("#e09e74ff"),
     ...
-} :: VideBackpack.ThemeConfig
+} :: sling.ThemeConfig
 
-VideBackpack.setTheme(customTheme)
+sling.setTheme(customTheme)
 ```
 
 ---
@@ -106,37 +106,37 @@ VideBackpack.setTheme(customTheme)
 Enables or disables the custom backpack interface.
 - **`enabled`**: Set to `true` to display the UI, or `false` to hide it.
 ```lua
-VideBackpack.setEnabled(true)
+sling.setEnabled(true)
 ```
 
 #### `isEnabled() -> boolean`
 Returns whether the custom backpack UI is currently enabled.
 ```lua
-local isEnabled = VideBackpack.isEnabled()
+local isEnabled = sling.isEnabled()
 ```
 
 #### `openInventory()`
 Opens the inventory screen interface.
 ```lua
-VideBackpack.openInventory()
+sling.openInventory()
 ```
 
 #### `closeInventory()`
 Closes the inventory screen interface.
 ```lua
-VideBackpack.closeInventory()
+sling.closeInventory()
 ```
 
 #### `toggleInventory()`
 Toggles the visibility state of the inventory interface.
 ```lua
-VideBackpack.toggleInventory()
+sling.toggleInventory()
 ```
 
 #### `isInventoryOpen() -> boolean`
 Returns whether the inventory screen is currently open.
 ```lua
-local isOpen = VideBackpack.isInventoryOpen()
+local isOpen = sling.isInventoryOpen()
 ```
 
 #### `createCategory(name: string, predicate: (item: Tool | HopperBin) -> boolean)`
@@ -144,7 +144,7 @@ Creates a custom category filtering items based on the provided predicate functi
 - **`name`**: The display name of the category (e.g., `"Weapons"`).
 - **`predicate`**: A function that receives an `item` and returns a `boolean` (whether the item belongs in the category).
 ```lua
-VideBackpack.createCategory("Weapons", function(item)
+sling.createCategory("Weapons", function(item)
     return item:HasTag("Weapon")
 end)
 ```
@@ -152,7 +152,7 @@ end)
 #### `getTopbarIcon() -> Icon?`
 Returns the `TopbarPlus` icon instance generated by the module.
 ```lua
-local icon = VideBackpack.getTopbarIcon()
+local icon = sling.getTopbarIcon()
 if icon then
     icon:setLabel("Inventory")
 end
@@ -162,7 +162,7 @@ end
 Sets the active theme configuration.
 - **`config`**: The new `ThemeConfig` layout to apply. Individual values are automatically animated using spring physics.
 ```lua
-VideBackpack.setTheme(VideBackpack.themes.white)
+sling.setTheme(sling.themes.white)
 ```
 
 ---
@@ -174,7 +174,7 @@ All event listeners return a **disconnect function** when called, which can be e
 #### `onInventoryOpened(callback: () -> ()) -> (() -> ())`
 Fires whenever the player's inventory interface is opened.
 ```lua
-local disconnect = VideBackpack.onInventoryOpened(function()
+local disconnect = sling.onInventoryOpened(function()
     print("Player opened their inventory!")
 end)
 
@@ -185,7 +185,7 @@ disconnect()
 #### `onInventoryClosed(callback: () -> ()) -> (() -> ())`
 Fires whenever the player's inventory interface is closed.
 ```lua
-VideBackpack.onInventoryClosed(function()
+sling.onInventoryClosed(function()
     print("Player closed their inventory!")
 end)
 ```
@@ -194,7 +194,7 @@ end)
 Fires when the player equips an item on character.
 - **`item`**: The `Tool` that was equipped.
 ```lua
-VideBackpack.onBackpackEquipped(function(item)
+sling.onBackpackEquipped(function(item)
     print("Equipped item:", item.Name)
 end)
 ```
@@ -203,7 +203,7 @@ end)
 Fires when the player unequips their currently active item.
 - **`item`**: The `Tool` that was unequipped.
 ```lua
-VideBackpack.onBackpackUnequipped(function(item)
+sling.onBackpackUnequipped(function(item)
     print("Unequipped item:", item.Name)
 end)
 ```
@@ -212,7 +212,7 @@ end)
 Fires when an item is added to the player's backpack.
 - **`item`**: The `Tool` or `HopperBin` that was added.
 ```lua
-VideBackpack.onBackpackAdded(function(item)
+sling.onBackpackAdded(function(item)
     print("Added to backpack:", item.Name)
 end)
 ```
@@ -221,7 +221,7 @@ end)
 Fires when an item is removed entirely from the player's backpack.
 - **`item`**: The `Tool` or `HopperBin` that was removed.
 ```lua
-VideBackpack.onBackpackRemoved(function(item)
+sling.onBackpackRemoved(function(item)
     print("Removed from backpack:", item.Name)
 end)
 ```
@@ -229,7 +229,7 @@ end)
 #### `onBackpackEmpty(callback: () -> ()) -> (() -> ())`
 Fires when the backpack becomes entirely empty (contains no items).
 ```lua
-VideBackpack.onBackpackEmpty(function()
+sling.onBackpackEmpty(function()
     print("The backpack is now empty!")
 end)
 ```
@@ -244,4 +244,4 @@ end)
 
 ## 📄 License
 
-VideBackpack is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Sling is licensed under the MIT License - see the [LICENSE](LICENSE) for details.

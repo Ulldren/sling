@@ -1,5 +1,5 @@
 {
-    "name": "VideBackpack",
+    "name": "sling",
     "emitLegacyScripts": false,
     "tree": {
         "$path": "models"

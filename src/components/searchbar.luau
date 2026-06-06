@@ -10,6 +10,8 @@ local SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
 
 local create = vide.create
 local changed = vide.changed
+local source = vide.source
+local spring = vide.spring
 
 type Props = {
 	searchText: vide.Source<string>,
@@ -17,8 +19,8 @@ type Props = {
 
 local function searchbar(props: Props)
 	local searchText = props.searchText
-
 	local preferredTransparency = usePreferredTransparency()
+	local isFocusing = source(false)
 
 	return create("TextBox")({
 		Name = "Search",
@@ -30,14 +32,23 @@ local function searchbar(props: Props)
 		ClipsDescendants = true,
 		FontFace = theme.theme.searchFontFace,
 		PlaceholderText = "Search",
-		PlaceholderColor3 = colorSpring(theme.theme.searchPlaceholderColor),
+		PlaceholderColor3 = colorSpring(theme.theme.searchTextColor),
 		Size = px.udim2(1, 0, 0, 30),
 		Text = searchText,
 		TextColor3 = colorSpring(theme.theme.searchTextColor),
+		TextTransparency = cond.ifelse(cond.neq(searchText, ""), 0, 0.5),
 		TextSize = px.scale(theme.theme.searchTextSize),
 		TextStrokeColor3 = colorSpring(theme.theme.textStrokeColor),
 		TextStrokeTransparency = theme.theme.textStrokeTransparency,
 		TextXAlignment = Enum.TextXAlignment.Left,
+
+		Focused = function()
+			isFocusing(true)
+		end,
+
+		FocusLost = function()
+			isFocusing(false)
+		end,
 
 		changed("Text", function(value: string)
 			searchText(value)
@@ -52,8 +63,11 @@ local function searchbar(props: Props)
 		create("UIStroke")({
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 			Color = theme.theme.searchStrokeColor,
-			Transparency = theme.theme.searchStrokeTransparency,
-			Thickness = px.scale(1),
+			Transparency = spring(function()
+				local transparency = theme.theme.searchStrokeTransparency()
+				return if transparency == 1 then 1 else if isFocusing() then 0 else transparency
+			end, 0.2),
+			Thickness = spring(px.scale(cond.ifelse(isFocusing, 1.5, 1)), 0.2),
 		}),
 		create("UICorner")({
 			CornerRadius = theme.theme.searchCornerRadius,

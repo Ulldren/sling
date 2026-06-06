@@ -41,7 +41,6 @@ return {
 		searchStrokeTransparency = selectProp("searchStrokeTransparency"),
 		searchFontFace = selectProp("searchFontFace", "fontFace"),
 		searchTextColor = selectProp("searchTextColor", "textColor"),
-		searchPlaceholderColor = selectProp("searchPlaceholderColor", "textColor"),
 		searchTextSize = selectProp("searchTextSize", "textSize"),
 
 		hintFontFace = selectProp("hintFontFace", "fontFace"),

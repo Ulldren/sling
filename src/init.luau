@@ -23,12 +23,12 @@
 ]]
 
 --[[
-	By using VideBackpack, you agree to provide attribution in one of the following ways:
+	By using Sling, you agree to provide attribution in one of the following ways:
 		1. Keep the attribution unmodified and enabled
-		2. Provide credit in your experience description by name (VideBackpack) and creator (@EncodedLux)
+		2. Provide credit in your experience description by name (Sling) and creator (@EncodedLux)
 		3. Have a DevForum topic linked in your experience description, crediting with the above
 
-	Thank you for supporting VideBackpack.
+	Thank you for supporting Sling.
 ]]
 local RunService = game:GetService("RunService")
 
@@ -36,7 +36,7 @@ local VERSION = "0.1.0"
 
 -- Print attribution. Do not modify without reading above
 if not RunService:IsStudio() and RunService:IsClient() then
-	print(`🎒 Running VideBackpack v{VERSION} by @EncodedLux`)
+	print(`🎒 Running Sling v{VERSION} by @EncodedLux`)
 end
 
 local closeInventory = require("@self/api/closeInventory")

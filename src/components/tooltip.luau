@@ -7,7 +7,6 @@ local vide = require("../../vide")
 local create = vide.create
 local spring = vide.spring
 local source = vide.source
-local effect = vide.effect
 
 type Props = {
 	text: vide.Source<string>,
@@ -15,15 +14,7 @@ type Props = {
 }
 
 local function tooltip(props: Props)
-	local visible: vide.Source<boolean> = source(false)
-
-	if props.visible then
-		effect(function()
-			visible(props.visible())
-		end)
-	else
-		visible(true)
-	end
+	local visible: vide.Source<boolean> = props.visible or source(true)
 
 	return create("TextLabel")({
 		Name = "ToolTip",

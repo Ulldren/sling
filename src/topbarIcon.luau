@@ -4,7 +4,7 @@ local openInventory = require("./api/openInventory")
 local topbarplus = require("../topbarplus")
 
 local icon = topbarplus.new()
-icon:setName("VideBackpack")
+icon:setName("Sling")
 icon:modifyTheme({
 	{ "IconLabelContainer", "TargetWidth", 0 }, -- Force minimum width
 	{ "IconLabel", "AutoLocalize", false }, -- Don't translate font icon

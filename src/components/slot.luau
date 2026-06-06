@@ -14,6 +14,7 @@ local show = vide.show
 local action = vide.action
 local derive = vide.derive
 local source = vide.source
+local spring = vide.spring
 
 type Props = {
 	item: vide.Source<BackpackItem?>,
@@ -25,38 +26,16 @@ type Props = {
 
 local function slot(props: Props): Frame
 	local item = props.item
-
-	local s = useSlot({
-		item = item,
-		order = props.order,
-		inHotbar = props.inHotbar,
-	})
-
-	local itemName = s.itemName
-	local itemImage = s.itemImage
-	local tooltipText = s.tooltipText
-	local slotNumber = s.slotNumber
-
-	local slotSize = s.slotSize
-	local zindex = s.zindex
-
-	local slotRef = s.slotRef
-	local slotFrameRef = s.slotFrameRef
-
-	local isDragging = s.isDragging
-
-	local getIndex = s.getIndex
-
-	local onClick = s.onClick
-	local onDragBegin = s.onDragBegin
-	local onDragStopped = s.onDragStopped
-
 	local isHovering = source(false)
-
 	local preferredTransparency = usePreferredTransparency()
 	local backgroundTransparency = derive(function()
 		return theme.theme.slotBackgroundTransparency() * preferredTransparency()
 	end)
+	local slot = useSlot({
+		item = item,
+		order = props.order,
+		inHotbar = props.inHotbar,
+	})
 
 	return create("Frame")({
 		Name = tostring(props.order),
@@ -65,33 +44,33 @@ local function slot(props: Props): Frame
 		LayoutOrder = props.order,
 		Visible = props.visible,
 
-		action(slotFrameRef),
+		action(slot.slotFrameRef),
 
 		create("TextButton")({
 			AutoButtonColor = true,
 			BackgroundColor3 = colorSpring(theme.theme.slotBackgroundColor),
 			BackgroundTransparency = cond.ifelse(props.unlocked, 0, backgroundTransparency),
-			Size = slotSize,
-			Text = cond.ifelse(cond.eq(itemImage, ""), itemName, ""),
+			Size = slot.slotSize,
+			Text = cond.ifelse(cond.eq(slot.itemImage, ""), slot.itemName, ""),
 			FontFace = theme.theme.slotFontFace,
 			TextColor3 = colorSpring(theme.theme.slotTextColor),
 			TextScaled = true,
 			TextStrokeTransparency = theme.theme.textStrokeTransparency,
 			TextTruncate = Enum.TextTruncate.SplitWord,
 			Draggable = cond.all(states.opened, item),
-			ZIndex = zindex,
+			ZIndex = slot.zindex,
 
-			action(slotRef) :: any,
+			action(slot.slotRef) :: any,
 
-			MouseButton1Click = onClick,
 			MouseEnter = function()
 				isHovering(true)
 			end,
 			MouseLeave = function()
 				isHovering(false)
 			end,
-			DragBegin = onDragBegin,
-			DragStopped = onDragStopped,
+			MouseButton1Click = slot.onClick,
+			DragBegin = slot.onDragBegin,
+			DragStopped = slot.onDragStopped,
 
 			create("UITextSizeConstraint")({
 				MaxTextSize = px.scale(theme.theme.slotTextSize),
@@ -114,7 +93,7 @@ local function slot(props: Props): Frame
 					Name = "Number",
 					BackgroundTransparency = 1,
 					AutomaticSize = Enum.AutomaticSize.XY,
-					Text = slotNumber,
+					Text = slot.slotNumber,
 					TextColor3 = colorSpring(theme.theme.slotTextColor),
 					TextSize = px.scale(theme.theme.slotTextSize),
 					FontFace = function()
@@ -122,7 +101,7 @@ local function slot(props: Props): Frame
 					end,
 					TextStrokeColor3 = colorSpring(theme.theme.textStrokeColor),
 					TextStrokeTransparency = theme.theme.textStrokeTransparency,
-					ZIndex = zindex,
+					ZIndex = slot.zindex,
 				})
 			end),
 			create("ImageLabel")({
@@ -130,35 +109,40 @@ local function slot(props: Props): Frame
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.fromScale(0.5, 0.5),
 				BackgroundTransparency = 1,
-				Image = itemImage,
+				Image = slot.itemImage,
 				Size = UDim2.fromScale(1, 1),
-				ZIndex = zindex,
-				Visible = cond.neq(itemImage, ""),
+				ZIndex = slot.zindex,
+				Visible = cond.neq(slot.itemImage, ""),
 
 				create("UICorner")({
 					CornerRadius = theme.theme.slotCornerRadius,
 				}),
 			}),
-			show(cond.all(item, cond.eq(states.equippedItem, item)), function()
+			show(cond.all(item, cond.eq(states.equippedItem, item)), function(_, present)
 				return create("UIStroke")({
 					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 					Color = theme.theme.slotEquipStrokeColor,
 					LineJoinMode = Enum.LineJoinMode.Round,
-					Thickness = px.scale(theme.theme.slotEquipStrokeThickness),
-				})
+					Thickness = spring(px.scale(cond.ifelse(present, theme.theme.slotEquipStrokeThickness, 0)), 0.1),
+				}),
+					0.1
 			end),
-			show(cond.any(cond.all(item, isDragging), cond.eq(states.gamepadSwapIndex, getIndex)), function()
-				return create("UIStroke")({
-					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-					BorderStrokePosition = Enum.BorderStrokePosition.Inner,
-					Color = Color3.fromRGB(255, 255, 255),
-					Thickness = px.scale(2),
-					Transparency = cond.ifelse(item, 0, 0.5),
-				})
-			end),
-			show(cond.all(props.inHotbar, cond.neq(tooltipText, ""), isHovering), function(_, present)
+			show(
+				cond.any(cond.all(item, slot.isDragging), cond.eq(states.gamepadSwapIndex, slot.getIndex)),
+				function(_, present)
+					return create("UIStroke")({
+						ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+						BorderStrokePosition = Enum.BorderStrokePosition.Inner,
+						Color = Color3.fromRGB(255, 255, 255),
+						Thickness = spring(px.scale(cond.ifelse(present, 2, 0)), 0.1),
+						Transparency = cond.ifelse(item, 0, 0.5),
+					}),
+						0.1
+				end
+			),
+			show(cond.all(props.inHotbar, cond.neq(slot.tooltipText, ""), isHovering), function(_, present)
 				return tooltip({
-					text = tooltipText,
+					text = slot.tooltipText,
 					visible = present,
 				}), 0.2
 			end),

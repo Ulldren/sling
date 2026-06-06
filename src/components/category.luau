@@ -17,12 +17,8 @@ type Props = {
 
 local function category(props: Props)
 	local category = props.category
-
 	local categoryName = derive(function()
 		return category().category
-	end)
-	local isSelected = derive(function()
-		return categoryName() == states.selectedCategory()
 	end)
 
 	return create("TextButton")({
@@ -37,7 +33,7 @@ local function category(props: Props)
 		TextColor3 = colorSpring(theme.theme.textColor),
 		TextSize = px.scale(theme.theme.textSize),
 		Text = categoryName,
-		TextTransparency = spring(cond.ifelse(isSelected, 0, 0.4), 0.2),
+		TextTransparency = spring(cond.ifelse(cond.eq(categoryName, states.selectedCategory), 0, 0.4), 0.2),
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		TextWrapped = true,
 
@@ -50,6 +46,7 @@ local function category(props: Props)
 			return categories[#categories] ~= category()
 		end, function()
 			return create("Frame")({
+				Name = "Divider",
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = colorSpring(theme.theme.textColor),
 				BackgroundTransparency = 0.8,

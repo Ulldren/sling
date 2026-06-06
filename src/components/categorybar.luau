@@ -40,6 +40,7 @@ local function categorybar()
 		}),
 
 		create("Frame")({
+			Name = "Divider",
 			AnchorPoint = Vector2.new(0.5, 1),
 			BackgroundColor3 = colorSpring(theme.theme.textColor),
 			BackgroundTransparency = 0.8,

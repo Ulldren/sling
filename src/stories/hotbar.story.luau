@@ -6,7 +6,7 @@ local vide = require("../../vide")
 local effect = vide.effect
 
 local controls = {
-	opened = true,
+	opened = false,
 	slots = 10,
 	keyboardHint = true,
 }

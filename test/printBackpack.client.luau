@@ -1,29 +1,29 @@
-local backpack = require("../VideBackpackLoader/VideBackpack")
+local Sling = require("../Sling")
 
-backpack.onInventoryOpened(function()
+Sling.onInventoryOpened(function()
 	print("Inventory opened!")
 end)
 
-backpack.onInventoryClosed(function()
+Sling.onInventoryClosed(function()
 	print("Inventory closed!")
 end)
 
-backpack.onBackpackEquipped(function(tool)
+Sling.onBackpackEquipped(function(tool)
 	print("Item equipped:", tool.Name)
 end)
 
-backpack.onBackpackUnequipped(function(tool)
+Sling.onBackpackUnequipped(function(tool)
 	print("Item unequipped:", tool.Name)
 end)
 
-backpack.onBackpackAdded(function(tool)
+Sling.onBackpackAdded(function(tool)
 	print("Item added:", tool.Name)
 end)
 
-backpack.onBackpackRemoved(function(tool)
+Sling.onBackpackRemoved(function(tool)
 	print("Item removed:", tool.Name)
 end)
 
-backpack.onBackpackEmpty(function()
+Sling.onBackpackEmpty(function()
 	print("Backpack empty!")
 end)

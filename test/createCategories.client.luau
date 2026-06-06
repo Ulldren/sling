@@ -1,9 +1,9 @@
-local backpack = require("../VideBackpackLoader/VideBackpack")
+local Sling = require("../Sling")
 
-backpack.createCategory("Swords", function(tool)
+Sling.createCategory("Swords", function(tool)
 	return tool:HasTag("Sword")
 end)
 
-backpack.createCategory("Guns", function(tool)
+Sling.createCategory("Guns", function(tool)
 	return tool:HasTag("Gun")
 end)
