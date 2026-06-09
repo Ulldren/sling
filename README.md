@@ -22,7 +22,7 @@ A modern and reactive backpack system for Roblox, built using [Vide](https://git
 Add **Sling** to your `wally.toml` dependencies:
 ```toml
 [dependencies]
-sling = "encodedlux/sling@0.1.0"
+sling = "encodedlux/sling@0.1.1"
 ```
 Then, run `wally install` in your project folder.
 

@@ -32,7 +32,7 @@
 ]]
 local RunService = game:GetService("RunService")
 
-local VERSION = "0.1.0"
+local VERSION = "0.1.1"
 
 -- Print attribution. Do not modify without reading above
 if not RunService:IsStudio() and RunService:IsClient() then
