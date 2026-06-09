@@ -2,8 +2,8 @@ local types = require("../types")
 
 type ThemeConfig = types.ThemeConfig
 
-return {
-	default = {
+return table.freeze({
+	default = table.freeze({
 		backgroundColor = Color3.fromHex("#191b1d"),
 		backgroundTransparency = 0.3,
 		cornerRadius = UDim.new(0, 8),
@@ -23,13 +23,13 @@ return {
 		searchStrokeTransparency = 0.8,
 
 		tooltipBackgroundTransparency = 0,
-	} :: ThemeConfig,
-	light = {
+	}) :: ThemeConfig,
+	light = table.freeze({
 		backgroundColor = Color3.fromHex("#eff1f5"),
 		textStrokeTransparency = 1,
 		textColor = Color3.fromHex("#4c4f69"),
 		slotEquipStrokeColor = Color3.fromHex("#9eb3ff"),
 		searchStrokeColor = Color3.fromHex("#4c4f69"),
 		hintTextColor = Color3.fromHex("#ffffff"),
-	} :: ThemeConfig,
-}
+	}) :: ThemeConfig,
+})

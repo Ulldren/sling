@@ -54,6 +54,16 @@ export default defineConfig({
           ]
         },
         {
+          text: "Platforms",
+          items: [
+            { text: "Computer", link: "/tut/platforms/computer" },
+            { text: "Phone", link: "/tut/platforms/phone" },
+            { text: "Console", link: "/tut/platforms/console" },
+            { text: "Tablet", link: "/tut/platforms/tablet" },
+            { text: "VR", link: "/tut/platforms/vr" }
+          ]
+        },
+        {
           text: "Advanced",
           items: [
             { text: "Customizing Components", link: "/tut/advanced/customizing-components" }

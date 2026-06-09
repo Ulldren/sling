@@ -50,7 +50,7 @@ local function inventory(): Frame
 		create("Frame")({
 			Name = "TopFrame",
 			AutomaticSize = Enum.AutomaticSize.Y,
-			Size = UDim2.fromScale(1, 0),
+			Size = px.udim2(1, 0, 0, 5),
 			BackgroundTransparency = 1,
 			LayoutOrder = 1,
 

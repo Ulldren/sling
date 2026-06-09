@@ -38,4 +38,19 @@ lightTheme:bindEvent("deselected", function()
 	Sling.setTheme(Sling.themes.light)
 end)
 
-icon:setDropdown({ defaultTheme, lightTheme })
+local ristretto: Sling.ThemeConfig = {
+	backgroundColor = Color3.fromHex("#2c2525"),
+	slotEquipStrokeColor = Color3.fromHex("#e4b9b9"),
+	searchStrokeColor = Color3.fromHex("#e4b9b9"),
+	textColor = Color3.fromHex("#e4b9b9"),
+	fontFace = Font.new("rbxasset://fonts/families/FredokaOne.json"),
+}
+
+local ristrettoTheme = Icon.new()
+ristrettoTheme:oneClick(true)
+ristrettoTheme:setLabel("Ristretto")
+ristrettoTheme:bindEvent("deselected", function()
+	Sling.setTheme(ristretto)
+end)
+
+icon:setDropdown({ defaultTheme, lightTheme, ristrettoTheme })
