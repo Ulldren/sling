@@ -10,8 +10,6 @@ hero:
   name: "Sling"
   text: "A modern and reactive backpack system"
   tagline: "A highly customizable replacement for the default Roblox backpack UI."
-  image:
-    src: /logo.png
   actions:
     - theme: brand
       text: Learn

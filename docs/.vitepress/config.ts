@@ -6,9 +6,6 @@ export default defineConfig({
   title: "Sling",
   description: "A modern and reactive backpack system for Roblox",
   base: "/sling/",
-  head: [
-    ["link", { rel: "icon", href: "/sling/logo.png" }]
-  ],
 
   markdown: {
     config(md) {
@@ -17,8 +14,6 @@ export default defineConfig({
   },
 
   themeConfig: {
-    logo: "/logo.png",
-
     search: {
       provider: "local"
     },
