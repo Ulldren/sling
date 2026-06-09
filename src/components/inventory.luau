@@ -29,7 +29,9 @@ local function inventory(): Frame
 	return create("Frame")({
 		Name = "Inventory",
 		Active = true,
-		BackgroundColor3 = colorSpring(theme.theme.backgroundColor),
+		BackgroundColor3 = colorSpring(function()
+			return theme.theme.backgroundColor():Lerp(Color3.fromHex("#ffffff"), (1 - preferredTransparency()) * 0.15)
+		end),
 		BackgroundTransparency = function()
 			return theme.theme.backgroundTransparency() * preferredTransparency()
 		end,

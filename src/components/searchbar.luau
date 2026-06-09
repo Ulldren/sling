@@ -6,8 +6,15 @@ local theme = require("../theme")
 local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local vide = require("../../vide")
 
+local SEARCH_TEXT = "Search"
 local SEARCH_WIDTH = 190
 local SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
+
+pcall(function()
+	local LocalizationService = game:GetService("LocalizationService")
+	local CorescriptLocalization = LocalizationService:GetCorescriptLocalizations()[1]
+	SEARCH_TEXT = CorescriptLocalization:GetString(LocalizationService.RobloxLocaleId, "BACKPACK_SEARCH")
+end)
 
 local create = vide.create
 local changed = vide.changed
@@ -34,7 +41,7 @@ local function searchbar(props: Props)
 		ClearTextOnFocus = false,
 		ClipsDescendants = true,
 		FontFace = theme.theme.searchFontFace,
-		PlaceholderText = "Search",
+		PlaceholderText = SEARCH_TEXT,
 		PlaceholderColor3 = colorSpring(theme.theme.searchTextColor),
 		Size = cond.ifelse(
 			cond.gt(states.width, SEARCH_WIDTH),

@@ -17,15 +17,6 @@ local function useCategories(props: Props)
 		states.selectedCategory(if #categories > 0 then categories[1].category else "")
 	end)
 
-	local categories = states.categories()
-	table.insert(categories, 1, {
-		category = "All",
-		predicate = function()
-			return true
-		end,
-	})
-	states.categories(categories)
-
 	local allCategories = derive(function()
 		local categories = states.categories()
 		local width = states.width()

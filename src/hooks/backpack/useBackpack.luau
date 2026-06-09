@@ -5,6 +5,7 @@ local UserInputService = game:GetService("UserInputService")
 
 local closeInventory = require("../../api/closeInventory")
 local config = require("../../constants/config")
+local createCategory = require("../../api/createCategory")
 local events = require("../../events")
 local setEnabled = require("../../api/setEnabled")
 local slotUtils = require("../../utils/slotUtils")
@@ -341,6 +342,10 @@ local function useBackpack()
 			end
 			lastEquipped = equipped
 		end
+	end)
+
+	createCategory("All", function()
+		return true
 	end)
 end
 

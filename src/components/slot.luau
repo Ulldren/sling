@@ -46,7 +46,11 @@ local function slot(props: Props): Frame
 
 		create("TextButton")({
 			AutoButtonColor = true,
-			BackgroundColor3 = colorSpring(theme.theme.slotBackgroundColor),
+			BackgroundColor3 = colorSpring(function()
+				return theme.theme
+					.slotBackgroundColor()
+					:Lerp(Color3.fromHex("#ffffff"), item() ~= nil and 0 or ((1 - preferredTransparency()) * 0.15))
+			end),
 			BackgroundTransparency = cond.ifelse(slot.unlocked, 0, backgroundTransparency),
 			Size = slot.slotSize,
 			Text = "",
