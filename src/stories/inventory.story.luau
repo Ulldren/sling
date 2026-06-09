@@ -6,6 +6,7 @@ local vide = require("../../vide")
 local controls = {
 	width = 655,
 	rows = 4,
+	items = 10,
 }
 
 type Props = {
@@ -20,24 +21,24 @@ return {
 			local tool = Instance.new("Tool")
 			tool.Name = "Sword"
 			tool.TextureId = "rbxasset://Textures/Sword128.png"
-			tool.ToolTip = "A cool sword"
 			return tool
 		end
-		local itemsTbl = {}
-		for _ = 1, 15 do
-			table.insert(itemsTbl, createSword())
-		end
+
+		local items = vide.derive(function()
+			local itemsTbl = {}
+			for _ = 1, (props.controls.items() + states.slots()) do
+				table.insert(itemsTbl, createSword())
+			end
+			return itemsTbl
+		end)
 
 		vide.effect(function()
 			states.width(props.controls.width())
 			states.rows(math.floor(props.controls.rows()))
+			states.items(items())
 		end)
 
 		states.opened(true)
-		states.items(itemsTbl)
-		states.equippedItem(nil)
-		states.categories({})
-		states.selectedCategory("")
 
 		return {
 			vide.action(states.appRef),

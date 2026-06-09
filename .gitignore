@@ -1,6 +1,13 @@
+.vscode
+
 /*.lock
 /*.rbxlx
+
 sourcemap.json
-.vscode
-AGENT.md
+
 Packages/
+
+docs/.vitepress/dist
+docs/.vitepress/cache
+docs/node_modules
+docs/package-lock.json

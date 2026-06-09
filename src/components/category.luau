@@ -9,10 +9,11 @@ local vide = require("../../vide")
 local create = vide.create
 local derive = vide.derive
 local show = vide.show
-local spring = vide.spring
 
 type Props = {
 	category: () -> types.Category,
+	size: types.Can<UDim2>,
+	inBar: boolean?,
 }
 
 local function category(props: Props)
@@ -20,27 +21,37 @@ local function category(props: Props)
 	local categoryName = derive(function()
 		return category().category
 	end)
+	local isSelected = cond.eq(states.selectedCategory, categoryName)
+	local zIndex = cond.ifelse(props.inBar, 1, 2)
 
 	return create("TextButton")({
 		BackgroundTransparency = 1,
 		FontFace = function()
 			return Font.new(theme.theme.fontFace().Family, Enum.FontWeight.Bold)
 		end,
-		Size = spring(function()
-			local sizeX = 1 / #states.categories()
-			return UDim2.fromScale(sizeX, 1)
-		end, 0.2),
+		Size = props.size,
 		TextColor3 = colorSpring(theme.theme.textColor),
 		TextSize = px.scale(theme.theme.textSize),
 		Text = categoryName,
-		TextTransparency = spring(cond.ifelse(cond.eq(categoryName, states.selectedCategory), 0, 0.4), 0.2),
+		TextTransparency = cond.ifelse(isSelected, 0, 0.4),
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		TextWrapped = true,
+		ZIndex = zIndex,
 
 		Activated = function()
 			states.selectedCategory(categoryName())
 		end,
 
+		show(isSelected, function()
+			return create("Frame")({
+				Name = "Indicator",
+				AnchorPoint = Vector2.new(0, 1),
+				BackgroundColor3 = colorSpring(theme.theme.textColor),
+				Position = UDim2.fromScale(0, 1),
+				Size = px.udim2(1, 0, 0, 4),
+				ZIndex = zIndex,
+			})
+		end),
 		show(function()
 			local categories = states.categories()
 			return categories[#categories] ~= category()
@@ -50,8 +61,9 @@ local function category(props: Props)
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = colorSpring(theme.theme.textColor),
 				BackgroundTransparency = 0.8,
-				Position = UDim2.fromScale(1, 0.5),
-				Size = px.udim2(0, 1, 1, -8),
+				Position = cond.ifelse(props.inBar, UDim2.fromScale(1, 0.5), UDim2.fromScale(0.5, 1)),
+				Size = cond.ifelse(props.inBar, px.udim2(0, 1, 1, -8), px.udim2(1, 0, 0, 1)),
+				ZIndex = zIndex,
 			})
 		end),
 	})

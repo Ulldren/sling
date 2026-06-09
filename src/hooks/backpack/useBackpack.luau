@@ -5,7 +5,6 @@ local UserInputService = game:GetService("UserInputService")
 
 local closeInventory = require("../../api/closeInventory")
 local config = require("../../constants/config")
-local createCategory = require("../../api/createCategory")
 local events = require("../../events")
 local setEnabled = require("../../api/setEnabled")
 local slotUtils = require("../../utils/slotUtils")
@@ -244,7 +243,6 @@ local function useBackpack()
 			return
 		end
 		slotUtils.insertToLowestSlot(item)
-
 		events.backpackAdded.fire(item)
 	end
 
@@ -263,7 +261,6 @@ local function useBackpack()
 			return
 		end
 		slotUtils.removeSlot(index)
-
 		events.backpackRemoved.fire(item)
 
 		if slotUtils.getMaxIndex() == 0 then
@@ -320,7 +317,7 @@ local function useBackpack()
 			end
 
 			if equipped:IsA("HopperBin") then -- NOTE: HopperBin
-				warn(`Cannot select '{equipped.Name}' hopper. HopperBin is deprecated and not supported.`)
+				warn(`[Sling] Cannot select '{equipped.Name}' hopper. HopperBin is deprecated and not supported.`)
 				task.defer(function()
 					states.equippedItem(nil)
 				end)
@@ -344,15 +341,6 @@ local function useBackpack()
 			end
 			lastEquipped = equipped
 		end
-	end)
-
-	effect(function()
-		local categories = states.categories()
-		states.selectedCategory(if #categories > 0 then categories[1].category else "")
-	end)
-
-	createCategory("All", function()
-		return true
 	end)
 end
 

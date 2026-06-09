@@ -14,14 +14,13 @@ local vide = require("../../vide")
 
 local derive = vide.derive
 local create = vide.create
-local source = vide.source
 local indexes = vide.indexes
 local show = vide.show
 local action = vide.action
 
 local function inventory(): Frame
 	local height = derive(function()
-		return states.rows() * (config.slotSize + 5) - 5
+		return states.rows() * (config.slotSize + 5)
 	end)
 	local inventory = useInventory()
 	local preferredTransparency = usePreferredTransparency()
@@ -49,7 +48,7 @@ local function inventory(): Frame
 		show(cond.gt(cond.len(states.categories), 1), categorybar),
 
 		create("Frame")({
-			Name = "InventoryMainFrame",
+			Name = "TopFrame",
 			AutomaticSize = Enum.AutomaticSize.Y,
 			Size = UDim2.fromScale(1, 0),
 			BackgroundTransparency = 1,
@@ -62,50 +61,51 @@ local function inventory(): Frame
 				PaddingTop = px.udim(0, 5),
 			}),
 
-			create("UIListLayout")({
-				Padding = px.udim(0, 5),
-			}),
-
 			show(cond.neq(preferredInput, Enum.PreferredInput.Gamepad), function()
 				return searchbar({
 					searchText = inventory.searchText,
 				})
 			end),
+		}),
 
-			create("ScrollingFrame")({
-				AutomaticCanvasSize = Enum.AutomaticSize.Y,
-				BackgroundTransparency = 1,
-				BorderSizePixel = 0,
-				CanvasSize = UDim2.new(0, 0, 0, 0),
-				ElasticBehavior = Enum.ElasticBehavior.Always,
-				ScrollBarImageColor3 = Color3.fromRGB(208, 216, 250),
-				ScrollBarThickness = 8,
-				ScrollingDirection = Enum.ScrollingDirection.Y,
-				Selectable = false,
-				Size = px.udim2(1, 18, 0, height),
-				LayoutOrder = 1,
+		create("ScrollingFrame")({
+			AutomaticCanvasSize = Enum.AutomaticSize.Y,
+			BackgroundTransparency = 1,
+			BorderSizePixel = 0,
+			CanvasSize = UDim2.new(0, 0, 0, 0),
+			ElasticBehavior = Enum.ElasticBehavior.Always,
+			ScrollBarImageColor3 = Color3.fromRGB(255, 255, 255),
+			ScrollBarThickness = 10,
+			ScrollingDirection = Enum.ScrollingDirection.Y,
+			Selectable = false,
+			Size = px.udim2(1, 10, 0, height),
+			LayoutOrder = 2,
 
-				action(states.inventoryGridRef) :: any,
+			action(states.inventoryGridRef) :: any,
 
-				create("UIListLayout")({
-					FillDirection = Enum.FillDirection.Horizontal,
-					Padding = px.udim(0, 5),
-					SortOrder = Enum.SortOrder.LayoutOrder,
-					Wraps = true,
-				}),
-
-				indexes(inventory.items, function(item, order)
-					local visible = derive(function()
-						return inventory.isVisible(item())
-					end)
-					return slot({
-						item = item,
-						visible = visible,
-						order = order,
-						unlocked = source(true),
-					})
-				end),
+			create("UIPadding")({
+				PaddingBottom = px.udim(0, 5),
+				PaddingLeft = px.udim(0, 5),
+				PaddingRight = px.udim(0, 5),
 			}),
+
+			create("UIListLayout")({
+				FillDirection = Enum.FillDirection.Horizontal,
+				Padding = px.udim(0, 5),
+				SortOrder = Enum.SortOrder.LayoutOrder,
+				Wraps = true,
+			}),
+
+			indexes(inventory.items, function(item, order)
+				local visible = derive(function()
+					return inventory.isVisible(item())
+				end)
+				return slot({
+					item = item,
+					order = order,
+					visible = visible,
+				})
+			end),
 		}),
 	})
 end

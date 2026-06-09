@@ -62,7 +62,6 @@ local function hotbar(): Frame
 				return slot({
 					item = item,
 					order = order,
-					unlocked = cond.all(states.opened, item),
 					inHotbar = true,
 				})
 			end)

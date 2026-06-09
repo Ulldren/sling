@@ -1,11 +1,12 @@
 local colorSpring = require("../utils/colorSpring")
 local cond = require("../utils/cond")
 local px = require("../utils/px")
+local states = require("../states")
 local theme = require("../theme")
 local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local vide = require("../../vide")
 
-local SEARCH_PADDING: number = 8
+local SEARCH_WIDTH = 190
 local SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
 
 local create = vide.create
@@ -24,6 +25,8 @@ local function searchbar(props: Props)
 
 	return create("TextBox")({
 		Name = "Search",
+		AnchorPoint = Vector2.new(1, 0),
+		Position = UDim2.fromScale(1, 0),
 		BackgroundColor3 = colorSpring(theme.theme.searchBackgroundColor),
 		BackgroundTransparency = function()
 			return theme.theme.searchBackgroundTransparency() * preferredTransparency()
@@ -33,10 +36,14 @@ local function searchbar(props: Props)
 		FontFace = theme.theme.searchFontFace,
 		PlaceholderText = "Search",
 		PlaceholderColor3 = colorSpring(theme.theme.searchTextColor),
-		Size = px.udim2(1, 0, 0, 30),
+		Size = cond.ifelse(
+			cond.gt(states.width, SEARCH_WIDTH),
+			px.udim2(0, SEARCH_WIDTH, 0, 30),
+			px.udim2(1, 0, 0, 30)
+		),
 		Text = searchText,
 		TextColor3 = colorSpring(theme.theme.searchTextColor),
-		TextTransparency = cond.ifelse(cond.neq(searchText, ""), 0, 0.5),
+		TextTransparency = cond.ifelse(cond.neq(searchText, ""), 0, 0.7),
 		TextSize = px.scale(theme.theme.searchTextSize),
 		TextStrokeColor3 = colorSpring(theme.theme.textStrokeColor),
 		TextStrokeTransparency = theme.theme.textStrokeTransparency,
@@ -45,7 +52,6 @@ local function searchbar(props: Props)
 		Focused = function()
 			isFocusing(true)
 		end,
-
 		FocusLost = function()
 			isFocusing(false)
 		end,
@@ -55,10 +61,10 @@ local function searchbar(props: Props)
 		end),
 
 		create("UIPadding")({
-			PaddingLeft = px.udim(0, SEARCH_PADDING),
-			PaddingRight = px.udim(0, SEARCH_PADDING),
-			PaddingTop = px.udim(0, SEARCH_PADDING),
-			PaddingBottom = px.udim(0, SEARCH_PADDING),
+			PaddingLeft = px.udim(0, 8),
+			PaddingRight = px.udim(0, 8),
+			PaddingTop = px.udim(0, 8),
+			PaddingBottom = px.udim(0, 8),
 		}),
 		create("UIStroke")({
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,

@@ -83,6 +83,13 @@ local function useSlot(props: {
 		return if props.inHotbar then props.order else states.slots() + props.order
 	end)
 
+	local unlocked = derive(function()
+		if props.inHotbar then
+			return states.opened() and item() ~= nil
+		end
+		return true
+	end)
+
 	local slotNumber = ""
 	if props.order >= 1 and props.order < 10 then
 		slotNumber = tostring(props.order)
@@ -195,29 +202,26 @@ local function useSlot(props: {
 
 	effect(function()
 		local i = item()
-		if not i then
-			itemName("")
-			itemImage("")
-			tooltipText("")
-			return
-		end
-
-		itemName(i.Name)
-		useEventListener(i:GetPropertyChangedSignal("Name"), function()
+		if i then
 			itemName(i.Name)
-		end)
+			itemImage(i.TextureId)
+			useEventListener(i:GetPropertyChangedSignal("Name"), function()
+				itemName(i.Name)
+			end)
+			useEventListener(i:GetPropertyChangedSignal("TextureId"), function()
+				itemImage(i.TextureId)
+			end)
 
-		if i:IsA("Tool") then
-			local tool = i :: Tool
-			itemImage(tool.TextureId)
-			tooltipText(tool.ToolTip)
-			useEventListener(tool:GetPropertyChangedSignal("TextureId"), function()
-				itemImage(tool.TextureId)
-			end)
-			useEventListener(tool:GetPropertyChangedSignal("ToolTip"), function()
-				tooltipText(tool.ToolTip)
-			end)
+			if i:IsA("Tool") then
+				tooltipText(i.ToolTip)
+				useEventListener(i:GetPropertyChangedSignal("ToolTip"), function()
+					tooltipText(i.ToolTip)
+				end)
+			else
+				tooltipText("")
+			end
 		else
+			itemName("")
 			itemImage("")
 			tooltipText("")
 		end
@@ -251,6 +255,8 @@ local function useSlot(props: {
 		slotFrameRef = slotFrameRef,
 
 		isDragging = isDragging,
+
+		unlocked = unlocked,
 
 		getIndex = getIndex,
 

@@ -14,13 +14,11 @@ local show = vide.show
 local action = vide.action
 local derive = vide.derive
 local source = vide.source
-local spring = vide.spring
 
 type Props = {
 	item: vide.Source<BackpackItem?>,
 	order: number,
 	visible: vide.Source<boolean>?,
-	unlocked: vide.Source<boolean>?,
 	inHotbar: boolean?,
 }
 
@@ -49,14 +47,9 @@ local function slot(props: Props): Frame
 		create("TextButton")({
 			AutoButtonColor = true,
 			BackgroundColor3 = colorSpring(theme.theme.slotBackgroundColor),
-			BackgroundTransparency = cond.ifelse(props.unlocked, 0, backgroundTransparency),
+			BackgroundTransparency = cond.ifelse(slot.unlocked, 0, backgroundTransparency),
 			Size = slot.slotSize,
-			Text = cond.ifelse(cond.eq(slot.itemImage, ""), slot.itemName, ""),
-			FontFace = theme.theme.slotFontFace,
-			TextColor3 = colorSpring(theme.theme.slotTextColor),
-			TextScaled = true,
-			TextStrokeTransparency = theme.theme.textStrokeTransparency,
-			TextTruncate = Enum.TextTruncate.SplitWord,
+			Text = "",
 			Draggable = cond.all(states.opened, item),
 			ZIndex = slot.zindex,
 
@@ -76,38 +69,48 @@ local function slot(props: Props): Frame
 				MaxTextSize = px.scale(theme.theme.slotTextSize),
 				MinTextSize = px.scale(12),
 			}),
-
 			create("UIPadding")({
 				PaddingBottom = px.udim(0, 5),
 				PaddingLeft = px.udim(0, 5),
 				PaddingRight = px.udim(0, 5),
 				PaddingTop = px.udim(0, 5),
 			}),
-
 			create("UICorner")({
 				CornerRadius = theme.theme.slotCornerRadius,
 			}),
-
-			show(cond.all(props.inHotbar, states.keyboardHint), function()
-				return create("TextLabel")({
-					Name = "Number",
-					BackgroundTransparency = 1,
-					AutomaticSize = Enum.AutomaticSize.XY,
-					Text = slot.slotNumber,
-					TextColor3 = colorSpring(theme.theme.slotTextColor),
-					TextSize = px.scale(theme.theme.slotTextSize),
-					FontFace = function()
-						return Font.new(theme.theme.slotFontFace().Family, Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
-					end,
-					TextStrokeColor3 = colorSpring(theme.theme.textStrokeColor),
-					TextStrokeTransparency = theme.theme.textStrokeTransparency,
-					ZIndex = slot.zindex,
+			show(cond.all(item, cond.eq(states.equippedItem, item)), function()
+				return create("UIStroke")({
+					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+					Color = theme.theme.slotEquipStrokeColor,
+					LineJoinMode = Enum.LineJoinMode.Round,
+					Thickness = theme.theme.slotEquipStrokeThickness,
 				})
 			end),
+			show(cond.any(cond.all(item, slot.isDragging), cond.eq(states.gamepadSwapIndex, slot.getIndex)), function()
+				return create("UIStroke")({
+					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
+					BorderStrokePosition = Enum.BorderStrokePosition.Inner,
+					Color = Color3.fromRGB(255, 255, 255),
+					Thickness = px.scale(2),
+					Transparency = cond.ifelse(item, 0, 0.5),
+				})
+			end),
+			create("TextLabel")({
+				Name = "ItemName",
+				BackgroundTransparency = 1,
+				Size = UDim2.fromScale(1, 1),
+				Text = slot.itemName,
+				FontFace = theme.theme.slotFontFace,
+				TextSize = px.scale(theme.theme.textSize),
+				TextColor3 = colorSpring(theme.theme.slotTextColor),
+				TextStrokeTransparency = theme.theme.textStrokeTransparency,
+				TextWrapped = true,
+				TextTruncate = Enum.TextTruncate.AtEnd,
+				ZIndex = slot.zindex,
+				Visible = cond.eq(slot.itemImage, ""),
+			}),
 			create("ImageLabel")({
 				Name = "Icon",
-				AnchorPoint = Vector2.new(0.5, 0.5),
-				Position = UDim2.fromScale(0.5, 0.5),
 				BackgroundTransparency = 1,
 				Image = slot.itemImage,
 				Size = UDim2.fromScale(1, 1),
@@ -118,28 +121,22 @@ local function slot(props: Props): Frame
 					CornerRadius = theme.theme.slotCornerRadius,
 				}),
 			}),
-			show(cond.all(item, cond.eq(states.equippedItem, item)), function(_, present)
-				return create("UIStroke")({
-					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-					Color = theme.theme.slotEquipStrokeColor,
-					LineJoinMode = Enum.LineJoinMode.Round,
-					Thickness = spring(px.scale(cond.ifelse(present, theme.theme.slotEquipStrokeThickness, 0)), 0.1),
-				}),
-					0.1
+			show(cond.all(props.inHotbar, states.keyboardHint), function()
+				return create("TextLabel")({
+					Name = "Number",
+					BackgroundTransparency = 1,
+					AutomaticSize = Enum.AutomaticSize.XY,
+					Text = slot.slotNumber,
+					TextColor3 = colorSpring(theme.theme.textColor),
+					TextSize = px.scale(theme.theme.smallTextSize),
+					FontFace = function()
+						return Font.new(theme.theme.slotFontFace().Family, Enum.FontWeight.Heavy, Enum.FontStyle.Normal)
+					end,
+					TextStrokeColor3 = colorSpring(theme.theme.textStrokeColor),
+					TextStrokeTransparency = theme.theme.textStrokeTransparency,
+					ZIndex = slot.zindex,
+				})
 			end),
-			show(
-				cond.any(cond.all(item, slot.isDragging), cond.eq(states.gamepadSwapIndex, slot.getIndex)),
-				function(_, present)
-					return create("UIStroke")({
-						ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-						BorderStrokePosition = Enum.BorderStrokePosition.Inner,
-						Color = Color3.fromRGB(255, 255, 255),
-						Thickness = spring(px.scale(cond.ifelse(present, 2, 0)), 0.1),
-						Transparency = cond.ifelse(item, 0, 0.5),
-					}),
-						0.1
-				end
-			),
 			show(cond.all(props.inHotbar, cond.neq(slot.tooltipText, ""), isHovering), function(_, present)
 				return tooltip({
 					text = slot.tooltipText,
