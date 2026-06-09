@@ -4,6 +4,7 @@ import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: "Sling",
+  titleTemplate: ":title - A modern and reactive backpack system for Roblox",
   description: "A modern and reactive backpack system for Roblox",
   base: "/sling/",
 
