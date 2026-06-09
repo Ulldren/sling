@@ -5,8 +5,9 @@ import { tabsMarkdownPlugin } from "vitepress-plugin-tabs";
 export default defineConfig({
   title: "Sling",
   description: "A modern and reactive backpack system for Roblox",
+  base: "/sling/",
   head: [
-    ["link", { rel: "icon", href: "/logo.png" }]
+    ["link", { rel: "icon", href: "/sling/logo.png" }]
   ],
 
   markdown: {
