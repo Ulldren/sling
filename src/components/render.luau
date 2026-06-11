@@ -30,7 +30,7 @@ local function render()
 			ZIndexBehavior = Enum.ZIndexBehavior.Global,
 			Enabled = states.enabled,
 
-			action(states.appRef),
+			action(states.appRef :: any),
 
 			backpack(),
 		})

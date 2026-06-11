@@ -56,13 +56,15 @@ local function createEvent<Args...>(): Event<Args...>
 end
 
 return {
-	backpackEmpty = createEvent(),
-	backpackEquipped = createEvent() :: Event<BackpackItem>,
-	backpackUnequipped = createEvent() :: Event<BackpackItem>,
-	backpackAdded = createEvent() :: Event<BackpackItem>,
-	backpackRemoved = createEvent() :: Event<BackpackItem>,
 	inventoryOpened = createEvent(),
 	inventoryClosed = createEvent(),
+	backpackLoaded = createEvent() :: Event<{ BackpackItem }>,
+	backpackItemEquipped = createEvent() :: Event<BackpackItem>,
+	backpackItemUnequipped = createEvent() :: Event<BackpackItem>,
+	backpackItemAdded = createEvent() :: Event<BackpackItem>,
+	backpackItemRemoved = createEvent() :: Event<BackpackItem>,
+	backpackEmpty = createEvent(),
+	hotbarChanged = createEvent() :: Event<{ BackpackItem }>,
 
 	-- internal
 	gamepadRemove = createEvent(),

@@ -1,13 +1,30 @@
+local typesModule = require("../types")
 local vide = require("../../vide")
 
 local read = vide.read
 
-type Can<T> = vide.Source<T> | T
+type Can<T> = typesModule.Can<T>
 
-local function ifelse<T0, T1>(fn: Can<unknown>, a: Can<T0>, b: Can<T1>)
-	return function(): T0 | T1
-		return if read(fn) then read(a) else read(b)
+type function GetterUnwrapArgs(a: type, b: type): type
+	local function unwrap(t: type): type
+		if t:is("function") then
+			local returns = t:returns()
+			if returns and returns.head and returns.head[1] then
+				return returns.head[1]
+			end
+		end
+		return t
 	end
+
+	local t_a = unwrap(a)
+	local t_b = unwrap(b)
+	return types.newfunction({}, { head = { if t_a == t_b then t_a else types.unionof(t_a, t_b) } })
+end
+
+local function ifelse<T0, T1>(fn: Can<unknown>, a: T0, b: T1): GetterUnwrapArgs<T0, T1>
+	return function()
+		return if read(fn) then read(a) else read(b)
+	end :: any
 end
 
 local function nott(fn)

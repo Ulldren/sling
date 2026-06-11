@@ -2,19 +2,19 @@ local colorSpring = require("../utils/colorSpring")
 local cond = require("../utils/cond")
 local px = require("../utils/px")
 local theme = require("../theme")
+local types = require("../types")
 local vide = require("../../vide")
 
 local create = vide.create
 local spring = vide.spring
-local source = vide.source
 
 type Props = {
-	text: vide.Source<string>,
-	visible: vide.Source<boolean>?,
+	text: () -> string,
+	visible: (() -> boolean)?,
 }
 
 local function tooltip(props: Props)
-	local visible: vide.Source<boolean> = props.visible or source(true)
+	local visible: types.Can<boolean> = props.visible or true
 
 	return create("TextLabel")({
 		Name = "ToolTip",

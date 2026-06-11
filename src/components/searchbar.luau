@@ -12,14 +12,12 @@ local SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
 
 pcall(function()
 	local LocalizationService = game:GetService("LocalizationService")
-	local CorescriptLocalization = LocalizationService:GetCorescriptLocalizations()[1]
+	local CorescriptLocalization = LocalizationService:GetCorescriptLocalizations()[1] :: any
 	SEARCH_TEXT = CorescriptLocalization:GetString(LocalizationService.RobloxLocaleId, "BACKPACK_SEARCH")
 end)
 
 local create = vide.create
 local changed = vide.changed
-local source = vide.source
-local spring = vide.spring
 
 type Props = {
 	searchText: vide.Source<string>,
@@ -28,7 +26,6 @@ type Props = {
 local function searchbar(props: Props)
 	local searchText = props.searchText
 	local preferredTransparency = usePreferredTransparency()
-	local isFocusing = source(false)
 
 	return create("TextBox")({
 		Name = "Search",
@@ -56,13 +53,6 @@ local function searchbar(props: Props)
 		TextStrokeTransparency = theme.theme.textStrokeTransparency,
 		TextXAlignment = Enum.TextXAlignment.Left,
 
-		Focused = function()
-			isFocusing(true)
-		end,
-		FocusLost = function()
-			isFocusing(false)
-		end,
-
 		changed("Text", function(value: string)
 			searchText(value)
 		end),
@@ -75,12 +65,9 @@ local function searchbar(props: Props)
 		}),
 		create("UIStroke")({
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
-			Color = theme.theme.searchStrokeColor,
-			Transparency = spring(function()
-				local transparency = theme.theme.searchStrokeTransparency()
-				return if transparency == 1 then 1 else if isFocusing() then 0 else transparency
-			end, 0.2),
-			Thickness = spring(px.scale(cond.ifelse(isFocusing, 1.5, 1)), 0.2),
+			Color = colorSpring(theme.theme.searchStrokeColor),
+			Transparency = theme.theme.searchStrokeTransparency,
+			Thickness = px.scale(1),
 		}),
 		create("UICorner")({
 			CornerRadius = theme.theme.searchCornerRadius,

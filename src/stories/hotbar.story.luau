@@ -3,6 +3,7 @@ local hotbar = require("../components/hotbar")
 local states = require("../states")
 local vide = require("../../vide")
 
+local apply = vide.apply
 local effect = vide.effect
 
 local controls = {
@@ -40,7 +41,7 @@ return {
 		states.items({ createSword(), createTool() })
 		states.equippedItem(nil)
 
-		return vide.apply(hotbar())({
+		return apply(hotbar())({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 		})

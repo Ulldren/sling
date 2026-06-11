@@ -40,10 +40,11 @@ end)
 
 local ristretto: Sling.ThemeConfig = {
 	backgroundColor = Color3.fromHex("#2c2525"),
-	slotEquipStrokeColor = Color3.fromHex("#e4b9b9"),
-	searchStrokeColor = Color3.fromHex("#e4b9b9"),
 	textColor = Color3.fromHex("#e4b9b9"),
 	fontFace = Font.new("rbxasset://fonts/families/FredokaOne.json"),
+	slotEquipStrokeColor = Color3.fromHex("#e4b9b9"),
+	slotEquipStrokeOutline = false,
+	searchStrokeColor = Color3.fromHex("#e4b9b9"),
 }
 
 local ristrettoTheme = Icon.new()
@@ -53,4 +54,26 @@ ristrettoTheme:bindEvent("deselected", function()
 	Sling.setTheme(ristretto)
 end)
 
-icon:setDropdown({ defaultTheme, lightTheme, ristrettoTheme })
+local legacy: Sling.ThemeConfig = {
+	backgroundColor = Color3.new(31 / 255, 31 / 255, 31 / 255),
+	backgroundTransparency = 0.5,
+	fontFace = Font.fromEnum(Enum.Font.SourceSans),
+	textStrokeTransparency = 1,
+	cornerRadius = UDim.new(),
+	smallCornerRadius = UDim.new(),
+	slotBackgroundColor = Color3.new(49 / 255, 49 / 255, 49 / 255),
+	slotEquipStrokeColor = Color3.new(90 / 255, 142 / 255, 233 / 255),
+	slotEquipStrokeOutline = false,
+	searchBackgroundColor = Color3.new(49 / 255, 49 / 255, 49 / 255),
+	searchBackgroundTransparency = 0.15,
+	searchStrokeTransparency = 1,
+}
+
+local legacyTheme = Icon.new()
+legacyTheme:oneClick(true)
+legacyTheme:setLabel("Legacy")
+legacyTheme:bindEvent("deselected", function()
+	Sling.setTheme(legacy)
+end)
+
+icon:setDropdown({ defaultTheme, lightTheme, ristrettoTheme, legacyTheme })

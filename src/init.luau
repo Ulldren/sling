@@ -48,6 +48,7 @@ local isInventoryOpen = require("@self/api/isInventoryOpen")
 local openInventory = require("@self/api/openInventory")
 local render = require("@self/components/render")
 local setEnabled = require("@self/api/setEnabled")
+local setHotbar = require("@self/api/setHotbar")
 local setTheme = require("@self/api/setTheme")
 local themes = require("@self/constants/themes")
 local toggleInventory = require("@self/api/toggleInventory")
@@ -69,17 +70,29 @@ return table.freeze({
 	setEnabled = setEnabled,
 	createCategory = createCategory,
 	setTheme = setTheme,
+	setHotbar = setHotbar,
 	getTopbarIcon = getTopbarIcon,
 
 	-- Themes
 	themes = themes,
 
 	-- Hooks
-	onBackpackEmpty = events.backpackEmpty.on,
-	onBackpackEquipped = events.backpackEquipped.on,
-	onBackpackUnequipped = events.backpackUnequipped.on,
-	onBackpackAdded = events.backpackAdded.on,
-	onBackpackRemoved = events.backpackRemoved.on,
+	--- Fires whenever the player's inventory interface is opened.
 	onInventoryOpened = events.inventoryOpened.on,
+	--- Fires whenever the player's inventory interface is closed.
 	onInventoryClosed = events.inventoryClosed.on,
+	--- Fires whenever the backpack is initially loaded.
+	onBackpackLoaded = events.backpackLoaded.on,
+	--- Fires when the player equips an item on character.
+	onBackpackItemEquipped = events.backpackItemEquipped.on,
+	--- Fires when the player unequips their currently active item.
+	onBackpackItemUnequipped = events.backpackItemUnequipped.on,
+	--- Fires when an item is added to the player's backpack.
+	onBackpackItemAdded = events.backpackItemAdded.on,
+	--- Fires when an item is removed entirely from the player's backpack.
+	onBackpackItemRemoved = events.backpackItemRemoved.on,
+	--- Fires when the backpack becomes entirely empty (contains no items).
+	onBackpackEmpty = events.backpackEmpty.on,
+	--- Fires whenever the hotbar layout changes manually.
+	onHotbarChanged = events.hotbarChanged.on,
 })

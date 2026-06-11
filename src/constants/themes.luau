@@ -17,6 +17,7 @@ return table.freeze({
 
 		slotEquipStrokeColor = Color3.fromHex("#335fff"),
 		slotEquipStrokeThickness = 5,
+		slotEquipStrokeOutline = true,
 
 		searchBackgroundTransparency = 0.2,
 		searchStrokeColor = Color3.fromHex("#ffffff"),

@@ -14,8 +14,8 @@ end
 --[=[
 	Creates a new category for the inventory.
 	
-	```lua
-	createCategory("Weapons", function(item)
+	```luau
+	sling.createCategory("Weapons", function(item)
 		return item:HasTag("Weapon")
 	end)
     ```

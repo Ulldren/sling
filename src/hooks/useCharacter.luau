@@ -3,8 +3,10 @@ local Players = game:GetService("Players")
 local useEventListener = require("./useEventListener")
 local vide = require("../../vide")
 
+local source = vide.source
+
 local function useCharacter(): () -> Model?
-	local character = vide.source(Players.LocalPlayer.Character)
+	local character = source(Players.LocalPlayer.Character)
 
 	useEventListener(Players.LocalPlayer.CharacterAdded, function(model: Model)
 		character(model)

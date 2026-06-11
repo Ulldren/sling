@@ -8,20 +8,20 @@ Sling.onInventoryClosed(function()
 	print("Inventory closed!")
 end)
 
-Sling.onBackpackEquipped(function(tool)
-	print("Item equipped:", tool.Name)
+Sling.onBackpackItemEquipped(function(item)
+	print("Item equipped:", item.Name)
 end)
 
-Sling.onBackpackUnequipped(function(tool)
-	print("Item unequipped:", tool.Name)
+Sling.onBackpackItemUnequipped(function(item)
+	print("Item unequipped:", item.Name)
 end)
 
-Sling.onBackpackAdded(function(tool)
-	print("Item added:", tool.Name)
+Sling.onBackpackItemAdded(function(item)
+	print("Item added:", item.Name)
 end)
 
-Sling.onBackpackRemoved(function(tool)
-	print("Item removed:", tool.Name)
+Sling.onBackpackItemRemoved(function(item)
+	print("Item removed:", item.Name)
 end)
 
 Sling.onBackpackEmpty(function()

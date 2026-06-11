@@ -3,8 +3,10 @@ local slot = require("../components/slot")
 local states = require("../states")
 local vide = require("../../vide")
 
-local source = vide.source
+local apply = vide.apply
 local cleanup = vide.cleanup
+local effect = vide.effect
+local source = vide.source
 
 local controls = {
 	name = "Tool",
@@ -24,14 +26,14 @@ return {
 		local item = Instance.new("Tool")
 		cleanup(item)
 
-		vide.effect(function()
+		effect(function()
 			item.Name = props.controls.name()
 			item.TextureId = props.controls.textureId()
 			item.ToolTip = props.controls.tooltip()
 			states.keyboardHint(props.controls.keyboardHint())
 		end)
 
-		return vide.apply(slot({
+		return apply(slot({
 			item = source(item),
 			order = 1,
 			inHotbar = true,

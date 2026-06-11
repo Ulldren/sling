@@ -24,7 +24,7 @@ local function hotbar(): Frame
 			local item = items[i]
 			newItems[i] = { item = item }
 		end
-		return newItems
+		return newItems :: { { item: BackpackItem? } }
 	end)
 
 	return create("Frame")({
@@ -34,11 +34,11 @@ local function hotbar(): Frame
 		BackgroundTransparency = 1,
 		LayoutOrder = 1,
 
-		action(states.hotbarRef) :: any,
+		action(states.hotbarRef :: any),
 
 		changed("AbsoluteSize", function(size: Vector2)
 			states.width(size.X)
-		end) :: any,
+		end),
 
 		create("UIListLayout")({
 			FillDirection = Enum.FillDirection.Horizontal,
@@ -56,7 +56,7 @@ local function hotbar(): Frame
 
 		indexes(items, function(entry, order)
 			local item = derive(function()
-				return entry().item
+				return entry().item :: BackpackItem?
 			end)
 			return show(cond.any(states.opened, item), function()
 				return slot({

@@ -24,5 +24,4 @@ return {
 
 	appRef = source(nil :: GuiObject?),
 	hotbarRef = source(nil :: Frame?),
-	inventoryGridRef = source(nil :: ScrollingFrame?),
 }

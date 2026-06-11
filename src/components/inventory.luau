@@ -16,7 +16,6 @@ local derive = vide.derive
 local create = vide.create
 local indexes = vide.indexes
 local show = vide.show
-local action = vide.action
 
 local function inventory(): Frame
 	local height = derive(function()
@@ -82,8 +81,6 @@ local function inventory(): Frame
 			Selectable = false,
 			Size = px.udim2(1, 10, 0, height),
 			LayoutOrder = 2,
-
-			action(states.inventoryGridRef) :: any,
 
 			create("UIPadding")({
 				PaddingBottom = px.udim(0, 5),
