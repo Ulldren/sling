@@ -41,22 +41,22 @@ end
 
 local closeInventory = require("@self/api/closeInventory")
 local createCategory = require("@self/api/createCategory")
-local events = require("@self/events")
+local events = require("@self/core/events")
 local getTopbarIcon = require("@self/api/getTopbarIcon")
 local isEnabled = require("@self/api/isEnabled")
 local isInventoryOpen = require("@self/api/isInventoryOpen")
 local openInventory = require("@self/api/openInventory")
-local render = require("@self/components/render")
+local render = require("@self/ui/components/render")
 local setEnabled = require("@self/api/setEnabled")
 local setHotbar = require("@self/api/setHotbar")
 local setTheme = require("@self/api/setTheme")
-local themes = require("@self/constants/themes")
+local themes = require("@self/ui/themes")
 local toggleInventory = require("@self/api/toggleInventory")
-local types = require("@self/types")
+local types = require("@self/core/types")
 
 export type ThemeConfig = types.ThemeConfig
 
-require("@self/topbarIcon")
+require("@self/core/topbarIcon")
 
 render()
 

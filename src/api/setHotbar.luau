@@ -1,5 +1,5 @@
-local events = require("../events")
-local slotUtils = require("../utils/slotUtils")
+local events = require("../core/events")
+local slotManager = require("../core/slotManager")
 
 --[=[
 	Sets the hotbar to the specified items.
@@ -14,7 +14,7 @@ local slotUtils = require("../utils/slotUtils")
 	```
 ]=]
 local function setHotbar(items: { BackpackItem }, force: boolean?)
-	slotUtils.setHotbarItems(items, force)
+	slotManager.setHotbarItems(items, force)
 	events.hotbarChanged.fire(items)
 end
 

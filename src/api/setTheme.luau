@@ -1,5 +1,5 @@
-local theme = require("../theme")
-local types = require("../types")
+local states = require("../core/states")
+local types = require("../core/types")
 
 --[=[
 	Sets the active theme configuration.
@@ -17,7 +17,7 @@ local types = require("../types")
 	```
 ]=]
 local function setTheme(config: types.ThemeConfig)
-	theme.selected(config)
+	states.selectedTheme(config)
 end
 
 return setTheme

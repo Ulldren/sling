@@ -1,5 +1,5 @@
-local states = require("../states")
-local types = require("../types")
+local states = require("../core/states")
+local types = require("../core/types")
 
 local function wasAlreadyCreated(category: string)
 	local state = states.categories()

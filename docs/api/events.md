@@ -22,40 +22,40 @@ Fires whenever the player's inventory interface is closed.
 	function sling.onInventoryClosed(callback: () -> ()): () -> ()
 	```
 
-### onBackpackItemEquipped()
+### onBackpackEquipped()
 Fires when the player equips an item on character.
 
 - **Type**
 
 	```luau
-	function sling.onBackpackItemEquipped(callback: (item: BackpackItem) -> ()): () -> ()
+	function sling.onBackpackEquipped(callback: (item: BackpackItem) -> ()): () -> ()
 	```
 
-### onBackpackItemUnequipped()
+### onBackpackUnequipped()
 Fires when the player unequips their currently active item.
 
 - **Type**
 
 	```luau
-	function sling.onBackpackItemUnequipped(callback: (item: BackpackItem) -> ()): () -> ()
+	function sling.onBackpackUnequipped(callback: (item: BackpackItem) -> ()): () -> ()
 	```
 
-### onBackpackItemAdded()
+### onBackpackAdded()
 Fires when an item is added to the player's backpack.
 
 - **Type**
 
 	```luau
-	function sling.onBackpackItemAdded(callback: (item: BackpackItem) -> ()): () -> ()
+	function sling.onBackpackAdded(callback: (item: BackpackItem) -> ()): () -> ()
 	```
 
-### onBackpackItemRemoved()
+### onBackpackRemoved()
 Fires when an item is removed entirely from the player's backpack.
 
 - **Type**
 
 	```luau
-	function sling.onBackpackItemRemoved(callback: (item: BackpackItem) -> ()): () -> ()
+	function sling.onBackpackRemoved(callback: (item: BackpackItem) -> ()): () -> ()
 	```
 
 ### onBackpackEmpty()

@@ -3,7 +3,7 @@
 You can track when the player interacts with their backpack, equips items, or when items are added/removed. All event listeners return a **disconnect function** to clean up the listener.
 
 ```luau
-local disconnect = sling.onBackpackItemEquipped(function(item)
+local disconnect = sling.onBackpackEquipped(function(item)
     print("Item equipped:", item.Name)
 end)
 
