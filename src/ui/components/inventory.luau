@@ -17,9 +17,12 @@ local create = vide.create
 local indexes = vide.indexes
 local show = vide.show
 
+local INVENTORY_SLOT_PADDING = 5
+local INVENTORY_SCROLLBAR_THICKNESS = 10
+
 local function inventory(): Frame
 	local height = derive(function()
-		return states.rows() * (config.slotSize + 5)
+		return states.rows() * (config.slotSize + INVENTORY_SLOT_PADDING)
 	end)
 	local inventory = useInventory()
 	local preferredTransparency = usePreferredTransparency()
@@ -51,15 +54,15 @@ local function inventory(): Frame
 		create("Frame")({
 			Name = "TopFrame",
 			AutomaticSize = Enum.AutomaticSize.Y,
-			Size = px.udim2(1, 0, 0, 5),
+			Size = px.udim2(1, 0, 0, INVENTORY_SLOT_PADDING),
 			BackgroundTransparency = 1,
 			LayoutOrder = 1,
 
 			create("UIPadding")({
-				PaddingBottom = px.udim(0, 5),
-				PaddingLeft = px.udim(0, 5),
-				PaddingRight = px.udim(0, 5),
-				PaddingTop = px.udim(0, 5),
+				PaddingBottom = px.udim(0, INVENTORY_SLOT_PADDING),
+				PaddingLeft = px.udim(0, INVENTORY_SLOT_PADDING),
+				PaddingRight = px.udim(0, INVENTORY_SLOT_PADDING),
+				PaddingTop = px.udim(0, INVENTORY_SLOT_PADDING),
 			}),
 
 			show(cond.neq(preferredInput, Enum.PreferredInput.Gamepad), function()
@@ -76,21 +79,21 @@ local function inventory(): Frame
 			CanvasSize = UDim2.new(0, 0, 0, 0),
 			ElasticBehavior = Enum.ElasticBehavior.Always,
 			ScrollBarImageColor3 = Color3.fromRGB(255, 255, 255),
-			ScrollBarThickness = 10,
+			ScrollBarThickness = px.scale(INVENTORY_SCROLLBAR_THICKNESS),
 			ScrollingDirection = Enum.ScrollingDirection.Y,
 			Selectable = false,
-			Size = px.udim2(1, 10, 0, height),
+			Size = px.udim2(1, INVENTORY_SCROLLBAR_THICKNESS, 0, height),
 			LayoutOrder = 2,
 
 			create("UIPadding")({
-				PaddingBottom = px.udim(0, 5),
-				PaddingLeft = px.udim(0, 5),
-				PaddingRight = px.udim(0, 5),
+				PaddingBottom = px.udim(0, INVENTORY_SLOT_PADDING),
+				PaddingLeft = px.udim(0, INVENTORY_SLOT_PADDING),
+				PaddingRight = px.udim(0, INVENTORY_SLOT_PADDING),
 			}),
 
 			create("UIListLayout")({
 				FillDirection = Enum.FillDirection.Horizontal,
-				Padding = px.udim(0, 5),
+				Padding = px.udim(0, INVENTORY_SLOT_PADDING),
 				SortOrder = Enum.SortOrder.LayoutOrder,
 				Wraps = true,
 			}),

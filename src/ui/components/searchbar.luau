@@ -7,8 +7,11 @@ local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local vide = require("../../../vide")
 
 local SEARCH_TEXT = "Search"
-local SEARCH_WIDTH = 190
+local SEARCHBAR_WIDTH = 190
+local SEARCHBAR_HEIGHT = 30
+local SEARCHBAR_PADDING = 8
 local SEARCH_IMAGE_X: string = "rbxasset://textures/ui/InspectMenu/x.png"
+local CLEAR_BUTTON_SIZE = SEARCHBAR_HEIGHT - SEARCHBAR_PADDING * 2
 
 pcall(function()
 	local LocalizationService = game:GetService("LocalizationService")
@@ -41,9 +44,9 @@ local function searchbar(props: Props)
 		PlaceholderText = SEARCH_TEXT,
 		PlaceholderColor3 = colorSpring(theme.searchTextColor),
 		Size = cond.ifelse(
-			cond.gt(states.width, SEARCH_WIDTH),
-			px.udim2(0, SEARCH_WIDTH, 0, 30),
-			px.udim2(1, 0, 0, 30)
+			cond.gt(states.width, px.scale(SEARCHBAR_WIDTH)),
+			px.udim2(0, SEARCHBAR_WIDTH, 0, SEARCHBAR_HEIGHT),
+			px.udim2(1, 0, 0, SEARCHBAR_HEIGHT)
 		),
 		Text = searchText,
 		TextColor3 = colorSpring(theme.searchTextColor),
@@ -58,10 +61,10 @@ local function searchbar(props: Props)
 		end),
 
 		create("UIPadding")({
-			PaddingLeft = px.udim(0, 8),
-			PaddingRight = px.udim(0, 8),
-			PaddingTop = px.udim(0, 8),
-			PaddingBottom = px.udim(0, 8),
+			PaddingLeft = px.udim(0, SEARCHBAR_PADDING),
+			PaddingRight = px.udim(0, SEARCHBAR_PADDING),
+			PaddingTop = px.udim(0, SEARCHBAR_PADDING),
+			PaddingBottom = px.udim(0, SEARCHBAR_PADDING),
 		}),
 		create("UIStroke")({
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
@@ -78,7 +81,7 @@ local function searchbar(props: Props)
 			AnchorPoint = Vector2.new(1, 0.5),
 			Position = UDim2.fromScale(1, 0.5),
 			Selectable = false,
-			Size = UDim2.fromScale(1, 1),
+			Size = px.offset(CLEAR_BUTTON_SIZE, CLEAR_BUTTON_SIZE),
 			Image = SEARCH_IMAGE_X,
 			ImageColor3 = colorSpring(theme.searchTextColor),
 			Visible = cond.neq(searchText, ""),
@@ -86,10 +89,6 @@ local function searchbar(props: Props)
 			Activated = function()
 				searchText("")
 			end,
-
-			create("UIAspectRatioConstraint")({
-				AspectRatio = 1,
-			}),
 		}),
 	})
 end

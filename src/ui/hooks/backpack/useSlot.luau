@@ -123,6 +123,7 @@ local function useSlot(props: {
 	end
 
 	local lastClickTime = 0
+	local doubleClickTime = 0.5
 
 	local function onClick()
 		local index = untrack(getIndex)
@@ -156,7 +157,7 @@ local function useSlot(props: {
 			return
 		end
 		local now = os.clock()
-		if now - lastClickTime < config.doubleClickTime and not props.inHotbar then
+		if now - lastClickTime < doubleClickTime and not props.inHotbar then
 			lastClickTime = 0
 			local moved = slotManager.moveToHotbar(untrack(getIndex))
 			if moved then

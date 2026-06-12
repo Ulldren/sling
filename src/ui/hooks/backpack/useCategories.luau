@@ -20,12 +20,13 @@ local function useCategories(props: Props)
 	local allCategories = derive(function()
 		local categories = states.categories()
 		local width = states.width()
+		local maxCategoryWidth = px.scale(props.maxCategoryWidth)()
 
 		local barCategories = {}
 		local dropdownCategories = {}
 		for i, category in categories do
 			local sizeX = (1 / i) * width
-			if sizeX > props.maxCategoryWidth then
+			if sizeX > maxCategoryWidth then
 				table.insert(barCategories, category)
 			else
 				table.insert(dropdownCategories, category)

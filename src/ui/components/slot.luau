@@ -15,6 +15,8 @@ local action = vide.action
 local derive = vide.derive
 local source = vide.source
 
+local SLOT_PADDING = 5
+
 type Props = {
 	item: () -> BackpackItem?,
 	visible: (() -> boolean)?,
@@ -77,10 +79,10 @@ local function slot(props: Props): Frame
 			end,
 
 			create("UIPadding")({
-				PaddingBottom = px.udim(0, 5),
-				PaddingLeft = px.udim(0, 5),
-				PaddingRight = px.udim(0, 5),
-				PaddingTop = px.udim(0, 5),
+				PaddingBottom = px.udim(0, SLOT_PADDING),
+				PaddingLeft = px.udim(0, SLOT_PADDING),
+				PaddingRight = px.udim(0, SLOT_PADDING),
+				PaddingTop = px.udim(0, SLOT_PADDING),
 			}),
 			create("UICorner")({
 				CornerRadius = theme.slotCornerRadius,
@@ -95,7 +97,7 @@ local function slot(props: Props): Frame
 					),
 					Color = theme.slotEquipStrokeColor,
 					LineJoinMode = Enum.LineJoinMode.Round,
-					Thickness = theme.slotEquipStrokeThickness,
+					Thickness = px.scale(theme.slotEquipStrokeThickness),
 				})
 			end),
 			show(showDraggingStroke, function()

@@ -8,6 +8,9 @@ local vide = require("../../../vide")
 local create = vide.create
 local spring = vide.spring
 
+local TOOLTIP_PADDING = 5
+local TOOLTIP_OFFSET = -10
+
 type Props = {
 	text: () -> string,
 	visible: (() -> boolean)?,
@@ -22,7 +25,7 @@ local function tooltip(props: Props)
 		AutomaticSize = Enum.AutomaticSize.XY,
 		BackgroundColor3 = colorSpring(theme.tooltipBackgroundColor),
 		BackgroundTransparency = spring(cond.ifelse(visible, theme.tooltipBackgroundTransparency, 1), 0.2),
-		Position = spring(cond.ifelse(visible, px.udim2(0.5, 0, 0, -10), px.udim2(0.5, 0, 0, 0)), 0.2),
+		Position = spring(cond.ifelse(visible, px.udim2(0.5, 0, 0, TOOLTIP_OFFSET), px.udim2(0.5, 0, 0, 0)), 0.2),
 		FontFace = theme.tooltipFontFace,
 		Text = props.text,
 		TextColor3 = colorSpring(theme.tooltipTextColor),
@@ -37,10 +40,10 @@ local function tooltip(props: Props)
 		}),
 
 		create("UIPadding")({
-			PaddingTop = px.udim(0, 4),
-			PaddingBottom = px.udim(0, 4),
-			PaddingLeft = px.udim(0, 4),
-			PaddingRight = px.udim(0, 4),
+			PaddingTop = px.udim(0, TOOLTIP_PADDING),
+			PaddingBottom = px.udim(0, TOOLTIP_PADDING),
+			PaddingLeft = px.udim(0, TOOLTIP_PADDING),
+			PaddingRight = px.udim(0, TOOLTIP_PADDING),
 		}),
 	})
 end

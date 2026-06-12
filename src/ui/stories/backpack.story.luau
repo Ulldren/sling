@@ -1,5 +1,6 @@
 --!nonstrict
 local backpack = require("../components/backpack")
+local px = require("../../core/utils/px")
 local states = require("../../core/states")
 local types = require("../../core/types")
 local vide = require("../../../vide")
@@ -15,6 +16,7 @@ local controls = {
 	slots = 10,
 	rows = 4,
 	categories = 4,
+	pxScale = 1,
 }
 
 type Props = {
@@ -62,6 +64,8 @@ return {
 			states.keyboardHint(props.controls.keyboardHint())
 			states.gamepadHint(props.controls.gamepadHint())
 			states.categories(getCategories())
+
+			px.setScale(props.controls.pxScale())
 		end)
 
 		states.items({ createSword(), createSword(), createSword() })

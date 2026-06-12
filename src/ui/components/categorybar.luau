@@ -17,6 +17,7 @@ local MAX_CATEGORY_WIDTH = 100
 local CATEGORY_HEIGHT = 35
 local DROPDOWN_BUTTON_WIDTH = 35
 local DROPDOWN_WIDTH = 120
+local DROPDOWN_SCROLLBAR_THICKNESS = 5
 
 local function categorybar()
 	local categories = useCategories({
@@ -92,7 +93,7 @@ local function categorybar()
 						Enum.FontWeight.Regular,
 						Enum.FontStyle.Normal
 					),
-					TextSize = 24,
+					TextSize = px.scale(24),
 					TextColor3 = colorSpring(theme.textColor),
 					LayoutOrder = function()
 						return #barCategories() + 1
@@ -127,10 +128,10 @@ local function categorybar()
 								CanvasSize = UDim2.new(0, 0, 0, 0),
 								ElasticBehavior = Enum.ElasticBehavior.Always,
 								ScrollBarImageColor3 = Color3.fromRGB(255, 255, 255),
-								ScrollBarThickness = 5,
+								ScrollBarThickness = px.scale(DROPDOWN_SCROLLBAR_THICKNESS),
 								ScrollingDirection = Enum.ScrollingDirection.Y,
 								Selectable = false,
-								Size = px.udim2(1, 5, 0, height),
+								Size = px.udim2(1, DROPDOWN_SCROLLBAR_THICKNESS, 0, height),
 
 								create("UIListLayout")({
 									FillDirection = Enum.FillDirection.Vertical,

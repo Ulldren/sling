@@ -7,21 +7,25 @@ local vide = require("../../../vide")
 
 local create = vide.create
 
+local GAMEPAD_HINT_HEIGHT = 40
+local GAMEPAD_HINT_PADDING = 12
+local GAMEPAD_HINT_IMAGE_SIZE = 30
+
 type Props = {
 	keyCode: Enum.KeyCode,
 	text: string,
 }
 
-local function inventoryHint(props: Props)
+local function gamepadHint(props: Props)
 	return create("Frame")({
 		Name = "HintFrame",
-		AutomaticSize = Enum.AutomaticSize.XY,
+		AutomaticSize = Enum.AutomaticSize.X,
 		BackgroundTransparency = 1,
-		Size = px.offset(0, 40),
+		Size = px.offset(0, GAMEPAD_HINT_HEIGHT),
 
 		create("UIListLayout")({
 			FillDirection = Enum.FillDirection.Horizontal,
-			Padding = px.udim(0, 12),
+			Padding = px.udim(0, GAMEPAD_HINT_PADDING),
 			SortOrder = Enum.SortOrder.LayoutOrder,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
 		}),
@@ -29,7 +33,7 @@ local function inventoryHint(props: Props)
 			Name = "HintImage",
 			BackgroundTransparency = 1,
 			Image = UserInputService:GetImageForKeyCode(props.keyCode),
-			Size = px.offset(30, 30),
+			Size = px.offset(GAMEPAD_HINT_IMAGE_SIZE, GAMEPAD_HINT_IMAGE_SIZE),
 		}),
 		create("TextLabel")({
 			Name = "HintText",
@@ -46,4 +50,4 @@ local function inventoryHint(props: Props)
 	})
 end
 
-return inventoryHint
+return gamepadHint

@@ -4,6 +4,8 @@ local vide = require("../../../vide")
 
 local create = vide.create
 
+local GAMEPAD_HINTS_PADDING = 5
+
 return function()
 	return create("Frame")({
 		Name = "GamepadHints",
@@ -16,7 +18,7 @@ return function()
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			HorizontalFlex = Enum.UIFlexAlignment.SpaceAround,
-			Padding = UDim.new(0, 5),
+			Padding = UDim.new(0, GAMEPAD_HINTS_PADDING),
 			Wraps = true,
 		}),
 
