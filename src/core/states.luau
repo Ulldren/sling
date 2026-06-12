@@ -25,6 +25,8 @@ return {
 	items = source({} :: { BackpackItem }),
 	equippedItem = source(nil :: BackpackItem?),
 
+	isBackpackLoaded = source(false),
+
 	appRef = source(nil :: GuiObject?),
 	hotbarRef = source(nil :: Frame?),
 }

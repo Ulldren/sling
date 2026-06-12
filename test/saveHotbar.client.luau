@@ -37,6 +37,6 @@ Sling.onBackpackLoaded(function(items)
 		end
 	end
 
-	-- Force-set the hotbar to overwrite any existing items
+	-- Force-set the hotbar to move any existing items to inventory and apply the saved hotbar layout
 	Sling.setHotbar(newHotbar, true)
 end)

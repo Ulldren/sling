@@ -151,6 +151,8 @@ local function setHotbarItems(items: { BackpackItem }, force: boolean?)
 end
 
 return {
+	getItemIndex = getItemIndex,
+
 	findLowestEmptyHotbarSlot = findLowestEmptyHotbarSlot,
 	findLowestEmptyInventorySlot = findLowestEmptyInventorySlot,
 	findLowestEmptySlot = findLowestEmptySlot,

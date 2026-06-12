@@ -105,14 +105,8 @@ local function useSlot(props: {
 
 	local getIndex = derive(function()
 		local currentItem = item()
-		if currentItem then
-			for i, v in untrack(states.items) do
-				if v == currentItem then
-					return i
-				end
-			end
-		end
-		return if props.inHotbar then props.order else states.slots() + props.order
+		return currentItem ~= nil and slotManager.getItemIndex(currentItem)
+			or (if props.inHotbar then props.order else states.slots() + props.order)
 	end)
 
 	local function swap(targetIndex: number)

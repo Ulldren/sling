@@ -145,16 +145,20 @@ local function useBackpack()
 			return
 		end
 
-		states.equippedItem(nil)
-		states.items({})
-
 		-- update backpack reference
 		backpack = player:FindFirstChildOfClass("Backpack") :: any
 
 		observeItems(char)
 		observeItems(backpack)
 
+		states.isBackpackLoaded(true)
 		events.backpackLoaded.fire(untrack(states.items))
+
+		cleanup(function()
+			states.equippedItem(nil)
+			states.items({})
+			states.isBackpackLoaded(false)
+		end)
 	end)
 
 	effect(function()

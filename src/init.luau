@@ -50,6 +50,7 @@ local render = require("@self/ui/components/render")
 local setEnabled = require("@self/api/setEnabled")
 local setHotbar = require("@self/api/setHotbar")
 local setTheme = require("@self/api/setTheme")
+local states = require("@self/core/states")
 local themes = require("@self/ui/themes")
 local toggleInventory = require("@self/api/toggleInventory")
 local types = require("@self/core/types")
@@ -82,7 +83,12 @@ return table.freeze({
 	--- Fires whenever the player's inventory interface is closed.
 	onInventoryClosed = events.inventoryClosed.on,
 	--- Fires whenever the backpack is initially loaded.
-	onBackpackLoaded = events.backpackLoaded.on,
+	onBackpackLoaded = function(callback)
+		if states.isBackpackLoaded() then
+			task.spawn(callback, states.items())
+		end
+		return events.backpackLoaded.on(callback)
+	end,
 	--- Fires when the player equips an item on character.
 	onBackpackItemEquipped = events.backpackItemEquipped.on,
 	--- Fires when the player unequips their currently active item.
