@@ -9,7 +9,7 @@ This goes over how to start setting up sling.
 In your `wally.toml`, add the following line to your dependencies.
 
 ```toml
-sling = "encodedlux/sling@0.1.1"
+sling = "encodedlux/sling@0.1.2"
 ```
 
 ==Rbxm

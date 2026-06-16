@@ -1,7 +1,7 @@
 [package]
 name = "encodedlux/sling"
 description = "A modern and reactive backpack system for Roblox."
-version = "0.1.2-rc.2"
+version = "0.1.2"
 license = "MIT"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"

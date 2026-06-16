@@ -41,7 +41,7 @@ Sling is a modern and reactive backpack UI designed for Roblox experiences. It r
 Add **Sling** to your `wally.toml` dependencies:
 ```toml
 [dependencies]
-sling = "encodedlux/sling@0.1.1"
+sling = "encodedlux/sling@0.1.2"
 ```
 Then, run `wally install` in your project folder.
 

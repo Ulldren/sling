@@ -1,6 +1,7 @@
 local ContextActionService = game:GetService("ContextActionService")
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
+local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 
 local closeInventory = require("../../../api/closeInventory")
@@ -22,6 +23,8 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui") :: PlayerGui
 
 local function useBackpack()
+	StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
+
 	useEventListener(GuiService.MenuOpened, closeInventory)
 
 	local function updateBackpackSize()
