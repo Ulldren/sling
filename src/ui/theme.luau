@@ -8,9 +8,9 @@ local read = vide.read
 local default = themes.default
 
 local function selectProp<Name>(
-	prop: Name | keyof<types.ThemeProps>,
-	secondaryProp: (Name | keyof<types.ThemeProps>)?
-): () -> index<types.ThemeProps, Name>
+	prop: Name | keyof<types.ThemeGetters>,
+	secondaryProp: (Name | keyof<types.ThemeGetters>)?
+): index<types.ThemeGetters, Name>
 	return function()
 		local selectedThemeProp = read((states.selectedTheme() :: any)[prop])
 		if selectedThemeProp ~= nil then
@@ -23,8 +23,8 @@ local function selectProp<Name>(
 				return (selectProp :: any)(secondaryProp)()
 			end
 		end
-		return nil :: any
-	end
+		return nil
+	end :: any
 end
 
 local theme: types.ThemeGetters = {

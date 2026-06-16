@@ -10,6 +10,7 @@ local vide = require("../../../vide")
 local mount = vide.mount
 local create = vide.create
 local action = vide.action
+local show = vide.show
 
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
@@ -17,23 +18,24 @@ local playerGui = player:WaitForChild("PlayerGui")
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
 
 local function render()
-	return mount(function()
-		useBackpack()
+	mount(function()
+		return show(states.enabled, function()
+			useBackpack()
 
-		px.usePx()
+			px.usePx()
 
-		return create("ScreenGui")({
-			Name = "BackpackGui",
-			DisplayOrder = 120,
-			IgnoreGuiInset = true,
-			ResetOnSpawn = false,
-			ZIndexBehavior = Enum.ZIndexBehavior.Global,
-			Enabled = states.enabled,
+			return create("ScreenGui")({
+				Name = "BackpackGui",
+				DisplayOrder = 120,
+				IgnoreGuiInset = true,
+				ResetOnSpawn = false,
+				ZIndexBehavior = Enum.ZIndexBehavior.Global,
 
-			action(states.appRef :: any),
+				action(states.appRef :: any),
 
-			backpack(),
-		})
+				backpack(),
+			})
+		end)
 	end, playerGui)
 end
 

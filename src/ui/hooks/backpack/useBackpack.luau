@@ -5,9 +5,7 @@ local UserInputService = game:GetService("UserInputService")
 
 local closeInventory = require("../../../api/closeInventory")
 local config = require("../../../core/config")
-local createCategory = require("../../../api/createCategory")
 local events = require("../../../core/events")
-local setEnabled = require("../../../api/setEnabled")
 local slotManager = require("../../../core/slotManager")
 local states = require("../../../core/states")
 local useCharacter = require("../useCharacter")
@@ -24,12 +22,7 @@ local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui") :: PlayerGui
 
 local function useBackpack()
-	useEventListener(GuiService.MenuOpened, function()
-		setEnabled(false)
-	end)
-	useEventListener(GuiService.MenuClosed, function()
-		setEnabled(true)
-	end)
+	useEventListener(GuiService.MenuOpened, closeInventory)
 
 	local function updateBackpackSize()
 		local screenOrientation = playerGui.CurrentScreenOrientation
@@ -325,16 +318,12 @@ local function useBackpack()
 		elseif inputType == Enum.UserInputType.Keyboard then
 			local inputNum = tonumber(UserInputService:GetStringForKeyCode(input.KeyCode))
 			if inputNum and inputNum <= untrack(states.slots) then
-				local item = untrack(states.items)[inputNum]
+				local item = untrack(states.items)[inputNum == 0 and 10 or inputNum]
 				if item then
 					states.equippedItem(if item == untrack(states.equippedItem) then nil else item)
 				end
 			end
 		end
-	end)
-
-	createCategory("All", function()
-		return true
 	end)
 end
 

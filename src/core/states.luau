@@ -17,7 +17,12 @@ return {
 
 	gamepadSwapIndex = source(nil :: number?),
 
-	categories = source({} :: { types.Category }),
+	categories = source({ {
+		category = "All",
+		predicate = function()
+			return true
+		end,
+	} } :: { types.Category }),
 	selectedCategory = source(""),
 
 	selectedTheme = source({} :: types.ThemeConfig),
