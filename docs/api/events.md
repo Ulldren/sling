@@ -66,3 +66,22 @@ Fires when the backpack becomes entirely empty (contains no items).
 	```luau
 	function sling.onBackpackEmpty(callback: () -> ()): () -> ()
 	```
+
+### onBackpackLoaded()
+Fires whenever the backpack is fully loaded (typically when the player's character spawns and their items are fetched).
+If the backpack is already loaded at the time this function is called, the callback will be fired immediately. This makes it the ideal place to run setup code, such as applying saved hotbar layouts, without worrying about race conditions.
+
+- **Type**
+
+	```luau
+	function sling.onBackpackLoaded(callback: (items: { BackpackItem }) -> ()): () -> ()
+	```
+
+### onHotbarChanged()
+Fires whenever the hotbar layout changes manually.
+
+- **Type**
+
+	```luau
+	function sling.onHotbarChanged(callback: (items: { BackpackItem }) -> ()): () -> ()
+	```

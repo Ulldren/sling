@@ -38,6 +38,8 @@ export default defineConfig({
             { text: "UI", link: "/api/ui" },
             { text: "Events", link: "/api/events" },
             { text: "Themes", link: "/api/themes" },
+            { text: "Categories", link: "/api/categories" },
+            { text: "Hotbar", link: "/api/hotbar" },
             { text: "Topbar Icon", link: "/api/topbar-icon" }
           ]
         }
@@ -50,7 +52,8 @@ export default defineConfig({
             { text: "Installation", link: "/tut/crash-course/2-installation" },
             { text: "Creating Category", link: "/tut/crash-course/3-category" },
             { text: "Changing Theme", link: "/tut/crash-course/4-themes" },
-            { text: "Subscribing to Events", link: "/tut/crash-course/5-events" }
+            { text: "Subscribing to Events", link: "/tut/crash-course/5-events" },
+            { text: "Managing Hotbar", link: "/tut/crash-course/6-hotbar" }
           ]
         },
         {

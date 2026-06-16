@@ -37,7 +37,7 @@ Closes the inventory interface.
 - **Type**
 
 	```luau
-    sling.closeInventory()
+    function sling.closeInventory()
     ```
 
 ### toggleInventory()
@@ -46,7 +46,7 @@ Toggles the visibility of the inventory interface.
 - **Type**
 
 	```luau
-    sling.toggleInventory()
+    function sling.toggleInventory()
     ```
 
 ### isInventoryOpen()
@@ -55,5 +55,5 @@ Returns whether the inventory interface is currently open.
 - **Type**
 
 	```luau
-	sling.isInventoryOpen(): boolean
+	function sling.isInventoryOpen(): boolean
 	```
