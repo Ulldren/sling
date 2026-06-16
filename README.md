@@ -1,6 +1,25 @@
-# Sling
+<p align="center">
+  <img alt="Sling" src="assets/sling-logo.svg" width="300">
+</p>
 
-A modern and reactive backpack system for Roblox, built using [Vide](https://github.com/centau/vide).
+<p align="center">
+  A modern and reactive backpack system for Roblox.
+</p>
+
+<div align="center">
+
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/encodedlux/sling/CI.yml?style=for-the-badge&branch=main&logo=github)
+[![GitHub Release](https://img.shields.io/github/v/release/encodedlux/sling?style=for-the-badge&logo=github)](https://github.com/encodedlux/sling/releases/latest)
+[![Docs](https://img.shields.io/badge/docs-online-blue?style=for-the-badge&logo=gitbook)](https://encodedlux.github.io/sling/)
+[![GitHub License](https://img.shields.io/github/license/encodedlux/sling?style=for-the-badge)](LICENSE)
+
+</div>
+
+---
+
+## About
+
+Sling is a modern and reactive backpack UI designed for Roblox experiences. It replaces the default backpack system, giving you complete freedom to customize the interface however you want, dynamically categorize inventory items, and use or create custom themes.
 
 ![Sling Preview](docs/public/inventory-preview.png)
 
@@ -10,7 +29,7 @@ A modern and reactive backpack system for Roblox, built using [Vide](https://git
 
 ### Github Releases
 
-1. Download the `Sling.rbxm` model file from the [Github Releases](https://github.com/encodedlux/sling/releases).
+1. Download the `Sling.rbxm` model file from the [Github Releases](https://github.com/encodedlux/sling/releases/latest).
 2. Open Roblox Studio and create a new place or open an existing place.
 3. In the Explorer window, insert **Sling** into **ReplicatedStorage**.
 4. Select the **Sling** model file you downloaded from GitHub.
