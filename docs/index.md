@@ -8,8 +8,9 @@ next:
 
 hero:
   name: "Sling"
-  text: "A modern and reactive backpack system"
-  tagline: "A highly customizable replacement for the default Roblox backpack UI."
+  tagline: "A modern and reactive backpack UI for Roblox."
+  image:
+    src: /logo.svg
   actions:
     - theme: brand
       text: Learn
@@ -22,10 +23,10 @@ hero:
       link: https://github.com/encodedlux/sling
 
 features:
-  - title: "Familiar UI"
-    details: "Maintains a highly intuitive layout familiar to Roblox players, matching the core interface patterns they expect, but elevated with a sleek, premium, and modern aesthetic."
-  - title: "Customizable Themes"
-    details: "Highly customizable theme properties using setTheme. Easily switch between predefined themes (default and light) or define your own."
+  - title: "Modern UI"
+    details: "Maintains a highly modern layout familiar to Roblox players are accustomed to."
+  - title: "Custom Themes"
+    details: "Customize theme properties, switch between predefined themes (default and light) or define your own."
   - title: "Custom Categorization"
     details: "Group your inventory items into tab categories (e.g., Weapons, Potions, Resources) using simple, custom declarative predicate functions."
 ---

@@ -7,6 +7,19 @@ export default defineConfig({
   titleTemplate: ":title - A modern and reactive backpack system for Roblox",
   description: "A modern and reactive backpack system for Roblox",
   base: "/sling/",
+  head: [
+    ["link", { rel: "icon", href: "/sling/logo.svg" }],
+    ["link", { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" }]
+  ],
+  cleanUrls: true,
+
+  vite: {
+    ssr: {
+      noExternal: [
+        '@nolebase/vitepress-plugin-highlight-targeted-heading',
+      ]
+    }
+  },
 
   markdown: {
     config(md) {
@@ -15,6 +28,8 @@ export default defineConfig({
   },
 
   themeConfig: {
+    logo: "/logo.svg",
+
     search: {
       provider: "local"
     },

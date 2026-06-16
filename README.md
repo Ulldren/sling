@@ -1,9 +1,11 @@
 <p align="center">
-  <img alt="Sling" src="assets/sling-logo.svg" width="300">
-</p>
-
-<p align="center">
-  A modern and reactive backpack system for Roblox.
+  <p align="center">
+    <img alt="Sling" src="docs/public/logo.svg" width="150">
+  </p>
+  <h1 align="center"><b>Sling</b></h1>
+  <p align="center">
+    A modern and reactive backpack system for Roblox.
+  </p>
 </p>
 
 <div align="center">
@@ -14,8 +16,6 @@
 [![GitHub License](https://img.shields.io/github/license/encodedlux/sling?style=for-the-badge)](LICENSE)
 
 </div>
-
----
 
 ## About
 
