@@ -22,8 +22,12 @@
 
 Sling is a modern and reactive backpack UI designed for Roblox experiences. It replaces the default backpack system, giving you complete freedom to customize the interface however you want, dynamically categorize inventory items, and use or create custom themes.
 
-<img alt="Sling Preview" src="docs/public/computer-inventory.png" width="100%">
-<img alt="Sling Phone" src="docs/public/phone-inventory.png" width="74%"> <img alt="Sling Portrait" src="docs/public/portrait-inventory.png" width="24%">
+<div align="center">
+
+  <img alt="Sling Preview" src="docs/public/computer-inventory.png" width="100%">
+  <img alt="Sling Phone" src="docs/public/phone-inventory.png" width="73%"> <img alt="Sling Portrait" src="docs/public/portrait-inventory.png" width="23%">
+
+</div>
 
 ---
 
