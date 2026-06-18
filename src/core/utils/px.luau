@@ -1,71 +1,32 @@
---!nonstrict
 local GuiService = game:GetService("GuiService")
 
 local vide = require("../../../vide")
 
-type Can<T> = vide.Source<T> | T
+type Can<T> = (() -> T) | T
 
-local read = vide.read
+local read = vide.read :: any
 local cleanup = vide.cleanup
---local derive = vide.derive
 local effect = vide.effect
 local source = vide.source
 
-local IsTenFootInterface = GuiService:IsTenFootInterface()
-
---local BASE_RESOLUTION = Vector2.new(1280, 720)
---local DOMINANT_AXIS = 0.5
---local SCALE_POINTS = { 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2, 3 }
-local CONSOLE_SCALE_MULTIPLIER = 1.66
+local SCALE_POINTS = {
+	[Enum.DisplaySize.Large] = 1.66, -- TVs or larger
+	[Enum.DisplaySize.Medium] = 1, -- laptops and monitors
+	[Enum.DisplaySize.Small] = 1, -- tablet/mobile/handheld devices
+}
 
 local currentScale = source(1)
 
---[[
-	Apply additional modifications to the scale factor here if desired.
-]]
-local function modifyScale(scale: number): number
-	if IsTenFootInterface then
-		scale *= CONSOLE_SCALE_MULTIPLIER
-	end
-	return scale
-	-- Downscale slower than upscale
-	--scale ^= 0.5
-
-	-- Snap to predefined scale points
-	--[[for _, point in SCALE_POINTS do
-		if scale < point then
-			return point
-		end
-	end]]
-
-	--return SCALE_POINTS[#SCALE_POINTS]
-end
-
 local function usePx()
-	local viewportSize = source(Vector2.new(0, 0))
-
-	--[[local getConstrainedViewportSize = derive(function()
-		local viewport = viewportSize()
-		local constrainedAspectRatio = math.min(viewport.X / viewport.Y, 16 / 9)
-
-		return Vector2.new(viewport.Y * constrainedAspectRatio, viewport.Y)
-	end)]]
+	local displaySize = source(GuiService.ViewportDisplaySize)
 
 	effect(function()
-		--local viewport = getConstrainedViewportSize()
-		--local scaleX = math.log(viewport.X / BASE_RESOLUTION.X, 2)
-		--local scaleY = math.log(viewport.Y / BASE_RESOLUTION.Y, 2)
-
-		--currentScale(modifyScale(2 ^ math.lerp(scaleX, scaleY, DOMINANT_AXIS)))
-		viewportSize()
-		currentScale(modifyScale(1))
+		currentScale(SCALE_POINTS[displaySize()])
 	end)
 
-	cleanup(workspace.CurrentCamera:GetPropertyChangedSignal("ViewportSize"):Connect(function()
-		viewportSize(workspace.CurrentCamera.ViewportSize)
+	cleanup(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"):Connect(function()
+		displaySize(GuiService.ViewportDisplaySize)
 	end))
-
-	viewportSize(workspace.CurrentCamera.ViewportSize)
 end
 
 local function setScale(scale: number)
