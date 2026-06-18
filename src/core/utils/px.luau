@@ -5,28 +5,14 @@ local vide = require("../../../vide")
 type Can<T> = (() -> T) | T
 
 local read = vide.read :: any
-local cleanup = vide.cleanup
-local effect = vide.effect
 local source = vide.source
 
-local SCALE_POINTS = {
-	[Enum.DisplaySize.Large] = 1.66, -- TVs or larger
-	[Enum.DisplaySize.Medium] = 1, -- laptops and monitors
-	[Enum.DisplaySize.Small] = 1, -- tablet/mobile/handheld devices
-}
+local TEN_FOOT_INTERFACE_SCALE = 1.66
 
 local currentScale = source(1)
 
 local function usePx()
-	local displaySize = source(GuiService.ViewportDisplaySize)
-
-	effect(function()
-		currentScale(SCALE_POINTS[displaySize()])
-	end)
-
-	cleanup(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"):Connect(function()
-		displaySize(GuiService.ViewportDisplaySize)
-	end))
+	currentScale(if GuiService:IsTenFootInterface() then TEN_FOOT_INTERFACE_SCALE else 1)
 end
 
 local function setScale(scale: number)
