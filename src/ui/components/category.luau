@@ -26,7 +26,9 @@ local function category(props: Props)
 
 	return create("TextButton")({
 		BackgroundTransparency = 1,
-		FontFace = theme.categoryTabsFontFace,
+		FontFace = function()
+			return Font.new(theme.categoryTabsFontFace().Family, Enum.FontWeight.Bold)
+		end,
 		Size = props.size,
 		TextColor3 = colorSpring(theme.categoryTabsTextColor),
 		TextSize = px.scale(theme.categoryTabsTextSize),

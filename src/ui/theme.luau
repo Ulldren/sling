@@ -49,7 +49,7 @@ local theme: types.ThemeGetters = {
 	searchTextSize = selectProp("searchTextSize", "textSize"),
 
 	categoryTabsBackgroundColor = selectProp("categoryTabsBackgroundColor", "backgroundColor"),
-	categoryTabsFontFace = selectProp("categoryTabsFontFace"),
+	categoryTabsFontFace = selectProp("categoryTabsFontFace", "fontFace"),
 	categoryTabsTextColor = selectProp("categoryTabsTextColor", "textColor"),
 	categoryTabsTextSize = selectProp("categoryTabsTextSize", "textSize"),
 	categoryTabsIndicatorColor = selectProp("categoryTabsIndicatorColor", "textColor"),

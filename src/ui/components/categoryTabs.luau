@@ -104,7 +104,10 @@ local function categoryTabs()
 
 					show(dropdownOpen, function()
 						local height = derive(function()
-							return math.min(#dropdownCategories() * CATEGORY_HEIGHT, states.rows() * CATEGORY_HEIGHT)
+							return math.min(
+								#dropdownCategories() * CATEGORY_HEIGHT,
+								(states.rows() + 1) * CATEGORY_HEIGHT
+							)
 						end)
 
 						return create("Frame")({
