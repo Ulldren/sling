@@ -3,5 +3,4 @@ return {
 	storyRoots = {
 		script.Parent,
 	},
-	groupRoots = true,
 }

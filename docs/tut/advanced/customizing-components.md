@@ -14,5 +14,5 @@ All interface components are written as declarative Luau modules using [Vide](ht
 * **[slot.luau](https://github.com/encodedlux/sling/tree/main/src/ui/components/slot.luau):** Renders individual item slots, handling hover states, icons, visual borders, and numbers.
 * **[tooltip.luau](https://github.com/encodedlux/sling/tree/main/src/ui/components/tooltip.luau):** Renders the hover description for tools.
 * **[gamepadHints.luau](https://github.com/encodedlux/sling/tree/main/src/ui/components/gamepadHints.luau):** Renders visual key guidance indicators at the top of the inventory for controller/console players.
-* **[categorybar.luau](https://github.com/encodedlux/sling/tree/main/src/ui/components/categorybar.luau):** Renders the category tabs for the inventory.
+* **[categoryTabs.luau](https://github.com/encodedlux/sling/tree/main/src/ui/components/categoryTabs.luau):** Renders the category tabs for the inventory.
 * **[searchbar.luau](https://github.com/encodedlux/sling/tree/main/src/ui/components/searchbar.luau):** Renders the search bar for the inventory.

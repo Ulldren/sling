@@ -31,6 +31,7 @@ local function tooltip(props: Props)
 		TextColor3 = colorSpring(theme.tooltipTextColor),
 		TextSize = px.scale(theme.tooltipTextSize),
 		TextTransparency = spring(cond.ifelse(visible, 0, 1), 0.2),
+		RichText = true,
 		TextStrokeColor3 = colorSpring(theme.textStrokeColor),
 		TextStrokeTransparency = spring(cond.ifelse(visible, theme.textStrokeTransparency, 1), 0.2),
 		ZIndex = 3,

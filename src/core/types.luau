@@ -4,6 +4,20 @@ export type Category = {
 	predicate: CategoryPredicate,
 }
 
+export type SlotContext = {
+	item: BackpackItem,
+	inHotbar: boolean?,
+	order: number,
+}
+
+export type SlotProperties = {
+	BackgroundColor: Color3?,
+	BackgroundTransparency: number?,
+	ItemName: string?,
+	ItemImage: string?,
+	TooltipText: string?,
+}
+
 export type Can<T> = (() -> T) | T
 
 export type ThemeConfig = {
@@ -26,6 +40,12 @@ export type ThemeConfig = {
 	searchFontFace: Can<Font>?,
 	searchTextColor: Can<Color3>?,
 	searchTextSize: Can<number>?,
+
+	categoryTabsBackgroundColor: Can<Color3>?,
+	categoryTabsFontFace: Can<Font>?,
+	categoryTabsTextColor: Can<Color3>?,
+	categoryTabsTextSize: Can<number>?,
+	categoryTabsIndicatorColor: Can<Color3>?,
 
 	hintFontFace: Can<Font>?,
 	hintTextColor: Can<Color3>?,

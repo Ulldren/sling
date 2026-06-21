@@ -15,6 +15,9 @@ return table.freeze({
 		textStrokeColor = Color3.fromHex("#000000"),
 		textStrokeTransparency = 0.5,
 
+		categoryTabsBackgroundTransparency = 0,
+		categoryTabsFontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold),
+
 		slotEquipStrokeColor = Color3.fromHex("#335fff"),
 		slotEquipStrokeThickness = 5,
 		slotEquipStrokeOutline = true,

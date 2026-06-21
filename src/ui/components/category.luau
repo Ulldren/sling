@@ -26,12 +26,10 @@ local function category(props: Props)
 
 	return create("TextButton")({
 		BackgroundTransparency = 1,
-		FontFace = function()
-			return Font.new(theme.fontFace().Family, Enum.FontWeight.Bold)
-		end,
+		FontFace = theme.categoryTabsFontFace,
 		Size = props.size,
-		TextColor3 = colorSpring(theme.textColor),
-		TextSize = px.scale(theme.textSize),
+		TextColor3 = colorSpring(theme.categoryTabsTextColor),
+		TextSize = px.scale(theme.categoryTabsTextSize),
 		Text = categoryName,
 		TextTransparency = cond.ifelse(isSelected, 0, 0.4),
 		TextTruncate = Enum.TextTruncate.AtEnd,
@@ -46,7 +44,7 @@ local function category(props: Props)
 			return create("Frame")({
 				Name = "Indicator",
 				AnchorPoint = Vector2.new(0, 1),
-				BackgroundColor3 = colorSpring(theme.textColor),
+				BackgroundColor3 = colorSpring(theme.categoryTabsIndicatorColor),
 				Position = UDim2.fromScale(0, 1),
 				Size = px.udim2(1, 0, 0, 4),
 				ZIndex = zIndex,

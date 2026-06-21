@@ -34,4 +34,6 @@ return {
 
 	appRef = source(nil :: GuiObject?),
 	hotbarRef = source(nil :: Frame?),
+
+	onSlotRender = source({ callback = nil :: ((context: types.SlotContext) -> types.SlotProperties)? }),
 }

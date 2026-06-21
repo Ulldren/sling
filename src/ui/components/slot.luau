@@ -26,16 +26,26 @@ type Props = {
 
 local function slot(props: Props): Frame
 	local item = props.item
-	local preferredTransparency = usePreferredTransparency()
-	local backgroundTransparency = derive(function()
-		return theme.slotBackgroundTransparency() * preferredTransparency()
-	end)
 	local isHovering = source(false)
 	local slot = useSlot({
 		item = item,
 		order = props.order,
 		inHotbar = props.inHotbar,
 	})
+
+	local customProps = derive(function()
+		local currentItem = item()
+		-- triggers
+		slot.itemName()
+		slot.itemImage()
+		slot.tooltipText()
+
+		local renderCallback = states.onSlotRender().callback
+		if renderCallback and currentItem then
+			return renderCallback({ item = currentItem, inHotbar = props.inHotbar, order = props.order })
+		end
+		return {}
+	end)
 
 	local unlocked = cond.ifelse(props.inHotbar, cond.all(states.opened, item), true)
 	local showEquipStroke = cond.all(item, cond.eq(states.equippedItem, item))
@@ -45,6 +55,11 @@ local function slot(props: Props): Frame
 	local showIcon = cond.neq(slot.itemImage, "")
 	local showSlotNumber = cond.all(props.inHotbar, states.keyboardHint)
 	local showTooltip = cond.all(props.inHotbar, cond.neq(slot.tooltipText, ""), isHovering)
+
+	local preferredTransparency = usePreferredTransparency()
+	local backgroundTransparency = derive(function()
+		return (customProps().BackgroundTransparency or theme.slotBackgroundTransparency()) * preferredTransparency()
+	end)
 
 	return create("Frame")({
 		Name = tostring(props.order),
@@ -56,11 +71,13 @@ local function slot(props: Props): Frame
 		action(slot.slotFrameRef :: any),
 
 		create("TextButton")({
-			BackgroundColor3 = colorSpring(function()
-				return theme
-					.slotBackgroundColor()
-					:Lerp(Color3.fromHex("#ffffff"), item() ~= nil and 0 or ((1 - preferredTransparency()) * 0.15))
-			end),
+			BackgroundColor3 = function()
+				local defaultColor = theme.slotBackgroundColor():Lerp(
+					Color3.fromHex("#ffffff"),
+					item() ~= nil and 0 or ((1 - preferredTransparency()) * 0.15)
+				)
+				return customProps().BackgroundColor or defaultColor
+			end,
 			BackgroundTransparency = cond.ifelse(unlocked, 0, backgroundTransparency),
 			Size = slot.slotSize,
 			Text = "",
@@ -117,12 +134,15 @@ local function slot(props: Props): Frame
 				Name = "ItemName",
 				BackgroundTransparency = 1,
 				Size = UDim2.fromScale(1, 1),
-				Text = slot.itemName,
+				Text = function()
+					return customProps().ItemName or slot.itemName()
+				end,
 				FontFace = theme.slotFontFace,
 				TextSize = px.scale(theme.textSize),
 				TextColor3 = colorSpring(theme.slotTextColor),
 				TextStrokeTransparency = theme.textStrokeTransparency,
 				TextWrapped = true,
+				RichText = true,
 				TextTruncate = Enum.TextTruncate.AtEnd,
 				ZIndex = slot.zindex,
 				Visible = showItemName,
@@ -130,7 +150,9 @@ local function slot(props: Props): Frame
 			create("ImageLabel")({
 				Name = "Icon",
 				BackgroundTransparency = 1,
-				Image = slot.itemImage,
+				Image = function()
+					return customProps().ItemImage or slot.itemImage()
+				end,
 				Size = UDim2.fromScale(1, 1),
 				ZIndex = slot.zindex,
 				Visible = showIcon,
@@ -154,9 +176,12 @@ local function slot(props: Props): Frame
 			}),
 			show(showTooltip, function(_, present)
 				return tooltip({
-					text = slot.tooltipText,
+					text = function()
+						return customProps().TooltipText or slot.tooltipText()
+					end,
 					visible = present,
-				}), 0.2
+				}),
+					0.2
 			end),
 		}),
 	})

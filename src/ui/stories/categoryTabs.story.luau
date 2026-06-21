@@ -1,5 +1,5 @@
 --!nonstrict
-local categorybar = require("../components/categorybar")
+local categoryTabs = require("../components/categoryTabs")
 local px = require("../../core/utils/px")
 local states = require("../../core/states")
 local types = require("../../core/types")
@@ -49,7 +49,7 @@ return {
 			states.width(props.controls.width())
 		end)
 
-		return apply(categorybar())({
+		return apply(categoryTabs())({
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.fromScale(0.5, 0.5),
 			Size = px.offset(states.width, 35),

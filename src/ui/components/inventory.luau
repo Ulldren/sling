@@ -1,4 +1,4 @@
-local categorybar = require("./categorybar")
+local categoryTabs = require("./categoryTabs")
 local colorSpring = require("../../core/utils/colorSpring")
 local cond = require("../../core/utils/cond")
 local config = require("../../core/config")
@@ -22,7 +22,7 @@ local INVENTORY_SCROLLBAR_THICKNESS = 10
 
 local function inventory(): Frame
 	local height = derive(function()
-		return states.rows() * (config.slotSize + INVENTORY_SLOT_PADDING)
+		return states.rows() * (config.slotSize + INVENTORY_SLOT_PADDING) + INVENTORY_SLOT_PADDING
 	end)
 	local inventory = useInventory()
 	local preferredTransparency = usePreferredTransparency()
@@ -49,17 +49,16 @@ local function inventory(): Frame
 
 		create("UIListLayout")({}),
 
-		show(cond.gt(cond.len(states.categories), 1), categorybar),
+		show(cond.gt(cond.len(states.categories), 1), categoryTabs),
 
 		create("Frame")({
 			Name = "TopFrame",
 			AutomaticSize = Enum.AutomaticSize.Y,
-			Size = px.udim2(1, 0, 0, INVENTORY_SLOT_PADDING),
+			Size = px.udim2(1, 0, 0, 0),
 			BackgroundTransparency = 1,
 			LayoutOrder = 1,
 
 			create("UIPadding")({
-				PaddingBottom = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingLeft = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingRight = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingTop = px.udim(0, INVENTORY_SLOT_PADDING),
@@ -86,6 +85,7 @@ local function inventory(): Frame
 			LayoutOrder = 2,
 
 			create("UIPadding")({
+				PaddingTop = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingBottom = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingLeft = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingRight = px.udim(0, INVENTORY_SLOT_PADDING),

@@ -19,7 +19,7 @@ local DROPDOWN_BUTTON_WIDTH = 35
 local DROPDOWN_WIDTH = 120
 local DROPDOWN_SCROLLBAR_THICKNESS = 5
 
-local function categorybar()
+local function categoryTabs()
 	local categories = useCategories({
 		maxCategoryWidth = MAX_CATEGORY_WIDTH,
 		dropdownButtonWidth = DROPDOWN_BUTTON_WIDTH,
@@ -31,18 +31,20 @@ local function categorybar()
 	local categoryWidth = categories.categoryWidth
 
 	return create("Frame")({
-		Name = "CategoryBar",
+		Name = "CategoryTabs",
 		AnchorPoint = Vector2.new(0.5, 0.5),
-		BackgroundColor3 = colorSpring(theme.backgroundColor),
+		BackgroundColor3 = colorSpring(theme.categoryTabsBackgroundColor),
 		Size = px.udim2(1, 0, 0, CATEGORY_HEIGHT),
 
 		create("UICorner")({
 			CornerRadius = theme.cornerRadius,
+			BottomLeftRadius = UDim.new(0, 0),
+			BottomRightRadius = UDim.new(0, 0),
 		}),
 
 		create("Frame")({
 			AnchorPoint = Vector2.new(0.5, 1),
-			BackgroundColor3 = colorSpring(theme.backgroundColor),
+			BackgroundColor3 = colorSpring(theme.categoryTabsBackgroundColor),
 			Position = UDim2.fromScale(0.5, 1),
 			Size = UDim2.fromScale(1, 0.5),
 		}),
@@ -74,9 +76,6 @@ local function categorybar()
 			end),
 
 			show(showDropdown, function()
-				local height = derive(function()
-					return math.min(#dropdownCategories() * CATEGORY_HEIGHT, states.rows() * CATEGORY_HEIGHT)
-				end)
 				local dropdownOpen = source(false)
 
 				return create("TextButton")({
@@ -104,6 +103,10 @@ local function categorybar()
 					end,
 
 					show(dropdownOpen, function()
+						local height = derive(function()
+							return math.min(#dropdownCategories() * CATEGORY_HEIGHT, states.rows() * CATEGORY_HEIGHT)
+						end)
+
 						return create("Frame")({
 							Name = "Dropdown",
 							AnchorPoint = Vector2.new(1, 0),
@@ -153,4 +156,4 @@ local function categorybar()
 	})
 end
 
-return categorybar
+return categoryTabs

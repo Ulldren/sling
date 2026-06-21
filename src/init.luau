@@ -56,12 +56,14 @@ local toggleInventory = require("@self/api/toggleInventory")
 local types = require("@self/core/types")
 
 export type ThemeConfig = types.ThemeConfig
+export type SlotContext = types.SlotContext
+export type SlotProperties = types.SlotProperties
 
 require("@self/core/topbarIcon")
 
 render()
 
-return table.freeze({
+return {
 	-- API
 	openInventory = openInventory,
 	closeInventory = closeInventory,
@@ -77,7 +79,16 @@ return table.freeze({
 	-- Themes
 	themes = themes,
 
-	-- Hooks
+	-- Callbacks
+	--- Sets a callback function that runs whenever a slot is rendered.
+	onSlotRender = function(callback: (context: SlotContext) -> SlotProperties)
+		if states.onSlotRender().callback then
+			error("[Sling] onSlotRender can only be set once.", 0)
+		end
+		states.onSlotRender({ callback = callback })
+	end,
+
+	-- Events
 	--- Fires whenever the player's inventory interface is opened.
 	onInventoryOpened = events.inventoryOpened.on,
 	--- Fires whenever the player's inventory interface is closed.
@@ -101,4 +112,4 @@ return table.freeze({
 	onBackpackEmpty = events.backpackEmpty.on,
 	--- Fires whenever the hotbar layout changes manually.
 	onHotbarChanged = events.hotbarChanged.on,
-})
+}
