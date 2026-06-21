@@ -24,7 +24,7 @@ type Props = {
 	inHotbar: boolean?,
 }
 
-local function slot(props: Props): Frame
+local function slot(props: Props)
 	local item = props.item
 	local isHovering = source(false)
 	local slot = useSlot({

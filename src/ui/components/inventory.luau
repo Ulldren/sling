@@ -20,7 +20,7 @@ local show = vide.show
 local INVENTORY_SLOT_PADDING = 5
 local INVENTORY_SCROLLBAR_THICKNESS = 10
 
-local function inventory(): Frame
+local function inventory()
 	local height = derive(function()
 		return states.rows() * (config.slotSize + INVENTORY_SLOT_PADDING) + INVENTORY_SLOT_PADDING
 	end)
