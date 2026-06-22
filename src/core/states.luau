@@ -12,10 +12,22 @@ return {
 	rows = source(config.inventoryRowsFull),
 	width = source(655),
 
+	items = source({} :: { BackpackItem }),
+	equippedItem = source(nil :: BackpackItem?),
+
 	keyboardHint = source(false),
 	gamepadHint = source(false),
 
 	gamepadSwapIndex = source(nil :: number?),
+
+	inputs = {
+		slotLeft = source(false),
+		slotRight = source(false),
+
+		closeInventory = source(false),
+		removeFromHotbar = source(false),
+		selectSwap = source(false),
+	},
 
 	categories = source({ {
 		category = "All",
@@ -26,9 +38,6 @@ return {
 	selectedCategory = source(""),
 
 	selectedTheme = source({} :: types.ThemeConfig),
-
-	items = source({} :: { BackpackItem }),
-	equippedItem = source(nil :: BackpackItem?),
 
 	isBackpackLoaded = source(false),
 

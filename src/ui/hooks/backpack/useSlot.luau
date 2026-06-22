@@ -3,24 +3,21 @@ local GuiService = game:GetService("GuiService")
 local cond = require("../../../core/utils/cond")
 local config = require("../../../core/config")
 local events = require("../../../core/events")
-local px = require("../../../core/utils/px")
 local slotManager = require("../../../core/slotManager")
 local states = require("../../../core/states")
 local useEventListener = require("../useEventListener")
 local usePreferredInput = require("../usePreferredInput")
 local vide = require("../../../../vide")
 
-local cleanup = vide.cleanup
 local effect = vide.effect
 local untrack = vide.untrack
 local source = vide.source
 local derive = vide.derive
-local spring = vide.spring
 
-local function checkBounds(pos: Vector2, target: GuiObject): boolean
+local function checkBounds(x: number, y: number, target: GuiObject): boolean
 	local absPos = target.AbsolutePosition
 	local absSize = target.AbsoluteSize
-	return pos.X >= absPos.X and pos.X <= absPos.X + absSize.X and pos.Y >= absPos.Y and pos.Y <= absPos.Y + absSize.Y
+	return x >= absPos.X and x <= absPos.X + absSize.X and y >= absPos.Y and y <= absPos.Y + absSize.Y
 end
 
 local function getClosestFrame(pos: Vector2, parent: Instance, maxDistance: number?): (GuiObject?, number?)
@@ -60,8 +57,6 @@ local function useSlot(props: {
 
 	local isDragging = source(false)
 
-	local slotSizePixel = source(config.slotSize)
-	local slotSize = spring(px.offset(slotSizePixel, slotSizePixel), 0.1)
 	local preferredInput = usePreferredInput()
 	local zindex = derive(cond.ifelse(isDragging, 2, 1))
 
@@ -142,12 +137,6 @@ local function useSlot(props: {
 				return
 			else
 				states.gamepadSwapIndex(index)
-
-				slotSizePixel(config.slotSize * 1.2)
-				task.delay(0.1, function()
-					slotSizePixel(config.slotSize)
-				end)
-
 				return
 			end
 		end
@@ -203,15 +192,14 @@ local function useSlot(props: {
 		end
 		slot.Position = UDim2.new()
 
-		local abpos = Vector2.new(x, y)
 		local hotbar = untrack(states.hotbarRef)
 
 		local insideHotbar = false
 
 		if hotbar then
-			insideHotbar = checkBounds(abpos, hotbar)
+			insideHotbar = checkBounds(x, y, hotbar)
 			if insideHotbar then
-				local closest = getClosestFrame(abpos, hotbar, config.slotSize / 2)
+				local closest = getClosestFrame(Vector2.new(x, y), hotbar, config.slotSize / 2)
 				if closest and closest ~= slotFrame then
 					local targetOrder = closest.LayoutOrder
 					swap(targetOrder)
@@ -238,11 +226,9 @@ local function useSlot(props: {
 		}
 	end
 
-	cleanup(events.gamepadRemove.on(function()
-		if not untrack(states.opened) then
-			return
-		end
-		if not props.inHotbar then
+	effect(function()
+		local pressedRemoveFromHotbar = states.inputs.removeFromHotbar()
+		if not pressedRemoveFromHotbar or not props.inHotbar then
 			return
 		end
 
@@ -254,26 +240,19 @@ local function useSlot(props: {
 				saveHotbar()
 			end
 		end
-	end))
+	end)
 
 	return {
 		slotRef = slotRef,
 		slotFrameRef = slotFrameRef,
-
 		itemName = itemName,
 		itemImage = itemImage,
 		tooltipText = tooltipText,
 		slotNumber = slotNumber,
-
-		isDragging = isDragging,
-
-		slotSize = slotSize,
 		zindex = zindex,
-
-		onClick = onClick,
-
+		isDragging = isDragging,
 		useDrag = useDrag,
-
+		onClick = onClick,
 		getIndex = getIndex,
 	}
 end

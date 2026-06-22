@@ -12,5 +12,4 @@ return table.freeze({
 	gamepadSwapKey = Enum.KeyCode.ButtonA,
 	gamepadRemoveKey = Enum.KeyCode.ButtonX,
 	gamepadCloseKey = Enum.KeyCode.ButtonB,
-	gamepadCloseSecondaryKey = Enum.KeyCode.ButtonStart,
 })

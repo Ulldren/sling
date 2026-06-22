@@ -79,7 +79,7 @@ local function slot(props: Props)
 				return customProps().BackgroundColor or defaultColor
 			end,
 			BackgroundTransparency = cond.ifelse(unlocked, 0, backgroundTransparency),
-			Size = slot.slotSize,
+			Size = px.offset(config.slotSize, config.slotSize),
 			Text = "",
 			ZIndex = slot.zindex,
 

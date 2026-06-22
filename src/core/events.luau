@@ -65,7 +65,4 @@ return {
 	backpackItemRemoved = createEvent() :: Event<BackpackItem>,
 	backpackEmpty = createEvent(),
 	hotbarChanged = createEvent() :: Event<{ BackpackItem }>,
-
-	-- internal
-	gamepadRemove = createEvent(),
 }
