@@ -3,7 +3,6 @@ local cond = require("../../core/utils/cond")
 local px = require("../../core/utils/px")
 local states = require("../../core/states")
 local theme = require("../theme")
-local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local vide = require("../../../vide")
 
 local SEARCH_TEXT = "Search"
@@ -28,7 +27,6 @@ type Props = {
 
 local function searchbar(props: Props)
 	local searchText = props.searchText
-	local preferredTransparency = usePreferredTransparency()
 
 	return create("TextBox")({
 		Name = "Search",
@@ -36,7 +34,7 @@ local function searchbar(props: Props)
 		Position = UDim2.fromScale(1, 0),
 		BackgroundColor3 = colorSpring(theme.searchBackgroundColor),
 		BackgroundTransparency = function()
-			return theme.searchBackgroundTransparency() * preferredTransparency()
+			return theme.searchBackgroundTransparency() * states.preferredTransparency()
 		end,
 		ClearTextOnFocus = false,
 		ClipsDescendants = true,

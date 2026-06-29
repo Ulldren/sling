@@ -12,15 +12,16 @@ local function selectProp<Name>(
 	secondaryProp: (Name | keyof<types.ThemeGetters>)?
 ): index<types.ThemeGetters, Name>
 	return function()
-		local selectedThemeProp = read((states.selectedTheme() :: any)[prop])
-		if selectedThemeProp ~= nil then
-			return selectedThemeProp
-		else
-			local defaultThemeProp = read((default :: any)[prop])
-			if defaultThemeProp ~= nil then
-				return defaultThemeProp
+		local selectedTheme = states.selectedTheme()
+		for _, theme in { selectedTheme, default } do
+			local propValue = read(theme[prop])
+			if propValue ~= nil then
+				return propValue
 			elseif secondaryProp then
-				return (selectProp :: any)(secondaryProp)()
+				local secondaryThemeProp = read(theme[secondaryProp])
+				if secondaryThemeProp ~= nil then
+					return secondaryThemeProp
+				end
 			end
 		end
 		return nil
@@ -53,6 +54,7 @@ local theme: types.ThemeGetters = {
 	categoryTabsTextColor = selectProp("categoryTabsTextColor", "textColor"),
 	categoryTabsTextSize = selectProp("categoryTabsTextSize", "textSize"),
 	categoryTabsIndicatorColor = selectProp("categoryTabsIndicatorColor", "textColor"),
+	categoryTabsDividerColor = selectProp("categoryTabsDividerColor", "textColor"),
 
 	hintFontFace = selectProp("hintFontFace", "fontFace"),
 	hintTextColor = selectProp("hintTextColor", "textColor"),
@@ -64,9 +66,14 @@ local theme: types.ThemeGetters = {
 	slotEquipStrokeColor = selectProp("slotEquipStrokeColor"),
 	slotEquipStrokeThickness = selectProp("slotEquipStrokeThickness"),
 	slotEquipStrokeOutline = selectProp("slotEquipStrokeOutline"),
+	slotDragStrokeColor = selectProp("slotDragStrokeColor"),
+	slotDragStrokeThickness = selectProp("slotDragStrokeThickness"),
 	slotFontFace = selectProp("slotFontFace", "fontFace"),
 	slotTextColor = selectProp("slotTextColor", "textColor"),
 	slotTextSize = selectProp("slotTextSize", "textSize"),
+	slotNumberFontFace = selectProp("slotNumberFontFace", "fontFace"),
+	slotNumberTextColor = selectProp("slotNumberTextColor", "textColor"),
+	slotNumberTextSize = selectProp("slotNumberTextSize", "smallTextSize"),
 
 	tooltipBackgroundColor = selectProp("tooltipBackgroundColor", "backgroundColor"),
 	tooltipBackgroundTransparency = selectProp("tooltipBackgroundTransparency", "backgroundTransparency"),

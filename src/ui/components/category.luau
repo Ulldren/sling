@@ -26,14 +26,14 @@ local function category(props: Props)
 
 	return create("TextButton")({
 		BackgroundTransparency = 1,
-		FontFace = function()
-			return Font.new(theme.categoryTabsFontFace().Family, Enum.FontWeight.Bold)
-		end,
+		FontFace = theme.categoryTabsFontFace,
 		Size = props.size,
 		TextColor3 = colorSpring(theme.categoryTabsTextColor),
 		TextSize = px.scale(theme.categoryTabsTextSize),
 		Text = categoryName,
 		TextTransparency = cond.ifelse(isSelected, 0, 0.4),
+		TextStrokeColor3 = colorSpring(theme.textStrokeColor),
+		TextStrokeTransparency = theme.textStrokeTransparency,
 		TextTruncate = Enum.TextTruncate.AtEnd,
 		TextWrapped = true,
 		ZIndex = zIndex,
@@ -59,7 +59,7 @@ local function category(props: Props)
 			return create("Frame")({
 				Name = "Divider",
 				AnchorPoint = Vector2.new(0.5, 0.5),
-				BackgroundColor3 = colorSpring(theme.textColor),
+				BackgroundColor3 = colorSpring(theme.categoryTabsDividerColor),
 				BackgroundTransparency = 0.8,
 				Position = cond.ifelse(props.inBar, UDim2.fromScale(1, 0.5), UDim2.fromScale(0.5, 1)),
 				Size = cond.ifelse(props.inBar, px.udim2(0, 1, 1, -8), px.udim2(1, 0, 0, 1)),

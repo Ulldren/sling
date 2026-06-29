@@ -6,7 +6,7 @@ Sling.onSlotRender(function(context)
 	if context.item:HasTag("Sword") then
 		properties.BackgroundColor = Color3.fromHex("#142442")
 	elseif context.item:HasTag("Knife") then
-		properties.ItemName = `<font face='Arcade' color='#ff5252'>{context.item.Name}</font>`
+		properties.ItemNameText = `<font face='Arcade' color='#ff5252'>{context.item.Name}</font>`
 		properties.BackgroundColor = Color3.fromHex("#421414")
 	elseif context.item:HasTag("Gun") then
 		properties.BackgroundColor = Color3.fromHex("#311442")

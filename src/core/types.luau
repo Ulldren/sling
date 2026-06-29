@@ -13,8 +13,7 @@ export type SlotContext = {
 export type SlotProperties = {
 	BackgroundColor: Color3?,
 	BackgroundTransparency: number?,
-	ItemName: string?,
-	ItemImage: string?,
+	ItemNameText: string?,
 	TooltipText: string?,
 }
 
@@ -46,6 +45,7 @@ export type ThemeConfig = {
 	categoryTabsTextColor: Can<Color3>?,
 	categoryTabsTextSize: Can<number>?,
 	categoryTabsIndicatorColor: Can<Color3>?,
+	categoryTabsDividerColor: Can<Color3>?,
 
 	hintFontFace: Can<Font>?,
 	hintTextColor: Can<Color3>?,
@@ -57,9 +57,14 @@ export type ThemeConfig = {
 	slotEquipStrokeColor: Can<Color3>?,
 	slotEquipStrokeThickness: Can<number>?,
 	slotEquipStrokeOutline: Can<boolean>?,
+	slotDragStrokeColor: Can<Color3>?,
+	slotDragStrokeThickness: Can<number>?,
 	slotFontFace: Can<Font>?,
 	slotTextColor: Can<Color3>?,
 	slotTextSize: Can<number>?,
+	slotNumberFontFace: Can<Font>?,
+	slotNumberTextColor: Can<Color3>?,
+	slotNumberTextSize: Can<number>?,
 
 	tooltipBackgroundColor: Can<Color3>?,
 	tooltipBackgroundTransparency: Can<number>?,

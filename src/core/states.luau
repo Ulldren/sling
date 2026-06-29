@@ -12,6 +12,9 @@ return {
 	rows = source(config.inventoryRowsFull),
 	width = source(655),
 
+	preferredInput = source(Enum.PreferredInput.Touch),
+	preferredTransparency = source(1),
+
 	items = source({} :: { BackpackItem }),
 	equippedItem = source(nil :: BackpackItem?),
 

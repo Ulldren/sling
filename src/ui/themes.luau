@@ -18,10 +18,15 @@ return table.freeze({
 		slotEquipStrokeColor = Color3.fromHex("#335fff"),
 		slotEquipStrokeThickness = 5,
 		slotEquipStrokeOutline = true,
+		slotDragStrokeColor = Color3.fromHex("#ffffff"),
+		slotDragStrokeThickness = 2,
+		slotNumberFontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold),
 
 		searchBackgroundTransparency = 0.2,
 		searchStrokeColor = Color3.fromHex("#ffffff"),
 		searchStrokeTransparency = 0.8,
+
+		categoryTabsFontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold),
 
 		tooltipBackgroundTransparency = 0,
 	}) :: ThemeConfig,
@@ -29,8 +34,14 @@ return table.freeze({
 		backgroundColor = Color3.fromHex("#eff1f5"),
 		textStrokeTransparency = 1,
 		textColor = Color3.fromHex("#4c4f69"),
+
 		slotEquipStrokeColor = Color3.fromHex("#9eb3ff"),
-		searchStrokeColor = Color3.fromHex("#4c4f69"),
+		slotNumberFontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold),
+
 		hintTextColor = Color3.fromHex("#ffffff"),
+
+		searchStrokeColor = Color3.fromHex("#4c4f69"),
+
+		categoryTabsFontFace = Font.new("rbxasset://fonts/families/BuilderSans.json", Enum.FontWeight.Bold),
 	}) :: ThemeConfig,
 })

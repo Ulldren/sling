@@ -12,7 +12,6 @@ local px = require("../../core/utils/px")
 local states = require("../../core/states")
 local useBackpack = require("../hooks/backpack/useBackpack")
 local useEventListener = require("../hooks/useEventListener")
-local usePreferredInput = require("../hooks/usePreferredInput")
 local vide = require("../../../vide")
 
 local mount = vide.mount
@@ -68,10 +67,19 @@ local function sling()
 	useEventListener(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"), updateBackpackSize)
 	useEventListener(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"), updateBackpackSize)
 
-	local preferredInput = usePreferredInput()
+	states.preferredInput(UserInputService.PreferredInput)
+	useEventListener(UserInputService:GetPropertyChangedSignal("PreferredInput"), function()
+		states.preferredInput(UserInputService.PreferredInput)
+	end)
+
+	states.preferredTransparency(GuiService.PreferredTransparency)
+	useEventListener(GuiService:GetPropertyChangedSignal("PreferredTransparency"), function()
+		states.preferredTransparency(GuiService.PreferredTransparency)
+	end)
+
 	effect(function()
-		states.keyboardHint(preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
-		states.gamepadHint(preferredInput() == Enum.PreferredInput.Gamepad)
+		states.keyboardHint(states.preferredInput() == Enum.PreferredInput.KeyboardAndMouse)
+		states.gamepadHint(states.preferredInput() == Enum.PreferredInput.Gamepad)
 	end)
 
 	local lastPressedLeft = false
@@ -138,10 +146,10 @@ local function sling()
 			closeInventory()
 		elseif inputType == Enum.UserInputType.Keyboard then
 			local inputNum = tonumber(UserInputService:GetStringForKeyCode(input.KeyCode))
-			if inputNum and inputNum <= untrack(states.slots) then
-				local item = untrack(states.items)[inputNum == 0 and 10 or inputNum]
+			if inputNum and inputNum <= states.slots() then
+				local item = states.items()[inputNum == 0 and 10 or inputNum]
 				if item then
-					states.equippedItem(if item == untrack(states.equippedItem) then nil else item)
+					states.equippedItem(if item == states.equippedItem() then nil else item)
 				end
 			end
 		end

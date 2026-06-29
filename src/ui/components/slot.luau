@@ -5,7 +5,6 @@ local px = require("../../core/utils/px")
 local states = require("../../core/states")
 local theme = require("../theme")
 local tooltip = require("./tooltip")
-local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local useSlot = require("../hooks/backpack/useSlot")
 local vide = require("../../../vide")
 
@@ -56,9 +55,9 @@ local function slot(props: Props)
 	local showSlotNumber = cond.all(props.inHotbar, states.keyboardHint)
 	local showTooltip = cond.all(props.inHotbar, cond.neq(slot.tooltipText, ""), isHovering)
 
-	local preferredTransparency = usePreferredTransparency()
 	local backgroundTransparency = derive(function()
-		return (customProps().BackgroundTransparency or theme.slotBackgroundTransparency()) * preferredTransparency()
+		return (customProps().BackgroundTransparency or theme.slotBackgroundTransparency())
+			* states.preferredTransparency()
 	end)
 
 	return create("Frame")({
@@ -74,7 +73,7 @@ local function slot(props: Props)
 			BackgroundColor3 = function()
 				local defaultColor = theme.slotBackgroundColor():Lerp(
 					Color3.fromHex("#ffffff"),
-					item() ~= nil and 0 or ((1 - preferredTransparency()) * 0.15)
+					item() ~= nil and 0 or ((1 - states.preferredTransparency()) * 0.15)
 				)
 				return customProps().BackgroundColor or defaultColor
 			end,
@@ -125,8 +124,8 @@ local function slot(props: Props)
 						Enum.BorderStrokePosition.Inner,
 						Enum.BorderStrokePosition.Outer
 					),
-					Color = Color3.fromRGB(255, 255, 255),
-					Thickness = px.scale(2),
+					Color = theme.slotDragStrokeColor,
+					Thickness = px.scale(theme.slotDragStrokeThickness),
 					Transparency = cond.ifelse(item, 0, 0.5),
 				})
 			end),
@@ -135,11 +134,12 @@ local function slot(props: Props)
 				BackgroundTransparency = 1,
 				Size = UDim2.fromScale(1, 1),
 				Text = function()
-					return customProps().ItemName or slot.itemName()
+					return customProps().ItemNameText or slot.itemName()
 				end,
 				FontFace = theme.slotFontFace,
-				TextSize = px.scale(theme.textSize),
+				TextSize = px.scale(theme.slotTextSize),
 				TextColor3 = colorSpring(theme.slotTextColor),
+				TextStrokeColor3 = colorSpring(theme.textStrokeColor),
 				TextStrokeTransparency = theme.textStrokeTransparency,
 				TextWrapped = true,
 				RichText = true,
@@ -150,9 +150,7 @@ local function slot(props: Props)
 			create("ImageLabel")({
 				Name = "Icon",
 				BackgroundTransparency = 1,
-				Image = function()
-					return customProps().ItemImage or slot.itemImage()
-				end,
+				Image = slot.itemImage,
 				Size = UDim2.fromScale(1, 1),
 				ZIndex = slot.zindex,
 				Visible = showIcon,
@@ -166,9 +164,9 @@ local function slot(props: Props)
 				BackgroundTransparency = 1,
 				AutomaticSize = Enum.AutomaticSize.XY,
 				Text = slot.slotNumber,
-				TextColor3 = colorSpring(theme.textColor),
-				TextSize = px.scale(theme.smallTextSize),
-				FontFace = theme.fontFace,
+				TextColor3 = colorSpring(theme.slotNumberTextColor),
+				TextSize = px.scale(theme.slotNumberTextSize),
+				FontFace = theme.slotNumberFontFace,
 				TextStrokeColor3 = colorSpring(theme.textStrokeColor),
 				TextStrokeTransparency = theme.textStrokeTransparency,
 				ZIndex = slot.zindex,

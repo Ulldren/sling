@@ -8,8 +8,6 @@ local slot = require("./slot")
 local states = require("../../core/states")
 local theme = require("../theme")
 local useInventory = require("../hooks/backpack/useInventory")
-local usePreferredInput = require("../hooks/usePreferredInput")
-local usePreferredTransparency = require("../hooks/usePreferredTransparency")
 local vide = require("../../../vide")
 
 local derive = vide.derive
@@ -25,17 +23,15 @@ local function inventory()
 		return states.rows() * (config.slotSize + INVENTORY_SLOT_PADDING) + INVENTORY_SLOT_PADDING
 	end)
 	local inventory = useInventory()
-	local preferredTransparency = usePreferredTransparency()
-	local preferredInput = usePreferredInput()
 
 	return create("Frame")({
 		Name = "Inventory",
 		Active = true,
 		BackgroundColor3 = colorSpring(function()
-			return theme.backgroundColor():Lerp(Color3.fromHex("#ffffff"), (1 - preferredTransparency()) * 0.15)
+			return theme.backgroundColor():Lerp(Color3.fromHex("#ffffff"), (1 - states.preferredTransparency()) * 0.15)
 		end),
 		BackgroundTransparency = function()
-			return theme.backgroundTransparency() * preferredTransparency()
+			return theme.backgroundTransparency() * states.preferredTransparency()
 		end,
 		AutomaticSize = Enum.AutomaticSize.Y,
 		Size = function()
@@ -64,7 +60,7 @@ local function inventory()
 				PaddingTop = px.udim(0, INVENTORY_SLOT_PADDING),
 			}),
 
-			show(cond.neq(preferredInput, Enum.PreferredInput.Gamepad), function()
+			show(cond.neq(states.preferredInput, Enum.PreferredInput.Gamepad), function()
 				return searchbar({
 					searchText = inventory.searchText,
 				})

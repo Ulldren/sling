@@ -6,7 +6,6 @@ local events = require("../../../core/events")
 local slotManager = require("../../../core/slotManager")
 local states = require("../../../core/states")
 local useEventListener = require("../useEventListener")
-local usePreferredInput = require("../usePreferredInput")
 local vide = require("../../../../vide")
 
 local effect = vide.effect
@@ -57,7 +56,6 @@ local function useSlot(props: {
 
 	local isDragging = source(false)
 
-	local preferredInput = usePreferredInput()
 	local zindex = derive(cond.ifelse(isDragging, 2, 1))
 
 	local itemName = source("")
@@ -124,7 +122,7 @@ local function useSlot(props: {
 		local index = untrack(getIndex)
 		local slots = untrack(states.slots)
 
-		if preferredInput() == Enum.PreferredInput.Gamepad and untrack(states.opened) then
+		if states.preferredInput() == Enum.PreferredInput.Gamepad and untrack(states.opened) then
 			local activeSwapIndex = untrack(states.gamepadSwapIndex)
 			if activeSwapIndex then
 				states.gamepadSwapIndex(nil)

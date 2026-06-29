@@ -1,7 +1,6 @@
 local cond = require("../../core/utils/cond")
 local config = require("../../core/config")
 local states = require("../../core/states")
-local usePreferredInput = require("../hooks/usePreferredInput")
 local vide = require("../../../vide")
 
 local create = vide.create
@@ -39,8 +38,7 @@ local function BoolInputAction(props: BoolInputActionProps)
 end
 
 local function inputs()
-	local preferredInput = usePreferredInput()
-	local isGamepadInput = cond.eq(preferredInput, Enum.PreferredInput.Gamepad)
+	local isGamepadInput = cond.eq(states.preferredInput, Enum.PreferredInput.Gamepad)
 
 	return create("Folder")({
 		Name = "inputs",

@@ -42,8 +42,10 @@ local ristretto: Sling.ThemeConfig = {
 	backgroundColor = Color3.fromHex("#2c2525"),
 	textColor = Color3.fromHex("#e4b9b9"),
 	fontFace = Font.new("rbxasset://fonts/families/FredokaOne.json"),
+
 	slotEquipStrokeColor = Color3.fromHex("#e4b9b9"),
 	slotEquipStrokeOutline = false,
+
 	searchStrokeColor = Color3.fromHex("#e4b9b9"),
 }
 
@@ -61,12 +63,16 @@ local legacy: Sling.ThemeConfig = {
 	textStrokeTransparency = 1,
 	cornerRadius = UDim.new(),
 	smallCornerRadius = UDim.new(),
+
 	slotBackgroundColor = Color3.new(49 / 255, 49 / 255, 49 / 255),
 	slotEquipStrokeColor = Color3.new(90 / 255, 142 / 255, 233 / 255),
 	slotEquipStrokeOutline = false,
+
 	searchBackgroundColor = Color3.new(49 / 255, 49 / 255, 49 / 255),
 	searchBackgroundTransparency = 0.15,
 	searchStrokeTransparency = 1,
+
+	categoryTabsFontFace = Font.fromEnum(Enum.Font.SourceSansBold),
 }
 
 local legacyTheme = Icon.new()

@@ -37,22 +37,16 @@ local function categoryTabs()
 		Size = px.udim2(1, 0, 0, CATEGORY_HEIGHT),
 
 		create("UICorner")({
-			CornerRadius = theme.cornerRadius,
+			TopLeftRadius = theme.cornerRadius,
+			TopRightRadius = theme.cornerRadius,
 			BottomLeftRadius = UDim.new(0, 0),
 			BottomRightRadius = UDim.new(0, 0),
 		}),
 
 		create("Frame")({
-			AnchorPoint = Vector2.new(0.5, 1),
-			BackgroundColor3 = colorSpring(theme.categoryTabsBackgroundColor),
-			Position = UDim2.fromScale(0.5, 1),
-			Size = UDim2.fromScale(1, 0.5),
-		}),
-
-		create("Frame")({
 			Name = "Divider",
 			AnchorPoint = Vector2.new(0.5, 1),
-			BackgroundColor3 = colorSpring(theme.textColor),
+			BackgroundColor3 = colorSpring(theme.categoryTabsDividerColor),
 			BackgroundTransparency = 0.8,
 			Position = UDim2.fromScale(0.5, 1),
 			Size = px.udim2(1, 0, 0, 1),
@@ -93,7 +87,7 @@ local function categoryTabs()
 						Enum.FontStyle.Normal
 					),
 					TextSize = px.scale(24),
-					TextColor3 = colorSpring(theme.textColor),
+					TextColor3 = colorSpring(theme.categoryTabsTextColor),
 					LayoutOrder = function()
 						return #barCategories() + 1
 					end,
@@ -113,7 +107,7 @@ local function categoryTabs()
 						return create("Frame")({
 							Name = "Dropdown",
 							AnchorPoint = Vector2.new(1, 0),
-							BackgroundColor3 = colorSpring(theme.backgroundColor),
+							BackgroundColor3 = colorSpring(theme.categoryTabsBackgroundColor),
 							Position = UDim2.fromScale(1, 1),
 							Size = px.offset(function()
 								return math.min(DROPDOWN_WIDTH, states.width())
@@ -123,7 +117,7 @@ local function categoryTabs()
 							create("UIStroke")({
 								ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 								BorderStrokePosition = Enum.BorderStrokePosition.Inner,
-								Color = colorSpring(theme.textColor),
+								Color = colorSpring(theme.categoryTabsTextColor),
 								Thickness = px.scale(1),
 								Transparency = 0.8,
 							}),
