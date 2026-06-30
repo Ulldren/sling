@@ -1,7 +1,7 @@
-local cond = require("../../../core/utils/cond")
-local px = require("../../../core/utils/px")
-local states = require("../../../core/states")
-local vide = require("../../../../vide")
+local cond = require("../../core/utils/cond")
+local px = require("../../core/utils/px")
+local states = require("../../core/states")
+local vide = require("../../../vide")
 
 local derive = vide.derive
 local effect = vide.effect

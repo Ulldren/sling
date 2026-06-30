@@ -1,12 +1,12 @@
 local GuiService = game:GetService("GuiService")
 
-local cond = require("../../../core/utils/cond")
-local config = require("../../../core/config")
-local events = require("../../../core/events")
-local slotManager = require("../../../core/slotManager")
-local states = require("../../../core/states")
-local useEventListener = require("../useEventListener")
-local vide = require("../../../../vide")
+local cond = require("../../core/utils/cond")
+local config = require("../../core/config")
+local events = require("../../core/events")
+local slotManager = require("../../core/slotManager")
+local states = require("../../core/states")
+local useEventListener = require("./useEventListener")
+local vide = require("../../../vide")
 
 local effect = vide.effect
 local untrack = vide.untrack
@@ -122,7 +122,9 @@ local function useSlot(props: {
 		local index = untrack(getIndex)
 		local slots = untrack(states.slots)
 
-		if states.preferredInput() == Enum.PreferredInput.Gamepad and untrack(states.opened) then
+		local isGamepadInput = untrack(states.preferredInput) == Enum.PreferredInput.Gamepad
+		local isVR = untrack(states.vrEnabled)
+		if untrack(states.opened) and isGamepadInput and not isVR then
 			local activeSwapIndex = untrack(states.gamepadSwapIndex)
 			if activeSwapIndex then
 				states.gamepadSwapIndex(nil)
@@ -143,6 +145,8 @@ local function useSlot(props: {
 		if not i then
 			return
 		end
+		states.equippedItem(if i == untrack(states.equippedItem) then nil else i)
+
 		local now = os.clock()
 		if now - lastClickTime < doubleClickTime and not props.inHotbar then
 			lastClickTime = 0
@@ -152,7 +156,6 @@ local function useSlot(props: {
 			end
 		else
 			lastClickTime = now
-			states.equippedItem(if i == untrack(states.equippedItem) then nil else i)
 		end
 	end
 

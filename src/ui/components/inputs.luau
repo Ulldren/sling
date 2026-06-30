@@ -75,11 +75,6 @@ local function inputs()
 				action = states.inputs.removeFromHotbar,
 				inputs = { { key = config.gamepadRemoveKey } },
 			}),
-			BoolInputAction({
-				name = "SelectSwapAction",
-				action = states.inputs.selectSwap,
-				inputs = { { key = config.gamepadSwapKey } },
-			}),
 		}),
 	})
 end

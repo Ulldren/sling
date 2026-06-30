@@ -5,7 +5,7 @@ local px = require("../../core/utils/px")
 local states = require("../../core/states")
 local theme = require("../theme")
 local tooltip = require("./tooltip")
-local useSlot = require("../hooks/backpack/useSlot")
+local useSlot = require("../hooks/useSlot")
 local vide = require("../../../vide")
 
 local create = vide.create

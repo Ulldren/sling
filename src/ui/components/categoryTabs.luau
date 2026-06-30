@@ -4,7 +4,7 @@ local cond = require("../../core/utils/cond")
 local px = require("../../core/utils/px")
 local states = require("../../core/states")
 local theme = require("../theme")
-local useCategories = require("../hooks/backpack/useCategories")
+local useCategories = require("../hooks/useCategories")
 local vide = require("../../../vide")
 
 local create = vide.create

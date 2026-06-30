@@ -7,7 +7,7 @@ local searchbar = require("./searchbar")
 local slot = require("./slot")
 local states = require("../../core/states")
 local theme = require("../theme")
-local useInventory = require("../hooks/backpack/useInventory")
+local useInventory = require("../hooks/useInventory")
 local vide = require("../../../vide")
 
 local derive = vide.derive
@@ -60,7 +60,9 @@ local function inventory()
 				PaddingTop = px.udim(0, INVENTORY_SLOT_PADDING),
 			}),
 
-			show(cond.neq(states.preferredInput, Enum.PreferredInput.Gamepad), function()
+			show(function()
+				return not (states.preferredInput() == Enum.PreferredInput.Gamepad and not states.vrEnabled())
+			end, function()
 				return searchbar({
 					searchText = inventory.searchText,
 				})

@@ -27,7 +27,7 @@ local function ifelse<T0, T1>(fn: Can<unknown>, a: T0, b: T1): GetterUnwrapArgs<
 	end :: any
 end
 
-local function nott(fn)
+local function nott<T>(fn: Can<T>): () -> boolean
 	return function()
 		return not read(fn)
 	end

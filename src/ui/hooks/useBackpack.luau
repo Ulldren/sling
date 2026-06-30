@@ -1,11 +1,11 @@
 local Players = game:GetService("Players")
 
-local events = require("../../../core/events")
-local slotManager = require("../../../core/slotManager")
-local states = require("../../../core/states")
-local useCharacter = require("../useCharacter")
-local useEventListener = require("../useEventListener")
-local vide = require("../../../../vide")
+local events = require("../../core/events")
+local slotManager = require("../../core/slotManager")
+local states = require("../../core/states")
+local useCharacter = require("./useCharacter")
+local useEventListener = require("./useEventListener")
+local vide = require("../../../vide")
 
 local effect = vide.effect
 local untrack = vide.untrack

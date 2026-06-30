@@ -70,6 +70,7 @@ local legacy: Sling.ThemeConfig = {
 
 	searchBackgroundColor = Color3.new(49 / 255, 49 / 255, 49 / 255),
 	searchBackgroundTransparency = 0.15,
+	searchTextSize = 24,
 	searchStrokeTransparency = 1,
 
 	categoryTabsFontFace = Font.fromEnum(Enum.Font.SourceSansBold),

@@ -1,5 +1,5 @@
-local states = require("../../../core/states")
-local vide = require("../../../../vide")
+local states = require("../../core/states")
+local vide = require("../../../vide")
 
 local source = vide.source
 local derive = vide.derive
