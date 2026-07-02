@@ -13,8 +13,9 @@ export type SlotContext = {
 export type SlotProperties = {
 	BackgroundColor: Color3?,
 	BackgroundTransparency: number?,
+	Children: { Instance }?,
 	ItemNameText: string?,
-	TooltipText: string?,
+	ItemNameChildren: { Instance }?,
 }
 
 export type Can<T> = (() -> T) | T

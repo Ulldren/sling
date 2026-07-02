@@ -4,16 +4,16 @@ local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 local VRService = game:GetService("VRService")
 
-local backpack = require("./backpack")
-local closeInventory = require("../../api/closeInventory")
-local config = require("../../core/config")
-local events = require("../../core/events")
-local inputs = require("./inputs")
-local px = require("../../core/utils/px")
-local states = require("../../core/states")
-local useBackpack = require("../hooks/useBackpack")
-local useEventListener = require("../hooks/useEventListener")
-local vide = require("../../../vide")
+local backpack = require("./components/backpack")
+local closeInventory = require("../api/closeInventory")
+local config = require("../core/config")
+local events = require("../core/events")
+local inputs = require("./components/inputs")
+local px = require("../core/utils/px")
+local states = require("../core/states")
+local useBackpack = require("./hooks/useBackpack")
+local useEventListener = require("./hooks/useEventListener")
+local vide = require("../../vide")
 
 local mount = vide.mount
 local create = vide.create
@@ -78,13 +78,8 @@ local function sling()
 		states.preferredTransparency(GuiService.PreferredTransparency)
 	end)
 
-	states.vrEnabled(VRService.VREnabled)
-	useEventListener(VRService:GetPropertyChangedSignal("VREnabled"), function()
-		states.vrEnabled(VRService.VREnabled)
-	end)
-
 	effect(function()
-		local vr = states.vrEnabled()
+		local vr = VRService.VREnabled
 		local prefInput = states.preferredInput()
 		states.keyboardHint(not vr and prefInput == Enum.PreferredInput.KeyboardAndMouse)
 		states.gamepadHint(not vr and prefInput == Enum.PreferredInput.Gamepad)
@@ -178,11 +173,11 @@ local function sling()
 	})
 end
 
-local function render()
+local function app()
 	mount(function()
 		return show(states.enabled, sling)
 	end, playerGui)
-	mount(inputs, script.Parent.Parent.Parent)
+	mount(inputs, script.Parent.Parent)
 end
 
-return render
+return app

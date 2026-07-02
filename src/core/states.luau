@@ -15,8 +15,6 @@ return {
 	preferredInput = source(Enum.PreferredInput.Touch),
 	preferredTransparency = source(1),
 
-	vrEnabled = source(false),
-
 	items = source({} :: { BackpackItem }),
 	equippedItem = source(nil :: BackpackItem?),
 

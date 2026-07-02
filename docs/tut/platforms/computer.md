@@ -1,6 +1,6 @@
 # Computer
 
-Sling provides a native, desktop-optimized layout for computer players using keyboard and mouse input.
+Sling provides a desktop-optimized layout for computer players using keyboard and mouse input.
 
 ![Computer Inventory](/computer-inventory.png)
 

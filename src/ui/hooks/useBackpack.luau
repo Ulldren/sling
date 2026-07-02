@@ -24,7 +24,7 @@ local function useBackpack()
 		return map
 	end)
 
-	local backpack: Backpack = player:WaitForChild("Backpack") :: any
+	local backpack: Backpack = player:FindFirstChildOfClass("Backpack") :: any
 	local character = useCharacter()
 
 	local function onItemAdded(item: BackpackItem)

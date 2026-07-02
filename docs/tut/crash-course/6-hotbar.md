@@ -1,4 +1,4 @@
-# Hotbar API
+# Managing Hotbar
 
 Sling provides a simple yet powerful API to manage and interact with the Hotbar. You can track when the user rearranges items and programmatically set which items should be placed in the Hotbar.
 

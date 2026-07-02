@@ -1,4 +1,5 @@
 local GuiService = game:GetService("GuiService")
+local VRService = game:GetService("VRService")
 
 local cond = require("../../core/utils/cond")
 local config = require("../../core/config")
@@ -103,8 +104,8 @@ local function useSlot(props: {
 	end)
 
 	local function swap(targetIndex: number)
-		local index = untrack(getIndex)
-		local items = untrack(states.items)
+		local index = getIndex()
+		local items = states.items()
 		if not items[index] then
 			return
 		end
@@ -119,13 +120,12 @@ local function useSlot(props: {
 	local doubleClickTime = 0.5
 
 	local function onClick()
-		local index = untrack(getIndex)
-		local slots = untrack(states.slots)
+		local index = getIndex()
+		local slots = states.slots()
 
-		local isGamepadInput = untrack(states.preferredInput) == Enum.PreferredInput.Gamepad
-		local isVR = untrack(states.vrEnabled)
-		if untrack(states.opened) and isGamepadInput and not isVR then
-			local activeSwapIndex = untrack(states.gamepadSwapIndex)
+		local isGamepadInput = states.preferredInput() == Enum.PreferredInput.Gamepad
+		if states.opened() and isGamepadInput and not VRService.VREnabled then
+			local activeSwapIndex = states.gamepadSwapIndex()
 			if activeSwapIndex then
 				states.gamepadSwapIndex(nil)
 				if activeSwapIndex ~= index then
@@ -141,29 +141,29 @@ local function useSlot(props: {
 			end
 		end
 
-		local i = untrack(item)
-		if not i then
+		local currentItem = item()
+		if not currentItem then
 			return
 		end
-		states.equippedItem(if i == untrack(states.equippedItem) then nil else i)
 
 		local now = os.clock()
 		if now - lastClickTime < doubleClickTime and not props.inHotbar then
 			lastClickTime = 0
-			local moved = slotManager.moveToHotbar(untrack(getIndex))
+			local moved = slotManager.moveToHotbar(index)
 			if moved then
 				saveHotbar()
 			end
 		else
 			lastClickTime = now
+			states.equippedItem(if currentItem == states.equippedItem() then nil else currentItem)
 		end
 	end
 
 	local function onDragBegin()
 		isDragging(true)
 
-		local slot = untrack(slotRef)
-		local app = untrack(states.appRef)
+		local slot = slotRef()
+		local app = states.appRef()
 		if not (slot and app) then
 			return
 		end
@@ -182,8 +182,8 @@ local function useSlot(props: {
 	local function onDragStopped(x: number, y: number)
 		isDragging(false)
 
-		local slot = untrack(slotRef)
-		local slotFrame = untrack(slotFrameRef)
+		local slot = slotRef()
+		local slotFrame = slotFrameRef()
 		if not (slot and slotFrame) then
 			return
 		end
@@ -193,7 +193,7 @@ local function useSlot(props: {
 		end
 		slot.Position = UDim2.new()
 
-		local hotbar = untrack(states.hotbarRef)
+		local hotbar = states.hotbarRef()
 
 		local insideHotbar = false
 
@@ -211,7 +211,7 @@ local function useSlot(props: {
 		end
 
 		if props.inHotbar and not insideHotbar then
-			local index = untrack(getIndex)
+			local index = getIndex()
 			local moved = slotManager.moveToInventory(index)
 			if moved then
 				saveHotbar()

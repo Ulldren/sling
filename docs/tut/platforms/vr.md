@@ -1,9 +1,21 @@
 # VR
 
-::: warning
-Sling is currently in beta. VR support is experimental and not 100% supported yet.
-:::
+Sling provides a controller and laser-compatible layout designed for VR.
 
-Sling does not currently offer full, optimized support for Virtual Reality (VR) devices. While some basic elements may load, you may encounter issues with input mapping, UI positioning, and selection.
+## Layout
 
+* **10 hotbar slots**
+* **4 inventory rows**
+
+### Controller Shortcuts
+
+| Button | Action |
+| --- | --- |
+| **`L1` / `R1` (Bumpers)** | Cycle left/right to select and equip/unequip tools in your hotbar. |
+| **`Button B`** | Close the inventory panel. |
+
+### Laser Shortcuts
+
+* **Move to Hotbar:** Double-tap any item in your inventory to quickly move it to an empty slot in the hotbar.
+* **Remove from Hotbar:** Drag from the hotbar and drop outside it to return it to the inventory.
 

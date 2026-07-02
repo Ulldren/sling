@@ -55,6 +55,7 @@ export default defineConfig({
             { text: "Themes", link: "/api/themes" },
             { text: "Categories", link: "/api/categories" },
             { text: "Hotbar", link: "/api/hotbar" },
+            { text: "Slots", link: "/api/slots" },
             { text: "Topbar Icon", link: "/api/topbar-icon" }
           ]
         }
@@ -68,7 +69,8 @@ export default defineConfig({
             { text: "Creating Category", link: "/tut/crash-course/3-category" },
             { text: "Changing Theme", link: "/tut/crash-course/4-themes" },
             { text: "Subscribing to Events", link: "/tut/crash-course/5-events" },
-            { text: "Managing Hotbar", link: "/tut/crash-course/6-hotbar" }
+            { text: "Managing Hotbar", link: "/tut/crash-course/6-hotbar" },
+            { text: "Customizing Slots", link: "/tut/crash-course/7-slots" }
           ]
         },
         {

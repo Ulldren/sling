@@ -1,6 +1,6 @@
 # Console
 
-Sling provides a native gamepad-compatible layout designed for consoles and controller players.
+Sling provides a gamepad-compatible layout designed for consoles and controller players.
 
 ![Console Inventory](/console-inventory.png)
 

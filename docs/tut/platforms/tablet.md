@@ -1,6 +1,6 @@
 # Tablet
 
-Sling supports tablets natively, adapting the interface dynamically based on the device's screen size and orientation.
+Sling supports tablets, adapting the interface dynamically based on the device's screen size and orientation.
 
 ## Layout
 

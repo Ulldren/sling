@@ -33,14 +33,14 @@ local function slot(props: Props)
 	})
 
 	local customProps = derive(function()
-		local currentItem = item()
-		-- triggers
-		slot.itemName()
-		slot.itemImage()
-		slot.tooltipText()
-
 		local renderCallback = states.onSlotRender().callback
+		local currentItem = item()
 		if renderCallback and currentItem then
+			-- triggers
+			slot.itemName()
+			slot.itemImage()
+			slot.tooltipText()
+
 			return renderCallback({ item = currentItem, inHotbar = props.inHotbar, order = props.order })
 		end
 		return {}
@@ -146,6 +146,10 @@ local function slot(props: Props)
 				TextTruncate = Enum.TextTruncate.AtEnd,
 				ZIndex = slot.zindex,
 				Visible = showItemName,
+
+				function()
+					return customProps().ItemNameChildren
+				end,
 			}),
 			create("ImageLabel")({
 				Name = "Icon",
@@ -174,13 +178,13 @@ local function slot(props: Props)
 			}),
 			show(showTooltip, function(_, present)
 				return tooltip({
-					text = function()
-						return customProps().TooltipText or slot.tooltipText()
-					end,
+					text = slot.tooltipText,
 					visible = present,
-				}),
-					0.2
+				}), 0.2
 			end),
+			function()
+				return customProps().Children
+			end,
 		}),
 	})
 end
