@@ -1,5 +1,3 @@
-local VRService = game:GetService("VRService")
-
 local categoryTabs = require("./categoryTabs")
 local colorSpring = require("../../core/utils/colorSpring")
 local cond = require("../../core/utils/cond")
@@ -63,7 +61,7 @@ local function inventory()
 			}),
 
 			show(function()
-				return not (states.preferredInput() == Enum.PreferredInput.Gamepad and not VRService.VREnabled)
+				return not (states.preferredInput() == Enum.PreferredInput.Gamepad and not states.vrEnabled())
 			end, function()
 				return searchbar({
 					searchText = inventory.searchText,

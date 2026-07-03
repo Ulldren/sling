@@ -78,8 +78,13 @@ local function sling()
 		states.preferredTransparency(GuiService.PreferredTransparency)
 	end)
 
+	states.vrEnabled(VRService.VREnabled)
+	useEventListener(VRService:GetPropertyChangedSignal("VREnabled"), function()
+		states.vrEnabled(VRService.VREnabled)
+	end)
+
 	effect(function()
-		local vr = VRService.VREnabled
+		local vr = states.vrEnabled()
 		local prefInput = states.preferredInput()
 		states.keyboardHint(not vr and prefInput == Enum.PreferredInput.KeyboardAndMouse)
 		states.gamepadHint(not vr and prefInput == Enum.PreferredInput.Gamepad)

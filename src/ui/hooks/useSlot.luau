@@ -1,5 +1,4 @@
 local GuiService = game:GetService("GuiService")
-local VRService = game:GetService("VRService")
 
 local cond = require("../../core/utils/cond")
 local config = require("../../core/config")
@@ -124,7 +123,7 @@ local function useSlot(props: {
 		local slots = states.slots()
 
 		local isGamepadInput = states.preferredInput() == Enum.PreferredInput.Gamepad
-		if states.opened() and isGamepadInput and not VRService.VREnabled then
+		if states.opened() and isGamepadInput and not states.vrEnabled() then
 			local activeSwapIndex = states.gamepadSwapIndex()
 			if activeSwapIndex then
 				states.gamepadSwapIndex(nil)
