@@ -153,9 +153,10 @@ local function sling()
 		if inputType == Enum.UserInputType.MouseButton1 or inputType == Enum.UserInputType.Touch then
 			closeInventory()
 		elseif inputType == Enum.UserInputType.Keyboard then
-			local inputNum = tonumber(UserInputService:GetStringForKeyCode(input.KeyCode))
+			local inputNum = input.KeyCode.Value - Enum.KeyCode.Zero.Value
+			inputNum = if inputNum >= 0 and inputNum < 10 then (inputNum == 0 and 10) or inputNum else nil
 			if inputNum and inputNum <= states.slots() then
-				local item = states.items()[inputNum == 0 and 10 or inputNum]
+				local item = states.items()[inputNum]
 				if item then
 					states.equippedItem(if item == states.equippedItem() then nil else item)
 				end

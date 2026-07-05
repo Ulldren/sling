@@ -50,17 +50,12 @@ local function useSlot(props: {
 	inHotbar: boolean?,
 })
 	local item = props.item
-
-	local slotRef = source(nil :: TextButton?)
-	local slotFrameRef = source(nil :: Frame?)
-
-	local isDragging = source(false)
-
-	local zindex = derive(cond.ifelse(isDragging, 2, 1))
-
 	local itemName = source("")
 	local itemImage = source("")
 	local tooltipText = source("")
+
+	local slotRef = source(nil :: TextButton?)
+	local slotFrameRef = source(nil :: Frame?)
 
 	local slotNumber = ""
 	if props.order >= 1 and props.order < 10 then
@@ -69,30 +64,32 @@ local function useSlot(props: {
 		slotNumber = "0"
 	end
 
-	effect(function()
-		local i = item()
-		if i then
-			itemName(i.Name)
-			itemImage(i.TextureId)
-			useEventListener(i:GetPropertyChangedSignal("Name"), function()
-				itemName(i.Name)
-			end)
-			useEventListener(i:GetPropertyChangedSignal("TextureId"), function()
-				itemImage(i.TextureId)
-			end)
+	local isDragging = source(false)
 
-			if i:IsA("Tool") then
-				tooltipText(i.ToolTip)
-				useEventListener(i:GetPropertyChangedSignal("ToolTip"), function()
-					tooltipText(i.ToolTip)
-				end)
-			else
-				tooltipText("")
-			end
-		else
+	local zindex = derive(cond.ifelse(isDragging, 2, 1))
+
+	effect(function()
+		local currentItem = item()
+		if not currentItem then
 			itemName("")
 			itemImage("")
 			tooltipText("")
+			return
+		end
+
+		itemName(currentItem.Name)
+		useEventListener(currentItem:GetPropertyChangedSignal("Name"), function()
+			itemName(currentItem.Name)
+		end)
+		itemImage(currentItem.TextureId)
+		useEventListener(currentItem:GetPropertyChangedSignal("TextureId"), function()
+			itemImage(currentItem.TextureId)
+		end)
+		if currentItem:IsA("Tool") then
+			tooltipText(currentItem.ToolTip)
+			useEventListener(currentItem:GetPropertyChangedSignal("ToolTip"), function()
+				tooltipText(currentItem.ToolTip)
+			end)
 		end
 	end)
 
@@ -102,17 +99,34 @@ local function useSlot(props: {
 			or (if props.inHotbar then props.order else states.slots() + props.order)
 	end)
 
-	local function swap(targetIndex: number)
-		local index = getIndex()
-		local items = states.items()
-		if not items[index] then
-			return
-		end
-		slotManager.swap(index, targetIndex)
-	end
-
 	local function saveHotbar()
 		events.hotbarChanged.fire(slotManager.getHotbarItems())
+	end
+
+	local function swap(targetIndex: number, force: boolean?)
+		local index = untrack(getIndex)
+		local items = untrack(states.items)
+		local slots = untrack(states.slots)
+		if items[index] or force then
+			local moved = slotManager.swap(index, targetIndex)
+			if moved and (index <= slots or targetIndex <= slots) then
+				saveHotbar()
+			end
+		end
+	end
+
+	local function moveToInventory()
+		local moved = slotManager.moveToInventory(untrack(getIndex))
+		if moved then
+			saveHotbar()
+		end
+	end
+
+	local function moveToHotbar()
+		local moved = slotManager.moveToHotbar(untrack(getIndex))
+		if moved then
+			saveHotbar()
+		end
 	end
 
 	local lastClickTime = 0
@@ -120,7 +134,6 @@ local function useSlot(props: {
 
 	local function onClick()
 		local index = getIndex()
-		local slots = states.slots()
 
 		local isGamepadInput = states.preferredInput() == Enum.PreferredInput.Gamepad
 		if states.opened() and isGamepadInput and not states.vrEnabled() then
@@ -128,10 +141,7 @@ local function useSlot(props: {
 			if activeSwapIndex then
 				states.gamepadSwapIndex(nil)
 				if activeSwapIndex ~= index then
-					slotManager.swap(index, activeSwapIndex)
-					if index <= slots or activeSwapIndex <= slots then
-						saveHotbar()
-					end
+					swap(activeSwapIndex, true)
 				end
 				return
 			else
@@ -145,16 +155,15 @@ local function useSlot(props: {
 			return
 		end
 
+		local currentEquipped = states.equippedItem()
+		states.equippedItem(if currentItem == currentEquipped then nil else currentItem)
+
 		local now = os.clock()
 		if now - lastClickTime < doubleClickTime and not props.inHotbar then
 			lastClickTime = 0
-			local moved = slotManager.moveToHotbar(index)
-			if moved then
-				saveHotbar()
-			end
+			moveToHotbar()
 		else
 			lastClickTime = now
-			states.equippedItem(if currentItem == states.equippedItem() then nil else currentItem)
 		end
 	end
 
@@ -163,10 +172,7 @@ local function useSlot(props: {
 
 		local slot = slotRef()
 		local app = states.appRef()
-		if not (slot and app) then
-			return
-		end
-		if not props.inHotbar then
+		if slot and app and not props.inHotbar then
 			local newPosition = UDim2.new(
 				0,
 				slot.AbsolutePosition.X - app.AbsolutePosition.X,
@@ -193,28 +199,15 @@ local function useSlot(props: {
 		slot.Position = UDim2.new()
 
 		local hotbar = states.hotbarRef()
+		local insideHotbar = hotbar and checkBounds(x, y, hotbar)
 
-		local insideHotbar = false
-
-		if hotbar then
-			insideHotbar = checkBounds(x, y, hotbar)
-			if insideHotbar then
-				local closest = getClosestFrame(Vector2.new(x, y), hotbar, config.slotSize / 2)
-				if closest and closest ~= slotFrame then
-					local targetOrder = closest.LayoutOrder
-					swap(targetOrder)
-					saveHotbar()
-					return
-				end
+		if insideHotbar then
+			local closest = getClosestFrame(Vector2.new(x, y), hotbar, config.slotSize / 2)
+			if closest and closest ~= slotFrame then
+				swap(closest.LayoutOrder)
 			end
-		end
-
-		if props.inHotbar and not insideHotbar then
-			local index = getIndex()
-			local moved = slotManager.moveToInventory(index)
-			if moved then
-				saveHotbar()
-			end
+		elseif props.inHotbar then
+			moveToInventory()
 		end
 	end
 
@@ -234,20 +227,16 @@ local function useSlot(props: {
 
 		local slotBtn = untrack(slotRef)
 		if slotBtn and GuiService.SelectedObject == slotBtn then
-			local index = untrack(getIndex)
-			local moved = slotManager.moveToInventory(index)
-			if moved then
-				saveHotbar()
-			end
+			moveToInventory()
 		end
 	end)
 
 	return {
-		slotRef = slotRef,
-		slotFrameRef = slotFrameRef,
 		itemName = itemName,
 		itemImage = itemImage,
 		tooltipText = tooltipText,
+		slotRef = slotRef,
+		slotFrameRef = slotFrameRef,
 		slotNumber = slotNumber,
 		zindex = zindex,
 		isDragging = isDragging,
