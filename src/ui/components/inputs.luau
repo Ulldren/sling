@@ -18,7 +18,7 @@ type BoolInputActionProps = {
 	inputs: { InputProps },
 }
 
-local function BoolInputAction(props: BoolInputActionProps)
+local function boolInputAction(props: BoolInputActionProps)
 	return create("InputAction")({
 		StateChanged = props.action,
 		Name = props.name,
@@ -46,14 +46,14 @@ local function inputs()
 		create("InputContext")({
 			Name = "HotbarContext",
 			Priority = 2000,
-			Enabled = isGamepadInput,
+			Enabled = cond.all(states.enabled, isGamepadInput),
 
-			BoolInputAction({
+			boolInputAction({
 				name = "SlotLeftAction",
 				action = states.inputs.slotLeft,
 				inputs = { { key = Enum.KeyCode.ButtonL1 } },
 			}),
-			BoolInputAction({
+			boolInputAction({
 				name = "SlotRightAction",
 				action = states.inputs.slotRight,
 				inputs = { { key = Enum.KeyCode.ButtonR1 } },
@@ -63,14 +63,14 @@ local function inputs()
 		create("InputContext")({
 			Name = "InventoryContext",
 			Priority = 2000,
-			Enabled = cond.all(states.opened, isGamepadInput),
+			Enabled = cond.all(states.enabled, states.opened, isGamepadInput),
 
-			BoolInputAction({
+			boolInputAction({
 				name = "CloseInventoryAction",
 				action = states.inputs.closeInventory,
 				inputs = { { key = config.gamepadCloseKey } },
 			}),
-			BoolInputAction({
+			boolInputAction({
 				name = "RemoveFromHotbarAction",
 				action = states.inputs.removeFromHotbar,
 				inputs = { { key = config.gamepadRemoveKey } },

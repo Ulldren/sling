@@ -82,6 +82,7 @@ local function searchbar(props: Props)
 			Size = px.offset(CLEAR_BUTTON_SIZE, CLEAR_BUTTON_SIZE),
 			Image = SEARCH_IMAGE_X,
 			ImageColor3 = colorSpring(theme.searchTextColor),
+			Modal = states.opened, -- Allows free mouse movement even in first person
 			Visible = cond.neq(searchText, ""),
 
 			Activated = function()
