@@ -2,7 +2,7 @@ local GuiService = game:GetService("GuiService")
 
 local vide = require("../../../vide")
 
-type Can<T> = (() -> T) | T
+type UsedAs<T> = vide.UsedAs<T>
 
 local read = vide.read :: any
 local source = vide.source
@@ -19,35 +19,40 @@ local function setScale(scale: number)
 	currentScale(scale)
 end
 
-local function px(x: Can<number>): () -> number
+local function px(x: UsedAs<number>): () -> number
 	return function()
 		return math.round(read(x) * currentScale())
 	end
 end
 
-local function raw(scaled: Can<number>): number
+local function raw(scaled: UsedAs<number>): number
 	return math.round(read(scaled) / currentScale())
 end
 
-local function scale(x: Can<number>): () -> number
+local function scale(x: UsedAs<number>): () -> number
 	return function()
 		return read(x) * currentScale()
 	end
 end
 
-local function offset(x: Can<number>, y: Can<number>): () -> UDim2
+local function offset(x: UsedAs<number>, y: UsedAs<number>): () -> UDim2
 	return function()
 		return UDim2.fromOffset(px(read(x))(), px(read(y))())
 	end
 end
 
-local function udim2(xScale: Can<number>, xOffset: Can<number>, yScale: Can<number>, yOffset: Can<number>): () -> UDim2
+local function udim2(
+	xScale: UsedAs<number>,
+	xOffset: UsedAs<number>,
+	yScale: UsedAs<number>,
+	yOffset: UsedAs<number>
+): () -> UDim2
 	return function()
 		return UDim2.new(read(xScale), px(read(xOffset))(), read(yScale), px(read(yOffset))())
 	end
 end
 
-local function udim(scale: Can<number>, offset: Can<number>): () -> UDim
+local function udim(scale: UsedAs<number>, offset: UsedAs<number>): () -> UDim
 	return function()
 		return UDim.new(read(scale), px(read(offset))())
 	end
@@ -62,7 +67,7 @@ return setmetatable({
 	udim2 = udim2,
 	udim = udim,
 }, {
-	__call = function(_, value: Can<number>): () -> number
+	__call = function(_, value: UsedAs<number>): () -> number
 		return px(value)
 	end,
 })

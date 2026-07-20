@@ -1,4 +1,4 @@
-local Sling = require("../Sling")
+local Sling = require("./Sling")
 
 local savedHotbarLayout: { string } = {}
 

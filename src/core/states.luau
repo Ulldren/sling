@@ -18,12 +18,12 @@ return {
 	vrEnabled = source(false),
 
 	items = source({} :: { BackpackItem }),
-	equippedItem = source(nil :: BackpackItem?),
+	equippedItem = source((nil :: any) :: BackpackItem),
 
 	keyboardHint = source(false),
 	gamepadHint = source(false),
 
-	gamepadSwapIndex = source(nil :: number?),
+	gamepadSwapIndex = source((nil :: any) :: number),
 
 	inputs = {
 		slotLeft = source(false),
@@ -45,8 +45,6 @@ return {
 
 	isBackpackLoaded = source(false),
 
-	appRef = source(nil :: GuiObject?),
-	hotbarRef = source(nil :: Frame?),
-
-	onSlotRender = source({ callback = nil :: ((context: types.SlotContext) -> types.SlotProperties)? }),
+	appRef = source((nil :: any) :: GuiObject),
+	hotbarRef = source((nil :: any) :: Frame),
 }

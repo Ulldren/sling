@@ -29,6 +29,7 @@ local function hotbar(): Frame
 
 	return create("Frame")({
 		Name = "Hotbar",
+		Active = states.opened,
 		AutomaticSize = Enum.AutomaticSize.X,
 		Size = px.offset(0, config.slotSize + HOTBAR_PADDING * 2),
 		BackgroundTransparency = 1,

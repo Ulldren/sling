@@ -12,7 +12,7 @@ local show = vide.show
 
 type Props = {
 	category: () -> types.Category,
-	size: types.Can<UDim2>,
+	size: vide.UsedAs<UDim2>,
 	inBar: boolean?,
 }
 

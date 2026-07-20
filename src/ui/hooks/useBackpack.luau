@@ -1,5 +1,6 @@
 local Players = game:GetService("Players")
 
+local equipHandler = require("../../api/setEquipHandler")()
 local events = require("../../core/events")
 local slotManager = require("../../core/slotManager")
 local states = require("../../core/states")
@@ -44,7 +45,7 @@ local function useBackpack()
 		local parent = item.Parent
 		local char = untrack(character)
 		if parent ~= char and untrack(states.equippedItem) == item then
-			states.equippedItem(nil)
+			states.equippedItem(nil :: any)
 		end
 
 		if parent == backpack or parent == char then
@@ -98,7 +99,7 @@ local function useBackpack()
 		events.backpackLoaded.fire(untrack(states.items))
 
 		cleanup(function()
-			states.equippedItem(nil)
+			states.equippedItem(nil :: any)
 			states.items({})
 			states.isBackpackLoaded(false)
 		end)
@@ -119,13 +120,21 @@ local function useBackpack()
 			if equipped:IsA("HopperBin") then -- NOTE: HopperBin
 				warn(`[Sling] Cannot select '{equipped.Name}' hopper. HopperBin is deprecated and not supported.`)
 				task.defer(function()
-					states.equippedItem(nil)
+					states.equippedItem(nil :: any)
 				end)
 			else
-				humanoid:EquipTool(equipped :: Tool)
+				if equipHandler.callback then
+					equipHandler.callback(equipped :: Tool)
+				else
+					humanoid:EquipTool(equipped :: Tool)
+				end
 			end
 		else
-			humanoid:UnequipTools()
+			if equipHandler.callback then
+				equipHandler.callback(nil)
+			else
+				humanoid:UnequipTools()
+			end
 		end
 	end)
 

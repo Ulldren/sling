@@ -11,6 +11,7 @@ local show = vide.show
 local function backpack()
 	return create("Frame")({
 		Name = "Backpack",
+		Active = true,
 		AnchorPoint = Vector2.new(0.5, 1),
 		Position = UDim2.fromScale(0.5, 1),
 		AutomaticSize = Enum.AutomaticSize.Y,

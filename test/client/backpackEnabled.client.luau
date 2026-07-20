@@ -1,7 +1,7 @@
 local StarterGui = game:GetService("StarterGui")
 
-local Icon = require("../Sling/Packages/topbarplus")
-local Sling = require("../Sling")
+local Icon = require("./Sling/Packages/topbarplus")
+local Sling = require("./Sling")
 
 local icon = Icon.new()
 icon:modifyTheme({

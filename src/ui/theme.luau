@@ -1,9 +1,6 @@
 local states = require("../core/states")
 local themes = require("./themes")
 local types = require("../core/types")
-local vide = require("../../vide")
-
-local read = vide.read
 
 local default = themes.default
 
@@ -13,12 +10,12 @@ local function selectProp<Name>(
 ): index<types.ThemeGetters, Name>
 	return function()
 		local selectedTheme = states.selectedTheme()
-		for _, theme in { selectedTheme, default } do
-			local propValue = read(theme[prop])
+		for _, theme: any in { selectedTheme, default } do
+			local propValue = theme[prop]
 			if propValue ~= nil then
 				return propValue
 			elseif secondaryProp then
-				local secondaryThemeProp = read(theme[secondaryProp])
+				local secondaryThemeProp = theme[secondaryProp]
 				if secondaryThemeProp ~= nil then
 					return secondaryThemeProp
 				end

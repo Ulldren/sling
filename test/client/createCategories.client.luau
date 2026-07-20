@@ -1,4 +1,4 @@
-local Sling = require("../Sling")
+local Sling = require("./Sling")
 
 Sling.createCategory("Swords", function(tool)
 	return tool:HasTag("Sword")

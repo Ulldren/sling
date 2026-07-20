@@ -2,6 +2,7 @@ local colorSpring = require("../../core/utils/colorSpring")
 local cond = require("../../core/utils/cond")
 local config = require("../../core/config")
 local px = require("../../core/utils/px")
+local slotRender = require("../../api/onSlotRender")()
 local states = require("../../core/states")
 local theme = require("../theme")
 local tooltip = require("./tooltip")
@@ -33,7 +34,7 @@ local function slot(props: Props)
 	})
 
 	local customProps = derive(function()
-		local renderCallback = states.onSlotRender().callback
+		local renderCallback = slotRender().callback
 		local currentItem = item()
 		if renderCallback and currentItem then
 			-- triggers
@@ -70,6 +71,7 @@ local function slot(props: Props)
 		action(slot.slotFrameRef :: any),
 
 		create("TextButton")({
+			Active = true,
 			BackgroundColor3 = function()
 				local defaultColor = theme.slotBackgroundColor():Lerp(
 					Color3.fromHex("#ffffff"),
@@ -180,7 +182,7 @@ local function slot(props: Props)
 				return tooltip({
 					text = slot.tooltipText,
 					visible = present,
-				}), 0.2
+				})
 			end),
 			function()
 				return customProps().Children

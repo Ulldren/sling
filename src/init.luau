@@ -6,7 +6,9 @@ local getTopbarIcon = require("@self/api/getTopbarIcon")
 local isEnabled = require("@self/api/isEnabled")
 local isInventoryOpen = require("@self/api/isInventoryOpen")
 local openInventory = require("@self/api/openInventory")
+local _, onSlotRender = require("@self/api/onSlotRender")()
 local setEnabled = require("@self/api/setEnabled")
+local _, setEquipHandler = require("@self/api/setEquipHandler")()
 local setHotbar = require("@self/api/setHotbar")
 local setTheme = require("@self/api/setTheme")
 local states = require("@self/core/states")
@@ -34,18 +36,12 @@ return {
 	createCategory = createCategory,
 	setTheme = setTheme,
 	setHotbar = setHotbar,
+	onSlotRender = onSlotRender,
+	setEquipHandler = setEquipHandler,
 	getTopbarIcon = getTopbarIcon,
 
 	-- Themes
 	themes = themes,
-
-	-- Callbacks
-	onSlotRender = function(callback: (context: SlotContext) -> SlotProperties)
-		if states.onSlotRender().callback then
-			error("[Sling] onSlotRender can only be set once.", 0)
-		end
-		states.onSlotRender({ callback = callback })
-	end,
 
 	-- Events
 	onInventoryOpened = events.inventoryOpened.on,

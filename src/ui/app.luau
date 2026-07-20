@@ -5,10 +5,11 @@ local UserInputService = game:GetService("UserInputService")
 local VRService = game:GetService("VRService")
 
 local backpack = require("./components/backpack")
+local boolAction = require("../core/utils/boolAction")
 local closeInventory = require("../api/closeInventory")
+local cond = require("../core/utils/cond")
 local config = require("../core/config")
 local events = require("../core/events")
-local inputs = require("./components/inputs")
 local px = require("../core/utils/px")
 local states = require("../core/states")
 local useBackpack = require("./hooks/useBackpack")
@@ -42,7 +43,7 @@ local function sling()
 			if opened then
 				events.inventoryOpened.fire()
 			else
-				states.gamepadSwapIndex(nil)
+				states.gamepadSwapIndex(nil :: any)
 				events.inventoryClosed.fire()
 			end
 		end
@@ -103,7 +104,7 @@ local function sling()
 		lastPressedRight = pressedSlotRight
 
 		if pressedSlotLeft and pressedSlotRight then
-			states.equippedItem(nil)
+			states.equippedItem(nil :: any)
 			return
 		end
 
@@ -135,7 +136,7 @@ local function sling()
 			end
 		end
 
-		states.equippedItem(nil)
+		states.equippedItem(nil :: any)
 	end)
 
 	effect(function()
@@ -144,6 +145,27 @@ local function sling()
 			closeInventory()
 		end
 	end)
+
+	local isGamepadInput = cond.eq(states.preferredInput, Enum.PreferredInput.Gamepad)
+
+	boolAction({
+		name = "BackpackHotbarEquip",
+		enabled = isGamepadInput,
+		actions = {
+			[Enum.KeyCode.ButtonL1] = states.inputs.slotLeft,
+			[Enum.KeyCode.ButtonR1] = states.inputs.slotRight,
+		},
+	})
+	boolAction({
+		name = "BackpackCloseInventory",
+		enabled = cond.all(states.opened, isGamepadInput),
+		actions = { [config.gamepadCloseKey] = states.inputs.closeInventory },
+	})
+	boolAction({
+		name = "BackpackRemoveSlot",
+		enabled = cond.all(states.opened, isGamepadInput),
+		actions = { [config.gamepadRemoveKey] = states.inputs.removeFromHotbar },
+	})
 
 	useEventListener(UserInputService.InputBegan, function(input: InputObject, gameProcessedEvent: boolean)
 		if gameProcessedEvent then
@@ -158,7 +180,7 @@ local function sling()
 			if inputNum and inputNum <= states.slots() then
 				local item = states.items()[inputNum]
 				if item then
-					states.equippedItem(if item == states.equippedItem() then nil else item)
+					states.equippedItem(if item == states.equippedItem() then nil :: any else item)
 				end
 			end
 		end
@@ -183,7 +205,6 @@ local function app()
 	mount(function()
 		return show(states.enabled, sling)
 	end, playerGui)
-	mount(inputs, script.Parent.Parent)
 end
 
 return app

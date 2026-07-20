@@ -17,5 +17,5 @@ include = [
 ]
 
 [dependencies]
-vide = "centau/vide@0.4.0"
+vide = "encodedlux/vide@0.4.2"
 topbarplus = "1foreverhd/topbarplus@3.4.0"

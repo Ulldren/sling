@@ -1,4 +1,4 @@
-local Sling = require("../Sling")
+local Sling = require("./Sling")
 
 Sling.onSlotRender(function(context)
 	local item = context.item

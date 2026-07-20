@@ -7,9 +7,10 @@
             "Sling": {
                 "$path": "models/Sling"
             },
-            "test": {
-                "$path": "test"
-            }
+            "$path": "test/client"
+        },
+        "ServerScriptService": {
+            "$path": "test/server"
         }
     }
 }

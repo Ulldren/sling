@@ -2,7 +2,6 @@ local colorSpring = require("../../core/utils/colorSpring")
 local cond = require("../../core/utils/cond")
 local px = require("../../core/utils/px")
 local theme = require("../theme")
-local types = require("../../core/types")
 local vide = require("../../../vide")
 
 local create = vide.create
@@ -17,7 +16,7 @@ type Props = {
 }
 
 local function tooltip(props: Props)
-	local visible: types.Can<boolean> = props.visible or true
+	local visible: vide.UsedAs<boolean> = props.visible or true
 
 	return create("TextLabel")({
 		Name = "ToolTip",
@@ -46,7 +45,8 @@ local function tooltip(props: Props)
 			PaddingLeft = px.udim(0, TOOLTIP_PADDING),
 			PaddingRight = px.udim(0, TOOLTIP_PADDING),
 		}),
-	})
+	}),
+		0.2
 end
 
 return tooltip

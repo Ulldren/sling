@@ -1,9 +1,8 @@
-local typesModule = require("../types")
 local vide = require("../../../vide")
 
 local read = vide.read
 
-type Can<T> = typesModule.Can<T>
+type UsedAs<T> = vide.UsedAs<T>
 
 type function GetterUnwrapArgs(a: type, b: type): type
 	local function unwrap(t: type): type
@@ -21,13 +20,13 @@ type function GetterUnwrapArgs(a: type, b: type): type
 	return types.newfunction({}, { head = { if t_a == t_b then t_a else types.unionof(t_a, t_b) } })
 end
 
-local function ifelse<T0, T1>(fn: Can<unknown>, a: T0, b: T1): GetterUnwrapArgs<T0, T1>
+local function ifelse<T0, T1>(fn: UsedAs<unknown>, a: T0, b: T1): GetterUnwrapArgs<T0, T1>
 	return function()
 		return if read(fn) then read(a) else read(b)
 	end :: any
 end
 
-local function nott<T>(fn: Can<T>): () -> boolean
+local function nott<T>(fn: UsedAs<T>): () -> boolean
 	return function()
 		return not read(fn)
 	end
@@ -59,43 +58,43 @@ local function any(...)
 	end
 end
 
-local function len<T>(a: Can<{ T }>)
+local function len<T>(a: UsedAs<{ T }>)
 	return function(): number
 		return #read(a) :: any
 	end
 end
 
-local function eq<T>(a: Can<T>, b: Can<T>)
+local function eq<T>(a: UsedAs<T>, b: UsedAs<T>)
 	return function()
 		return read(a) == read(b)
 	end
 end
 
-local function neq<T>(a: Can<T>, b: Can<T>)
+local function neq<T>(a: UsedAs<T>, b: UsedAs<T>)
 	return function()
 		return read(a) ~= read(b)
 	end
 end
 
-local function gt(a: Can<number>, b: Can<number>)
+local function gt(a: UsedAs<number>, b: UsedAs<number>)
 	return function()
 		return read(a) > read(b) :: any
 	end
 end
 
-local function lt(a: Can<number>, b: Can<number>)
+local function lt(a: UsedAs<number>, b: UsedAs<number>)
 	return function()
 		return read(a) < read(b) :: any
 	end
 end
 
-local function gte(a: Can<number>, b: Can<number>)
+local function gte(a: UsedAs<number>, b: UsedAs<number>)
 	return function()
 		return read(a) >= read(b) :: any
 	end
 end
 
-local function lte(a: Can<number>, b: Can<number>)
+local function lte(a: UsedAs<number>, b: UsedAs<number>)
 	return function()
 		return read(a) <= read(b) :: any
 	end

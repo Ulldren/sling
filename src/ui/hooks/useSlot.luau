@@ -54,8 +54,8 @@ local function useSlot(props: {
 	local itemImage = source("")
 	local tooltipText = source("")
 
-	local slotRef = source(nil :: TextButton?)
-	local slotFrameRef = source(nil :: Frame?)
+	local slotRef = source((nil :: any) :: TextButton)
+	local slotFrameRef = source((nil :: any) :: Frame)
 
 	local slotNumber = ""
 	if props.order >= 1 and props.order < 10 then
@@ -139,7 +139,7 @@ local function useSlot(props: {
 		if states.opened() and isGamepadInput and not states.vrEnabled() then
 			local activeSwapIndex = states.gamepadSwapIndex()
 			if activeSwapIndex then
-				states.gamepadSwapIndex(nil)
+				states.gamepadSwapIndex(nil :: any)
 				if activeSwapIndex ~= index then
 					swap(activeSwapIndex, true)
 				end
@@ -156,7 +156,7 @@ local function useSlot(props: {
 		end
 
 		local currentEquipped = states.equippedItem()
-		states.equippedItem(if currentItem == currentEquipped then nil else currentItem)
+		states.equippedItem(if currentItem == currentEquipped then nil :: any else currentItem)
 
 		local now = os.clock()
 		if now - lastClickTime < doubleClickTime and not props.inHotbar then
