@@ -43,7 +43,6 @@ EquipToolRemote.OnServerEvent:Connect(function(player: Player, tool: Tool?)
     end
 
     if tool then
-        -- TODO: Check if the player owns the tool
         humanoid:EquipTool(tool)
     else
         humanoid:UnequipTools()

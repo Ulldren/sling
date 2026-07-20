@@ -29,5 +29,7 @@ features:
     details: "Customize theme properties, switch between predefined themes (default and light) or define your own."
   - title: "Custom Categorization"
     details: "Group your inventory items into tab categories (e.g., Weapons, Potions, Resources) using simple, custom declarative predicate functions."
+  - title: "Custom Equip Handlers"
+    details: "Easily integrate with server-authoritative networking models by overriding how tools are equipped and unequipped."
 ---
 
