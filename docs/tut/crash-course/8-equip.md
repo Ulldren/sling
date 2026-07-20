@@ -49,7 +49,3 @@ EquipToolRemote.OnServerEvent:Connect(function(player: Player, tool: Tool?)
     end
 end)
 ```
-
-## Instant Visual Feedback (Prediction)
-
-Sling's UI updates automatically by watching character child replication events. The UI will instantly transition the active slot selection on click while the server processes and replicates the physics change, ensuring a lag-free experience for the player.
