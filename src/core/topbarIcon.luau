@@ -1,7 +1,11 @@
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+local topbarplus = require(ReplicatedStorage.Shared.Packages.topbarplus)
+
 local closeInventory = require("../api/closeInventory")
 local events = require("./events")
 local openInventory = require("../api/openInventory")
-local topbarplus = require("../../topbarplus")
+
 
 local icon = topbarplus.new()
 icon:setName("Sling")
