@@ -40,6 +40,7 @@ local function hotbar(): Frame
 		end)
 	end)
 
+	local slotPadding = config.customHotbarSlotPadding or px.udim(0, HOTBAR_PADDING)
 	local padding = config.customHotbarPadding or px.udim(0, HOTBAR_PADDING)
 	return create "Frame" {
 		Name = "Hotbar",
@@ -69,7 +70,7 @@ local function hotbar(): Frame
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Bottom,
-			Padding = padding,
+			Padding = slotPadding,
 		},
 
 		create "UIPadding" {

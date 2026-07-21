@@ -19,8 +19,7 @@ return {
 
 	customSlotSize = nil :: CustomSlotSize?,
 	customSlotComponent = nil :: CustomSlotComponent?,
-	-- Only used for the invisible button hitbox on slot buttons
-	customSlotCornerRadius = nil :: UDim?,
-
-	customHotbarPadding = nil :: CustomSlotPadding?,
+	customSlotCornerRadius = nil :: UDim?, -- Only used for the invisible button hitbox on slot buttons
+	customHotbarSlotPadding = nil :: CustomSlotPadding?, -- Padding between slots
+	customHotbarPadding = nil :: CustomSlotPadding?, -- Padding above & below hotbar
 }
