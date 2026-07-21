@@ -28,7 +28,7 @@ type Props = {
 local function searchbar(props: Props)
 	local searchText = props.searchText
 
-	return create("TextBox")({
+	return create "TextBox" {
 		Name = "Search",
 		AnchorPoint = Vector2.new(1, 0),
 		Position = UDim2.fromScale(1, 0),
@@ -58,22 +58,22 @@ local function searchbar(props: Props)
 			searchText(value)
 		end),
 
-		create("UIPadding")({
+		create "UIPadding" {
 			PaddingLeft = px.udim(0, SEARCHBAR_PADDING),
 			PaddingRight = px.udim(0, SEARCHBAR_PADDING),
 			PaddingTop = px.udim(0, SEARCHBAR_PADDING),
 			PaddingBottom = px.udim(0, SEARCHBAR_PADDING),
-		}),
-		create("UIStroke")({
+		},
+		create "UIStroke" {
 			ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 			Color = colorSpring(theme.searchStrokeColor),
 			Transparency = theme.searchStrokeTransparency,
 			Thickness = px.scale(1),
-		}),
-		create("UICorner")({
+		},
+		create "UICorner" {
 			CornerRadius = theme.searchCornerRadius,
-		}),
-		create("ImageButton")({
+		},
+		create "ImageButton" {
 			Name = "Clear",
 			BackgroundTransparency = 1,
 			AnchorPoint = Vector2.new(1, 0.5),
@@ -87,8 +87,8 @@ local function searchbar(props: Props)
 			Activated = function()
 				searchText("")
 			end,
-		}),
-	})
+		},
+	}
 end
 
 return searchbar

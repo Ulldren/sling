@@ -188,7 +188,7 @@ local function sling()
 
 	px.usePx()
 
-	return create("ScreenGui")({
+	return create "ScreenGui" {
 		Name = "BackpackGui",
 		DisplayOrder = 120,
 		IgnoreGuiInset = true,
@@ -198,7 +198,7 @@ local function sling()
 		action(states.appRef :: any),
 
 		backpack(),
-	})
+	} 
 end
 
 local function app()

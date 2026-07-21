@@ -9,7 +9,7 @@ local create = vide.create
 local show = vide.show
 
 local function backpack()
-	return create("Frame")({
+	return create "Frame" {
 		Name = "Backpack",
 		Active = true,
 		AnchorPoint = Vector2.new(0.5, 1),
@@ -20,14 +20,14 @@ local function backpack()
 		end,
 		BackgroundTransparency = 1,
 
-		create("UIListLayout")({
+		create "UIListLayout" {
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
-		}),
+		},
 
 		show(cond.all(states.gamepadHint, states.opened), gamepadHints),
 		inventory(),
 		hotbar(),
-	})
+	}
 end
 
 return backpack

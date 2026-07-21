@@ -1,3 +1,4 @@
+local types = require("../../core/types")
 local category = require("./category")
 local colorSpring = require("../../core/utils/colorSpring")
 local cond = require("../../core/utils/cond")
@@ -20,59 +21,61 @@ local DROPDOWN_WIDTH = 120
 local DROPDOWN_SCROLLBAR_THICKNESS = 5
 
 local function categoryTabs()
-	local categories = useCategories({
+	local categories = useCategories {
 		maxCategoryWidth = MAX_CATEGORY_WIDTH,
 		dropdownButtonWidth = DROPDOWN_BUTTON_WIDTH,
-	})
+	}
 
 	local barCategories = categories.barCategories
 	local dropdownCategories = categories.dropdownCategories
 	local showDropdown = categories.showDropdown
 	local categoryWidth = categories.categoryWidth
 
-	return create("Frame")({
+	local categoryFrames = indexes<< number, types.Category >>(barCategories, function(categorySrc)
+		return category {
+			category = categorySrc,
+			size = px.offset(categoryWidth, CATEGORY_HEIGHT),
+			inBar = true,
+		}
+	end)
+
+	return create "Frame" {
 		Name = "CategoryTabs",
 		AnchorPoint = Vector2.new(0.5, 0.5),
 		BackgroundColor3 = colorSpring(theme.categoryTabsBackgroundColor),
 		Size = px.udim2(1, 0, 0, CATEGORY_HEIGHT),
 
-		create("UICorner")({
+		create "UICorner" {
 			TopLeftRadius = theme.cornerRadius,
 			TopRightRadius = theme.cornerRadius,
 			BottomLeftRadius = UDim.new(0, 0),
 			BottomRightRadius = UDim.new(0, 0),
-		}),
+		},
 
-		create("Frame")({
+		create "Frame" {
 			Name = "Divider",
 			AnchorPoint = Vector2.new(0.5, 1),
 			BackgroundColor3 = colorSpring(theme.categoryTabsDividerColor),
 			BackgroundTransparency = 0.8,
 			Position = UDim2.fromScale(0.5, 1),
 			Size = px.udim2(1, 0, 0, 1),
-		}),
+		},
 
-		create("Frame")({
+		create "Frame" {
 			BackgroundTransparency = 1,
 			Size = UDim2.fromScale(1, 1),
 
-			create("UIListLayout")({
+			create "UIListLayout" {
 				FillDirection = Enum.FillDirection.Horizontal,
 				SortOrder = Enum.SortOrder.LayoutOrder,
-			}),
+			},
 
-			indexes(barCategories, function(categorySrc)
-				return category({
-					category = categorySrc,
-					size = px.offset(categoryWidth, CATEGORY_HEIGHT),
-					inBar = true,
-				})
-			end),
+			categoryFrames,
 
 			show(showDropdown, function()
 				local dropdownOpen = source(false)
 
-				return create("TextButton")({
+				return create "TextButton" {
 					Name = "DropdownButton",
 					BackgroundTransparency = 1,
 					Size = cond.ifelse(
@@ -104,7 +107,7 @@ local function categoryTabs()
 							)
 						end)
 
-						return create("Frame")({
+						return create "Frame" {
 							Name = "Dropdown",
 							AnchorPoint = Vector2.new(1, 0),
 							BackgroundColor3 = colorSpring(theme.categoryTabsBackgroundColor),
@@ -114,15 +117,15 @@ local function categoryTabs()
 							end, height),
 							ZIndex = 2,
 
-							create("UIStroke")({
+							create "UIStroke" {
 								ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 								BorderStrokePosition = Enum.BorderStrokePosition.Inner,
 								Color = colorSpring(theme.categoryTabsTextColor),
 								Thickness = px.scale(1),
 								Transparency = 0.8,
-							}),
+							},
 
-							create("ScrollingFrame")({
+							create "ScrollingFrame" {
 								AutomaticCanvasSize = Enum.AutomaticSize.Y,
 								BackgroundTransparency = 1,
 								CanvasSize = UDim2.new(0, 0, 0, 0),
@@ -133,10 +136,10 @@ local function categoryTabs()
 								Selectable = false,
 								Size = px.udim2(1, DROPDOWN_SCROLLBAR_THICKNESS, 0, height),
 
-								create("UIListLayout")({
+								create "UIListLayout" {
 									FillDirection = Enum.FillDirection.Vertical,
 									SortOrder = Enum.SortOrder.LayoutOrder,
-								}),
+								},
 
 								indexes(dropdownCategories, function(categorySrc)
 									return category({
@@ -144,13 +147,13 @@ local function categoryTabs()
 										size = px.udim2(1, -5, 0, CATEGORY_HEIGHT),
 									})
 								end),
-							}),
-						})
+							},
+						}
 					end),
-				})
+				}
 			end),
-		}),
-	})
+		},
+	}
 end
 
 return categoryTabs

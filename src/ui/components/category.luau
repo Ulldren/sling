@@ -11,7 +11,7 @@ local derive = vide.derive
 local show = vide.show
 
 type Props = {
-	category: vide.Source<types.Category>,
+	category: () -> types.Category,
 	size: vide.SourceRaw<UDim2>,
 	inBar: boolean?,
 }
@@ -24,7 +24,7 @@ local function category(props: Props)
 	local isSelected = cond.eq(states.selectedCategory, categoryName)
 	local zIndex = cond.ifelse(props.inBar, 1, 2)
 
-	return create("TextButton") ({
+	return create "TextButton" {
 		BackgroundTransparency = 1,
 		FontFace = theme.categoryTabsFontFace,
 		Size = props.size,
@@ -43,20 +43,20 @@ local function category(props: Props)
 		end,
 
 		show(isSelected, function()
-			return create("Frame")({
+			return create "Frame" {
 				Name = "Indicator",
 				AnchorPoint = Vector2.new(0, 1),
 				BackgroundColor3 = colorSpring(theme.categoryTabsIndicatorColor),
 				Position = UDim2.fromScale(0, 1),
 				Size = px.udim2(1, 0, 0, 4),
 				ZIndex = zIndex,
-			})
+			}
 		end),
 		show(function()
 			local categories = states.categories()
 			return categories[#categories] ~= category()
 		end, function()
-			return create("Frame")({
+			return create "Frame" {
 				Name = "Divider",
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = colorSpring(theme.categoryTabsDividerColor),
@@ -64,9 +64,9 @@ local function category(props: Props)
 				Position = cond.ifelse(props.inBar, UDim2.fromScale(1, 0.5), UDim2.fromScale(0.5, 1)),
 				Size = cond.ifelse(props.inBar, px.udim2(0, 1, 1, -8), px.udim2(1, 0, 0, 1)),
 				ZIndex = zIndex,
-			})
+			}
 		end),
-	})
+	}
 end
 
 return category

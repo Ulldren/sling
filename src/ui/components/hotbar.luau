@@ -19,15 +19,28 @@ local function hotbar(): Frame
 		local slots = states.slots()
 		local items = states.items()
 
-		local newItems = table.create(slots)
+		local newItems = table.create(slots) :: { { item: BackpackItem? } }
 		for i = 1, slots do
 			local item = items[i]
 			newItems[i] = { item = item }
 		end
-		return newItems :: { { item: BackpackItem? } }
+		return newItems
 	end)
 
-	return create("Frame")({
+	local slots = indexes<<number, { item: BackpackItem? }>>(items, function(entry, order)
+		local item = derive(function()
+			return entry().item
+		end)
+		return show(cond.any(states.opened, item), function()
+			return slot {
+				item = item,
+				order = order,
+				inHotbar = true,
+			}
+		end)
+	end)
+
+	return create "Frame" {
 		Name = "Hotbar",
 		Active = states.opened,
 		AutomaticSize = Enum.AutomaticSize.X,
@@ -41,33 +54,22 @@ local function hotbar(): Frame
 			states.width(size.X)
 		end),
 
-		create("UIListLayout")({
+		create "UIListLayout" {
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
 			Padding = px.udim(0, HOTBAR_PADDING),
-		}),
+		},
 
-		create("UIPadding")({
+		create "UIPadding" {
 			PaddingLeft = px.udim(0, HOTBAR_PADDING),
 			PaddingRight = px.udim(0, HOTBAR_PADDING),
 			PaddingTop = px.udim(0, HOTBAR_PADDING),
 			PaddingBottom = px.udim(0, HOTBAR_PADDING),
-		}),
+		},
 
-		indexes(items, function(entry, order)
-			local item = derive(function()
-				return entry().item :: BackpackItem?
-			end)
-			return show(cond.any(states.opened, item), function()
-				return slot({
-					item = item,
-					order = order,
-					inHotbar = true,
-				})
-			end)
-		end),
-	})
+		slots
+	}
 end
 
 return hotbar

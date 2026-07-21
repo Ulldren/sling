@@ -24,7 +24,7 @@ local function inventory()
 	end)
 	local inventory = useInventory()
 
-	return create("Frame")({
+	return create "Frame" {
 		Name = "Inventory",
 		Active = true,
 		BackgroundColor3 = colorSpring(function()
@@ -39,37 +39,37 @@ local function inventory()
 		end,
 		Visible = states.opened,
 
-		create("UICorner")({
+		create "UICorner" {
 			CornerRadius = theme.cornerRadius,
-		}),
+		},
 
-		create("UIListLayout")({}),
+		create "UIListLayout" {},
 
 		show(cond.gt(cond.len(states.categories), 1), categoryTabs),
 
-		create("Frame")({
+		create "Frame" {
 			Name = "TopFrame",
 			AutomaticSize = Enum.AutomaticSize.Y,
 			Size = px.udim2(1, 0, 0, 0),
 			BackgroundTransparency = 1,
 			LayoutOrder = 1,
 
-			create("UIPadding")({
+			create "UIPadding" {
 				PaddingLeft = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingRight = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingTop = px.udim(0, INVENTORY_SLOT_PADDING),
-			}),
+			},
 
 			show(function()
 				return not (states.preferredInput() == Enum.PreferredInput.Gamepad and not states.vrEnabled())
 			end, function()
-				return searchbar({
+				return searchbar {
 					searchText = inventory.searchText,
-				})
+				} 
 			end),
-		}),
+		},
 
-		create("ScrollingFrame")({
+		create "ScrollingFrame" {
 			AutomaticCanvasSize = Enum.AutomaticSize.Y,
 			BackgroundTransparency = 1,
 			BorderSizePixel = 0,
@@ -82,32 +82,32 @@ local function inventory()
 			Size = px.udim2(1, INVENTORY_SCROLLBAR_THICKNESS, 0, height),
 			LayoutOrder = 2,
 
-			create("UIPadding")({
+			create "UIPadding" {
 				PaddingTop = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingBottom = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingLeft = px.udim(0, INVENTORY_SLOT_PADDING),
 				PaddingRight = px.udim(0, INVENTORY_SLOT_PADDING),
-			}),
+			},
 
-			create("UIListLayout")({
+			create "UIListLayout" {
 				FillDirection = Enum.FillDirection.Horizontal,
 				Padding = px.udim(0, INVENTORY_SLOT_PADDING),
 				SortOrder = Enum.SortOrder.LayoutOrder,
 				Wraps = true,
-			}),
+			},
 
 			indexes(inventory.items, function(item, order)
 				local visible = derive(function()
 					return inventory.isVisible(item())
 				end)
-				return slot({
+				return slot {
 					item = item,
 					order = order,
 					visible = visible,
-				})
+				}
 			end),
-		}),
-	})
+		},
+	}
 end
 
 return inventory

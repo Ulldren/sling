@@ -27,11 +27,11 @@ type Props = {
 local function slot(props: Props)
 	local item = props.item
 	local isHovering = source(false)
-	local slot = useSlot({
+	local slot = useSlot {
 		item = item,
 		order = props.order,
 		inHotbar = props.inHotbar,
-	})
+	}
 
 	local customProps = derive(function()
 		local renderCallback = slotRender().callback
@@ -42,7 +42,11 @@ local function slot(props: Props)
 			slot.itemImage()
 			slot.tooltipText()
 
-			return renderCallback({ item = currentItem, inHotbar = props.inHotbar, order = props.order })
+			return renderCallback { 
+				item = currentItem, 
+				inHotbar = props.inHotbar, 
+				order = props.order 
+			}
 		end
 		return {}
 	end)
@@ -61,7 +65,7 @@ local function slot(props: Props)
 			* states.preferredTransparency()
 	end)
 
-	return create("Frame")({
+	return create "Frame" {
 		Name = tostring(props.order),
 		BackgroundTransparency = 1,
 		Size = px.offset(config.slotSize, config.slotSize),
@@ -70,7 +74,7 @@ local function slot(props: Props)
 
 		action(slot.slotFrameRef :: any),
 
-		create("TextButton")({
+		create "TextButton" {
 			Active = true,
 			BackgroundColor3 = function()
 				local defaultColor = theme.slotBackgroundColor():Lerp(
@@ -96,17 +100,17 @@ local function slot(props: Props)
 				isHovering(false)
 			end,
 
-			create("UIPadding")({
+			create "UIPadding" {
 				PaddingBottom = px.udim(0, SLOT_PADDING),
 				PaddingLeft = px.udim(0, SLOT_PADDING),
 				PaddingRight = px.udim(0, SLOT_PADDING),
 				PaddingTop = px.udim(0, SLOT_PADDING),
-			}),
-			create("UICorner")({
+			},
+			create "UICorner" {
 				CornerRadius = theme.slotCornerRadius,
-			}),
+			},
 			show(showEquipStroke, function()
-				return create("UIStroke")({
+				return create "UIStroke" {
 					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 					BorderStrokePosition = cond.ifelse(
 						theme.slotEquipStrokeOutline,
@@ -116,10 +120,10 @@ local function slot(props: Props)
 					Color = theme.slotEquipStrokeColor,
 					LineJoinMode = Enum.LineJoinMode.Round,
 					Thickness = px.scale(theme.slotEquipStrokeThickness),
-				})
+				}
 			end),
 			show(showDraggingStroke, function()
-				return create("UIStroke")({
+				return create "UIStroke" {
 					ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
 					BorderStrokePosition = cond.ifelse(
 						theme.slotEquipStrokeOutline,
@@ -129,9 +133,9 @@ local function slot(props: Props)
 					Color = theme.slotDragStrokeColor,
 					Thickness = px.scale(theme.slotDragStrokeThickness),
 					Transparency = cond.ifelse(item, 0, 0.5),
-				})
+				}
 			end),
-			create("TextLabel")({
+			create "TextLabel" {
 				Name = "ItemName",
 				BackgroundTransparency = 1,
 				Size = UDim2.fromScale(1, 1),
@@ -152,8 +156,8 @@ local function slot(props: Props)
 				function()
 					return customProps().ItemNameChildren
 				end,
-			}),
-			create("ImageLabel")({
+			},
+			create "ImageLabel" {
 				Name = "Icon",
 				BackgroundTransparency = 1,
 				Image = slot.itemImage,
@@ -161,11 +165,11 @@ local function slot(props: Props)
 				ZIndex = slot.zindex,
 				Visible = showIcon,
 
-				create("UICorner")({
+				create "UICorner" {
 					CornerRadius = theme.slotCornerRadius,
-				}),
-			}),
-			create("TextLabel")({
+				},
+			},
+			create "TextLabel" {
 				Name = "Number",
 				BackgroundTransparency = 1,
 				AutomaticSize = Enum.AutomaticSize.XY,
@@ -177,18 +181,20 @@ local function slot(props: Props)
 				TextStrokeTransparency = theme.textStrokeTransparency,
 				ZIndex = slot.zindex,
 				Visible = showSlotNumber,
-			}),
+			},
+
 			show(showTooltip, function(_, present)
 				return tooltip({
 					text = slot.tooltipText,
 					visible = present,
 				})
 			end),
+
 			function()
 				return customProps().Children
 			end,
-		}),
-	})
+		},
+	}
 end
 
 return slot

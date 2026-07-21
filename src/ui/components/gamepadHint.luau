@@ -17,25 +17,25 @@ type Props = {
 }
 
 local function gamepadHint(props: Props)
-	return create("Frame")({
+	return create "Frame" {
 		Name = "HintFrame",
 		AutomaticSize = Enum.AutomaticSize.X,
 		BackgroundTransparency = 1,
 		Size = px.offset(0, GAMEPAD_HINT_HEIGHT),
 
-		create("UIListLayout")({
+		create "UIListLayout" {
 			FillDirection = Enum.FillDirection.Horizontal,
 			Padding = px.udim(0, GAMEPAD_HINT_PADDING),
 			SortOrder = Enum.SortOrder.LayoutOrder,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
-		}),
-		create("ImageLabel")({
+		},
+		create "ImageLabel" {
 			Name = "HintImage",
 			BackgroundTransparency = 1,
 			Image = UserInputService:GetImageForKeyCode(props.keyCode),
 			Size = px.offset(GAMEPAD_HINT_IMAGE_SIZE, GAMEPAD_HINT_IMAGE_SIZE),
-		}),
-		create("TextLabel")({
+		},
+		create "TextLabel" {
 			Name = "HintText",
 			AutomaticSize = Enum.AutomaticSize.XY,
 			BackgroundTransparency = 1,
@@ -46,8 +46,8 @@ local function gamepadHint(props: Props)
 			TextColor3 = colorSpring(theme.hintTextColor),
 			TextSize = px.scale(theme.hintTextSize),
 			TextXAlignment = Enum.TextXAlignment.Left,
-		}),
-	})
+		},
+	}
 end
 
 return gamepadHint

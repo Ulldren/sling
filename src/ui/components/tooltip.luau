@@ -18,7 +18,7 @@ type Props = {
 local function tooltip(props: Props)
 	local visible: vide.SourceRaw<boolean> = props.visible or true
 
-	return create("TextLabel")({
+	return create "TextLabel" {
 		Name = "ToolTip",
 		AnchorPoint = Vector2.new(0.5, 1),
 		AutomaticSize = Enum.AutomaticSize.XY,
@@ -35,18 +35,17 @@ local function tooltip(props: Props)
 		TextStrokeTransparency = spring(cond.ifelse(visible, theme.textStrokeTransparency, 1), 0.2),
 		ZIndex = 3,
 
-		create("UICorner")({
+		create "UICorner" {
 			CornerRadius = theme.tooltipCornerRadius,
-		}),
+		},
 
-		create("UIPadding")({
+		create "UIPadding" {
 			PaddingTop = px.udim(0, TOOLTIP_PADDING),
 			PaddingBottom = px.udim(0, TOOLTIP_PADDING),
 			PaddingLeft = px.udim(0, TOOLTIP_PADDING),
 			PaddingRight = px.udim(0, TOOLTIP_PADDING),
-		}),
-	}),
-		0.2
+		},
+	}, 0.2
 end
 
 return tooltip
