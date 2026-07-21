@@ -9,7 +9,7 @@ local slot = require("../ui/components/slot")
 	sling.useCustomSlot(CustomSlotFrame)
 	```
 ]=]
-local function useCustomSlot(customSlotComponent: (slot.SlotFrameProps) -> (GuiObject))
+local function useCustomSlot(customSlotComponent: (slot.SlotFrameProps) -> (any))
 	config.customSlotComponent = customSlotComponent
 end
 

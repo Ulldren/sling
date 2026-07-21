@@ -1,4 +1,5 @@
-export type CustomSlotComponent = (any) -> (GuiObject)
+export type CustomSlotComponent = (any) -> (any)
+export type CustomSlotSize = () -> UDim2
 
 return {
 	slotSize = 60,
@@ -16,5 +17,6 @@ return {
 	gamepadCloseKey = Enum.KeyCode.ButtonB,
 
 
+	customSlotSize = nil :: CustomSlotSize?,
 	customSlotComponent = nil :: CustomSlotComponent?,
 }

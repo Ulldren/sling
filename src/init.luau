@@ -12,6 +12,7 @@ local _, setEquipHandler = require("@self/api/setEquipHandler")()
 local setHotbar = require("@self/api/setHotbar")
 local setTheme = require("@self/api/setTheme")
 local useCustomSlot = require("@self/api/useCustomSlot")
+local useCustomSlotSize = require("@self/api/useCustomSlotSize")
 local states = require("@self/core/states")
 local themes = require("@self/ui/themes")
 local toggleInventory = require("@self/api/toggleInventory")
@@ -47,6 +48,8 @@ return {
 	onSlotRender = onSlotRender,
 	setEquipHandler = setEquipHandler,
 	getTopbarIcon = getTopbarIcon,
+
+	useCustomSlotSize = useCustomSlotSize,
 	useCustomSlot = useCustomSlot,
 
 	-- Themes

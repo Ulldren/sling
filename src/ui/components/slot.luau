@@ -185,7 +185,7 @@ local function slot(props: Props)
 	return create "Frame" {
 		Name = tostring(props.order),
 		BackgroundTransparency = 1,
-		Size = px.offset(config.slotSize, config.slotSize),
+		Size = config.customSlotSize or px.offset(config.slotSize, config.slotSize),
 		LayoutOrder = props.order,
 		Visible = props.visible,
 
