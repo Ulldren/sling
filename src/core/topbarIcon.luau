@@ -5,6 +5,7 @@ local topbarplus = require(ReplicatedStorage.Shared.Packages.topbarplus)
 local closeInventory = require("../api/closeInventory")
 local events = require("./events")
 local openInventory = require("../api/openInventory")
+local config = require("./config")
 
 
 local icon = topbarplus.new()
@@ -48,5 +49,9 @@ icon.toggled:Connect(function(isSelected, fromSource)
 		end
 	end
 end)
+
+if config.useCustomInventory then
+	icon:destroy()
+end
 
 return icon

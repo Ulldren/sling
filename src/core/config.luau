@@ -17,6 +17,8 @@ return {
 	gamepadRemoveKey = Enum.KeyCode.ButtonX,
 	gamepadCloseKey = Enum.KeyCode.ButtonB,
 
+
+	useCustomInventory = true, -- Will disable the inventory keeping only the hotbar
 	customSlotSize = nil :: CustomSlotSize?,
 	customSlotComponent = nil :: CustomSlotComponent?,
 	customSlotCornerRadius = nil :: UDim?, -- Only used for the invisible button hitbox on slot buttons
