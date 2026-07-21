@@ -1,5 +1,6 @@
 export type CustomSlotComponent = (any) -> (any)
 export type CustomSlotSize = () -> UDim2
+export type CustomSlotPadding = () -> UDim
 
 return {
 	slotSize = 60,
@@ -20,4 +21,6 @@ return {
 	customSlotComponent = nil :: CustomSlotComponent?,
 	-- Only used for the invisible button hitbox on slot buttons
 	customSlotCornerRadius = nil :: UDim?,
+
+	customHotbarPadding = nil :: CustomSlotPadding?,
 }

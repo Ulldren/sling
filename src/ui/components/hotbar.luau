@@ -40,12 +40,23 @@ local function hotbar(): Frame
 		end)
 	end)
 
+	local padding = config.customHotbarPadding or px.udim(0, HOTBAR_PADDING)
 	return create "Frame" {
 		Name = "Hotbar",
 		Active = states.opened,
 		AutomaticSize = Enum.AutomaticSize.X,
-		Size = px.offset(0, config.slotSize + HOTBAR_PADDING * 2),
-		BackgroundTransparency = 1,
+		Size = function()
+			local customSlotSize = config.customSlotSize
+			if customSlotSize then
+				local sizeY = customSlotSize().Y.Offset + padding().Offset*2
+				return UDim2.fromOffset(0, sizeY)
+			else
+				return px.offset(0, config.slotSize + HOTBAR_PADDING * 2)()
+			end
+		end,
+		Position = UDim2.fromScale(0.5, 1),
+		AnchorPoint = Vector2.new(0.5, 1),
+		BackgroundTransparency = 0,
 		LayoutOrder = 1,
 
 		action(states.hotbarRef :: any),
@@ -57,15 +68,15 @@ local function hotbar(): Frame
 		create "UIListLayout" {
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
-			VerticalAlignment = Enum.VerticalAlignment.Center,
-			Padding = px.udim(0, HOTBAR_PADDING),
+			VerticalAlignment = Enum.VerticalAlignment.Bottom,
+			Padding = padding,
 		},
 
 		create "UIPadding" {
-			PaddingLeft = px.udim(0, HOTBAR_PADDING),
-			PaddingRight = px.udim(0, HOTBAR_PADDING),
-			PaddingTop = px.udim(0, HOTBAR_PADDING),
-			PaddingBottom = px.udim(0, HOTBAR_PADDING),
+			PaddingLeft = padding,
+			PaddingRight = padding,
+			PaddingTop = padding,
+			PaddingBottom = padding,
 		},
 
 		slots
