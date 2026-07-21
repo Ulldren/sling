@@ -1,7 +1,9 @@
-return table.freeze({
+export type CustomSlotComponent = (any) -> (GuiObject)
+
+return {
 	slotSize = 60,
 
-	hotbarSlotsFull = 10,
+	hotbarSlotsFull = 9,
 	hotbarSlotsMini = 6,
 	hotbarSlotsPortrait = 3,
 
@@ -12,4 +14,7 @@ return table.freeze({
 	gamepadSwapKey = Enum.KeyCode.ButtonA,
 	gamepadRemoveKey = Enum.KeyCode.ButtonX,
 	gamepadCloseKey = Enum.KeyCode.ButtonB,
-})
+
+
+	customSlotComponent = nil :: CustomSlotComponent?,
+}

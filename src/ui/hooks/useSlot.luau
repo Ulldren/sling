@@ -246,4 +246,6 @@ local function useSlot(props: {
 	}
 end
 
+export type Slot = typeof(useSlot(...))
+
 return useSlot
