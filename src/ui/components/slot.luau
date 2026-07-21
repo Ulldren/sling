@@ -199,6 +199,7 @@ local function slot(props: Props)
 
 		-- Events here
 		create "TextButton" {
+			Name = "InteractButton",
 			Active = true,
 			BackgroundTransparency = 1,
 			ZIndex = 1e9,
