@@ -37,8 +37,8 @@ local function useInventory()
 	local searchText = source("")
 
 	local searchTokens = derive(function()
-		local text = searchText():lower()
-		local tokens = {}
+		local text: string = searchText():lower()
+		local tokens = {} :: { string }
 		for token in text:gmatch("%S+") do
 			table.insert(tokens, token)
 		end

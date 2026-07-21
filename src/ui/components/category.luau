@@ -11,8 +11,8 @@ local derive = vide.derive
 local show = vide.show
 
 type Props = {
-	category: () -> types.Category,
-	size: vide.UsedAs<UDim2>,
+	category: vide.Source<types.Category>,
+	size: vide.SourceRaw<UDim2>,
 	inBar: boolean?,
 }
 
@@ -24,7 +24,7 @@ local function category(props: Props)
 	local isSelected = cond.eq(states.selectedCategory, categoryName)
 	local zIndex = cond.ifelse(props.inBar, 1, 2)
 
-	return create("TextButton")({
+	return create("TextButton") ({
 		BackgroundTransparency = 1,
 		FontFace = theme.categoryTabsFontFace,
 		Size = props.size,

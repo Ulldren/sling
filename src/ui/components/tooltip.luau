@@ -16,7 +16,7 @@ type Props = {
 }
 
 local function tooltip(props: Props)
-	local visible: vide.UsedAs<boolean> = props.visible or true
+	local visible: vide.SourceRaw<boolean> = props.visible or true
 
 	return create("TextLabel")({
 		Name = "ToolTip",

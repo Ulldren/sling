@@ -2,7 +2,7 @@ local GuiService = game:GetService("GuiService")
 
 local vide = require("../../../vide")
 
-type UsedAs<T> = vide.UsedAs<T>
+type UsedAs<T> = vide.SourceRaw<T>
 
 local read = vide.read :: any
 local source = vide.source

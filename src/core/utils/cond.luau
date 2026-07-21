@@ -1,8 +1,8 @@
 local vide = require("../../../vide")
 
-local read = vide.read
+local read = vide.read :: (any) -> (any)
 
-type UsedAs<T> = vide.UsedAs<T>
+type UsedAs<T> = vide.SourceRaw<T>
 
 type function GetterUnwrapArgs(a: type, b: type): type
 	local function unwrap(t: type): type

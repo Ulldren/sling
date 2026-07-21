@@ -22,6 +22,7 @@ local function boolAction(props: {
 				if action then
 					action(state == Enum.UserInputState.Begin)
 				end
+				return nil
 			end, false, table.unpack(keycodes))
 
 			cleanup(function()
