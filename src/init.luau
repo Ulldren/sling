@@ -11,21 +11,29 @@ local setEnabled = require("@self/api/setEnabled")
 local _, setEquipHandler = require("@self/api/setEquipHandler")()
 local setHotbar = require("@self/api/setHotbar")
 local setTheme = require("@self/api/setTheme")
+local useCustomSlot = require("@self/api/useCustomSlot")
 local states = require("@self/core/states")
 local themes = require("@self/ui/themes")
 local toggleInventory = require("@self/api/toggleInventory")
 local types = require("@self/core/types")
+local config = require("@self/core/config")
 
 export type ThemeConfig = types.ThemeConfig
 export type SlotContext = types.SlotContext
 export type SlotProperties = types.SlotProperties
 
+local slot = require("@self/ui/components/slot")
+export type SlotFrameProps = slot.SlotFrameProps
+
 require("@self/attribution")
 require("@self/core/topbarIcon")
 
-app()
-
 return {
+	app = app,
+
+	-- expose
+	config = config,
+
 	-- API
 	openInventory = openInventory,
 	closeInventory = closeInventory,
@@ -39,6 +47,7 @@ return {
 	onSlotRender = onSlotRender,
 	setEquipHandler = setEquipHandler,
 	getTopbarIcon = getTopbarIcon,
+	useCustomSlot = useCustomSlot,
 
 	-- Themes
 	themes = themes,

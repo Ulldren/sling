@@ -16,7 +16,6 @@ local useBackpack = require("./hooks/useBackpack")
 local useEventListener = require("./hooks/useEventListener")
 local vide = require("../../vide")
 
-local mount = vide.mount
 local create = vide.create
 local action = vide.action
 local show = vide.show
@@ -202,9 +201,7 @@ local function sling()
 end
 
 local function app()
-	mount(function()
-		return show(states.enabled, sling)
-	end, playerGui)
+	return show(states.enabled, sling)
 end
 
 return app
