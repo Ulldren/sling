@@ -13,6 +13,7 @@ local setHotbar = require("@self/api/setHotbar")
 local setTheme = require("@self/api/setTheme")
 local useCustomSlot = require("@self/api/useCustomSlot")
 local useCustomSlotSize = require("@self/api/useCustomSlotSize")
+local useCustomSlotCornerRadius = require("@self/api/useCustomSlotCornerRadius")
 local states = require("@self/core/states")
 local themes = require("@self/ui/themes")
 local toggleInventory = require("@self/api/toggleInventory")
@@ -52,6 +53,7 @@ return {
 
 	useCustomSlotSize = useCustomSlotSize,
 	useCustomSlot = useCustomSlot,
+	useCustomSlotCornerRadius = useCustomSlotCornerRadius,
 
 	-- Themes
 	themes = themes,

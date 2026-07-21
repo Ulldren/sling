@@ -188,6 +188,7 @@ local function slot(props: Props)
 		Size = config.customSlotSize or px.offset(config.slotSize, config.slotSize),
 		LayoutOrder = props.order,
 		Visible = props.visible,
+		Active = false,
 
 		action(slot.slotFrameRef :: any),
 
@@ -205,6 +206,10 @@ local function slot(props: Props)
 			Text = "",
 
 			action(slot.slotRef :: any),
+
+			create "UICorner" {
+				CornerRadius = config.customSlotCornerRadius or UDim.new(0, 0),
+			},
 
 			slot.useDrag(),
 

@@ -16,7 +16,8 @@ return {
 	gamepadRemoveKey = Enum.KeyCode.ButtonX,
 	gamepadCloseKey = Enum.KeyCode.ButtonB,
 
-
 	customSlotSize = nil :: CustomSlotSize?,
 	customSlotComponent = nil :: CustomSlotComponent?,
+	-- Only used for the invisible button hitbox on slot buttons
+	customSlotCornerRadius = nil :: UDim?,
 }
