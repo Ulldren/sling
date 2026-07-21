@@ -34,6 +34,7 @@ return {
 
 	-- expose
 	config = config,
+	states = states,
 
 	-- API
 	openInventory = openInventory,
