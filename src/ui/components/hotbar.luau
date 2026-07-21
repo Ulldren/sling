@@ -56,7 +56,7 @@ local function hotbar(): Frame
 		end,
 		Position = UDim2.fromScale(0.5, 1),
 		AnchorPoint = Vector2.new(0.5, 1),
-		BackgroundTransparency = 0,
+		BackgroundTransparency = 1,
 		LayoutOrder = 1,
 
 		action(states.hotbarRef :: any),
