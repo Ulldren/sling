@@ -44,7 +44,7 @@ local function hotbar(): Frame
 	local padding = config.customHotbarPadding or px.udim(0, HOTBAR_PADDING)
 	return create "Frame" {
 		Name = "Hotbar",
-		Active = states.opened,
+		Active = false,
 		AutomaticSize = Enum.AutomaticSize.X,
 		Size = function()
 			local customSlotSize = config.customSlotSize
