@@ -69,7 +69,7 @@ local function hotbar(): Frame
 		create "UIListLayout" {
 			FillDirection = Enum.FillDirection.Horizontal,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
-			VerticalAlignment = Enum.VerticalAlignment.Bottom,
+			VerticalAlignment = Enum.VerticalAlignment.Center,
 			Padding = slotPadding,
 		},
 
