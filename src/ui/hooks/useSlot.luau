@@ -133,7 +133,7 @@ local function useSlot(props: {
 	local doubleClickTime = 0.5
 
 	local function onClick()
-		if states.equipMovesToInventory then
+		if states.equipMovesToInventory() then
 			local currentItem = item()
 			if currentItem and currentItem:GetAttribute("HotbarOnly") ~= true then
 				moveToInventory()
