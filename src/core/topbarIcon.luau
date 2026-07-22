@@ -1,12 +1,16 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-
-local topbarplus = require(ReplicatedStorage.Shared.Packages.topbarplus)
+local RunService = game:GetService("RunService")
 
 local closeInventory = require("../api/closeInventory")
 local events = require("./events")
 local openInventory = require("../api/openInventory")
 local config = require("./config")
+if config.useCustomInventory or not RunService:IsRunning() then
+	return nil :: Icon?
+end
 
+
+local topbarplus = require(ReplicatedStorage.Shared.Packages.topbarplus)
 
 local icon = topbarplus.new()
 icon:setName("Sling")
@@ -50,8 +54,6 @@ icon.toggled:Connect(function(isSelected, fromSource)
 	end
 end)
 
-if config.useCustomInventory then
-	icon:destroy()
-end
+type Icon = typeof(icon)
 
-return icon
+return icon :: Icon?

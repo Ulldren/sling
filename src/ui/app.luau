@@ -1,5 +1,6 @@
 local GuiService = game:GetService("GuiService")
 local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 local StarterGui = game:GetService("StarterGui")
 local UserInputService = game:GetService("UserInputService")
 local VRService = game:GetService("VRService")
@@ -23,9 +24,52 @@ local effect = vide.effect
 local untrack = vide.untrack
 
 local player = Players.LocalPlayer
-local playerGui = player:WaitForChild("PlayerGui") :: PlayerGui
+local playerGui = player:FindFirstChildOfClass("PlayerGui")
 
 StarterGui:SetCoreGuiEnabled(Enum.CoreGuiType.Backpack, false)
+
+
+local function BaseScreenGui(props: {
+    name: string?,
+    displayOrder: number,
+    visible: vide.SourceRaw<boolean>?,
+    clipToSafeArea: boolean?,
+	zindexBehavior: Enum.ZIndexBehavior?,
+
+    children: { any }?,
+    [number]: any,
+}): Instance
+    if RunService:IsRunning() then
+        return create "ScreenGui" {
+            Name = props.name,
+            Enabled = props.visible,
+            DisplayOrder = props.displayOrder,
+            IgnoreGuiInset = true,
+            ResetOnSpawn = false,
+            ClipToDeviceSafeArea = props.clipToSafeArea,
+			ZIndexBehavior = props.zindexBehavior,
+
+            props.children,
+            table.unpack(props),
+        }
+    else
+        return create "Frame" {
+            Name = props.name,
+            Visible = props.visible,
+            ZIndex = props.displayOrder,
+
+            Size = UDim2.fromScale(1, 1),
+            Position = UDim2.fromScale(0.5, 0.5),
+            AnchorPoint = Vector2.new(0.5, 0.5),
+
+            BackgroundTransparency = 1,
+            Active = false,
+
+            props.children,
+            table.unpack(props),
+        }
+    end
+end
 
 local function sling()
 	local b = useBackpack()
@@ -49,7 +93,7 @@ local function sling()
 	end)
 
 	local function updateBackpackSize()
-		local screenOrientation = playerGui.CurrentScreenOrientation
+		local screenOrientation = playerGui and playerGui.CurrentScreenOrientation or Enum.ScreenOrientation.LandscapeRight
 		local viewportSize = GuiService.ViewportDisplaySize
 
 		if screenOrientation == Enum.ScreenOrientation.Portrait then
@@ -66,7 +110,9 @@ local function sling()
 
 	updateBackpackSize()
 	useEventListener(GuiService:GetPropertyChangedSignal("ViewportDisplaySize"), updateBackpackSize)
-	useEventListener(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"), updateBackpackSize)
+	if playerGui then
+		useEventListener(playerGui:GetPropertyChangedSignal("CurrentScreenOrientation"), updateBackpackSize)
+	end
 
 	states.preferredInput(UserInputService.PreferredInput)
 	useEventListener(UserInputService:GetPropertyChangedSignal("PreferredInput"), function()
@@ -187,12 +233,10 @@ local function sling()
 
 	px.usePx()
 
-	return create "ScreenGui" {
-		Name = "BackpackGui",
-		DisplayOrder = 120,
-		IgnoreGuiInset = true,
-		ResetOnSpawn = false,
-		ZIndexBehavior = Enum.ZIndexBehavior.Global,
+	return BaseScreenGui {
+		name = "BackpackGui",
+		displayOrder = 120,
+		-- zindexBehavior = Enum.ZIndexBehavior.Global,
 
 		action(states.appRef :: any),
 

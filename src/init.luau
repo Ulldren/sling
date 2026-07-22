@@ -25,7 +25,6 @@ local slot = require("@self/ui/components/slot")
 export type SlotFrameProps = slot.SlotFrameProps
 
 require("@self/attribution")
-require("@self/core/topbarIcon")
 
 return {
 	app = app,
