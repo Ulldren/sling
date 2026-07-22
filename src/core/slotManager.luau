@@ -150,6 +150,11 @@ local function setHotbarItems(items: { BackpackItem }, force: boolean?)
 	end
 end
 
+
+local function getIndexOfItem(item: BackpackItem)
+	return item ~= nil and getItemIndex(item) or nil
+end
+
 return {
 	getItemIndex = getItemIndex,
 
@@ -167,4 +172,6 @@ return {
 
 	getHotbarItems = getHotbarItems,
 	setHotbarItems = setHotbarItems,
+
+	getIndexOfItem = getIndexOfItem,
 }

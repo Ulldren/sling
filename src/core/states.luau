@@ -8,6 +8,8 @@ return {
 	enabled = source(true),
 	opened = source(false),
 
+	equipMovesToInventory = source(false), -- when equipping a slot in hotbar, will immediately move it to the inventory (mainly used for custom inventory)
+
 	slots = source(config.hotbarSlotsFull),
 	rows = source(config.inventoryRowsFull),
 	width = source(655),

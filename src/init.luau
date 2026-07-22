@@ -2,6 +2,7 @@ local app = require("@self/ui/app")
 local closeInventory = require("@self/api/closeInventory")
 local createCategory = require("@self/api/createCategory")
 local events = require("@self/core/events")
+local slotManager = require("@self/core/slotManager")
 local getTopbarIcon = require("@self/api/getTopbarIcon")
 local isEnabled = require("@self/api/isEnabled")
 local isInventoryOpen = require("@self/api/isInventoryOpen")
@@ -32,6 +33,7 @@ return {
 	-- expose
 	config = config,
 	states = states,
+	slotManager = slotManager,
 
 	-- API
 	openInventory = openInventory,
