@@ -4,6 +4,7 @@ local hotbar = require("./hotbar")
 local inventory = require("./inventory")
 local states = require("../../core/states")
 local vide = require("../../../vide")
+local config = require("../../core/config")
 
 local create = vide.create
 local show = vide.show
@@ -25,7 +26,7 @@ local function backpack()
 		},
 
 		show(cond.all(states.gamepadHint, states.opened), gamepadHints),
-		inventory(),
+		if not config.useCustomInventory then nil else inventory(),
 		hotbar(),
 	}
 end
